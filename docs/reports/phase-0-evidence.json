@@ -1,0 +1,157 @@
+{
+  "reportId": "phase-0-g0-2026-10-01",
+  "dateLocal": "2026-10-01",
+  "timezone": "Asia/Shanghai",
+  "implementationCommit": "a4713239b1307c31d82ab368eed5274bbab954f5",
+  "baselineCommit": "3ae5ecc",
+  "toolchainId": "phase0-win-x64-node24.21.0",
+  "specificationSha256": "D3A987A554575FB72D3D7BA11AF4888639C32C1DC8FED66FBDC7610E0BD86271",
+  "tasks": [
+    "P0-01",
+    "P0-02",
+    "P0-03",
+    "P0-04",
+    "P0-05",
+    "P0-06"
+  ],
+  "unitTests": {
+    "passed": 44,
+    "failed": 0,
+    "success": true
+  },
+  "boundaries": {
+    "checkedFiles": 17,
+    "selfTests": 5,
+    "passed": true,
+    "errors": []
+  },
+  "determinism": {
+    "artifacts": [
+      "artifacts/phase-0/中文 路径/run-a.json",
+      "artifacts/phase-0/中文 路径/run-b.json"
+    ],
+    "changedSeedChangesState": true,
+    "contentHash": "4aba9b5cc636680d7b3174e6e2dcd72ed576e2780faa93f431522f92620010d5",
+    "engineBuild": "phase0-v1",
+    "eventSequenceHash": "b64d70d4a9977f7269451d4e4c2c5307ca41337d2d35471ce5d6436a82fd073b",
+    "finalWorldHash": "a6de98e7d34e9210ab249df0228e4fc06c0252e1d30f6ae96722b94d1f946601",
+    "frozenManifestsVerified": 5,
+    "fullReportBytesEqual": true,
+    "fullReportFileHash": "25c7931d256fb3b79726fbe904279c2c5cc88dc5b31411cab73a321514170385",
+    "inputCountPerRun": 600,
+    "invalidCliCasesPassed": 6,
+    "node": "v24.21.0",
+    "passed": true,
+    "recordingOnOffEqual": true,
+    "repetitions": 2,
+    "rulesHash": "66ea96581c98c9d1c26d6f3f06049d4ca84e1fa77e4af059102b1a626a98903d",
+    "seed": 17,
+    "stateCountPerRun": 601,
+    "stateSequenceHash": "ed6bef5db8dbe685b57769975e7a178221779b6247fb0d5c08155d3615f8b0aa",
+    "ticks": 600,
+    "v8": "13.6.233.17-node.53"
+  },
+  "browser": {
+    "passed": true,
+    "browserVersion": "153.0.8010.12",
+    "playwrightVersion": "1.63.0",
+    "viewport": {
+      "width": 1100,
+      "height": 1080
+    },
+    "deviceScaleFactor": 1,
+    "canvas": {
+      "width": 480,
+      "height": 480,
+      "pixel": [
+        75,
+        145,
+        237,
+        255
+      ]
+    },
+    "fontFacesLoaded": 1,
+    "fontStatus": "loaded",
+    "nodeBrowserMatchingSeeds": [
+      17,
+      18
+    ],
+    "pageErrors": [],
+    "screenshot": "artifacts/phase-0/browser.png"
+  },
+  "cleanDependencyInstall": "npm ci --offline --no-audit: passed; full verification passed after reinstall",
+  "artifacts": [
+    {
+      "path": "artifacts/phase-0/unit-tests.json",
+      "sha256": "4047ce43f124ddda9d149fa58b39576785a31fd8eb862c1f5574a394ff5a5b0b",
+      "bytes": 14190
+    },
+    {
+      "path": "artifacts/phase-0/boundaries.json",
+      "sha256": "78a5496c053b3a8e60b37c6ac3ae3eaaed43e227de8d3796f9a2ec9e1439a0ea",
+      "bytes": 76
+    },
+    {
+      "path": "artifacts/phase-0/determinism.json",
+      "sha256": "5fba29a564ecacae26f55091e3c66abbda57edda9b4dd6acd56aaf6ae54b4072",
+      "bytes": 921
+    },
+    {
+      "path": "artifacts/phase-0/browser.json",
+      "sha256": "9b8a39322034e7a860ce1d33ef8691ee646b912e159215746cba50b3cdedcee2",
+      "bytes": 465
+    },
+    {
+      "path": "artifacts/phase-0/browser.png",
+      "sha256": "0c68b8a4d74c1300a26a69a0af2be9b766af85a8151fb28f724074279fc5cd6e",
+      "bytes": 34046
+    },
+    {
+      "path": "artifacts/phase-0/中文 路径/run-a.json",
+      "sha256": "25c7931d256fb3b79726fbe904279c2c5cc88dc5b31411cab73a321514170385",
+      "bytes": 822954
+    },
+    {
+      "path": "artifacts/phase-0/中文 路径/run-b.json",
+      "sha256": "25c7931d256fb3b79726fbe904279c2c5cc88dc5b31411cab73a321514170385",
+      "bytes": 822954
+    }
+  ],
+  "limits": [
+    "neutral structural fixture only",
+    "world snapshot only; full runner checkpoint deferred",
+    "production FFmpeg/ffprobe and Chinese font not validated"
+  ],
+  "stage": "Phase 0",
+  "taskId": "P0-06",
+  "machine": {
+    "os": "Windows_NT",
+    "release": "10.0.26100",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) Ultra 7 265K",
+    "logicalCores": 20,
+    "totalMemoryBytes": 34049359872
+  },
+  "engineBuild": "phase0-v1",
+  "command": "npm run verify:phase0",
+  "workerCount": 1,
+  "traceMode": "record-states on/off; no AI trace in Phase 0",
+  "pacingMode": "off",
+  "pacingProfileVersion": null,
+  "pacingProfileHash": null,
+  "aiProfileHash": null,
+  "expectedCases": 44,
+  "executedCases": 44,
+  "passed": 44,
+  "failed": 0,
+  "skipped": 0,
+  "retries": 0,
+  "representativeSeeds": [
+    17,
+    18
+  ],
+  "datasetId": "phase0-neutral-repeat-600",
+  "simTicksRepeatedPair": 1200,
+  "confidenceIntervals": null,
+  "nextAction": "P1-01"
+}
