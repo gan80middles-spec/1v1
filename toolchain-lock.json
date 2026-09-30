@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "phase0-win-x64-node24.21.0",
+  "verifiedDateLocal": "2026-10-01",
+  "timezone": "Asia/Shanghai",
+  "node": {
+    "version": "v24.21.0",
+    "v8": "13.6.233.17-node.53",
+    "platform": "win32",
+    "arch": "x64",
+    "npm": "11.19.0",
+    "distribution": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip",
+    "distributionSha256": "158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541",
+    "preexistingSystemNode": "v22.16.0",
+    "preexistingSystemNpm": "10.9.2"
+  },
+  "machine": {
+    "os": "Windows_NT",
+    "release": "10.0.26100",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) Ultra 7 265K",
+    "logicalCores": 20,
+    "totalMemoryBytes": 34049359872
+  },
+  "packages": {
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.11",
+    "zod": "4.6.5",
+    "playwright": "1.63.0",
+    "@types/node": "24.19.0"
+  },
+  "packageLockSha256": "21333ea0c33b483bc62f7a3623303eb266b44200e46819692534372055a3c33b",
+  "chromium": {
+    "name": "chromium",
+    "revision": "1243",
+    "installByDefault": true,
+    "browserVersion": "153.0.8010.12",
+    "title": "Chrome for Testing",
+    "actualVersion": "153.0.8010.12",
+    "validatedCanvas": true,
+    "validatedLocalFont": true
+  },
+  "fonts": {
+    "probe": "IBM Plex Mono Regular",
+    "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+    "license": "SIL OFL 1.1",
+    "chineseExportValidated": false
+  },
+  "encoding": {
+    "ffmpegOnPath": false,
+    "ffprobeOnPath": false,
+    "libx264Validated": false,
+    "aacValidated": false,
+    "playwrightBundledFfmpegRevision": "1011",
+    "status": "production encoder and ffprobe deferred to Phase 4; Playwright helper is not the validated export toolchain"
+  },
+  "deterministicBoundary": "same build, fixed Node/V8, same compiled content, seed and inputs"
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "purpose": "structural-fixture",
+  "characters": [{
+    "id": "standard", "version": 1, "name": "标准 · Phase 0 结构夹具",
+    "ruleText": "仅验证配置、时钟与状态；本阶段不执行战斗技能。",
+    "body": { "radius": 32, "mass": 1, "restitution": 0.65, "moveSpeed": 320, "groundAcceleration": 1800, "airAcceleration": 600, "jumpSpeed": 620 },
+    "stats": { "maxHp": 100 },
+    "slots": { "basic": "standard-jab", "skill1": "standard-bolt", "skill2": "standard-push", "ultimate": "fixture-volley" },
+    "passiveIds": [], "aiProfileId": "balanced",
+    "visual": { "shape": "hexagon", "color": "#4b91ed", "outlineColor": "#d9e7ff" }
+  }],
+  "abilities": [
+    {
+      "id": "standard-jab", "version": 1, "tags": ["melee"], "allowedWhen": "both",
+      "startupTicks": 8, "activeTicks": 4, "recoveryTicks": 14, "cooldownTicks": 26, "energyCost": 0, "movementScale": 0.25, "conditions": [],
+      "timeline": [{ "offsetTick": 8, "effects": [{ "kind": "hitbox", "radius": 34, "offset": {"x":48,"y":0}, "durationTicks":4, "hit":{"damage":8,"launchDeltaV":{"x":500,"y":300},"hitstunTicks":10,"hitGroup":"jab"} }] }],
+      "ai": { "predictorId": "melee", "preferredCenterDistance": [76,104], "purpose": "damage" }
+    },
+    {
+      "id": "standard-bolt", "version": 1, "tags": ["projectile"], "allowedWhen": "both",
+      "startupTicks": 12, "activeTicks": 1, "recoveryTicks": 18, "cooldownTicks": 120, "energyCost": 0, "movementScale": 0.5, "conditions": [],
+      "timeline": [{ "offsetTick": 12, "effects": [{ "kind":"projectile","radius":12,"speed":720,"lifetimeTicks":90,"reflectable":true,"hit":{"damage":11,"launchDeltaV":{"x":420,"y":240},"hitstunTicks":10,"hitGroup":"bolt"} }] }],
+      "ai": { "predictorId": "projectile", "preferredCenterDistance": [220,420], "purpose": "damage" }
+    },
+    {
+      "id": "standard-push", "version": 1, "tags": ["melee"], "allowedWhen": "both",
+      "startupTicks": 16, "activeTicks": 5, "recoveryTicks": 19, "cooldownTicks": 180, "energyCost": 0, "movementScale": 0.25, "conditions": [],
+      "timeline": [{ "offsetTick": 16, "effects": [{ "kind":"hitbox","radius":42,"offset":{"x":48,"y":0},"durationTicks":5,"hit":{"damage":8,"launchDeltaV":{"x":850,"y":460},"hitstunTicks":16,"hitGroup":"push"} }] }],
+      "ai": { "predictorId": "melee", "preferredCenterDistance": [76,104], "purpose": "damage" }
+    },
+    {
+      "id": "fixture-volley", "version": 1, "tags": ["projectile"], "allowedWhen": "both",
+      "startupTicks": 18, "activeTicks": 1, "recoveryTicks": 24, "cooldownTicks": 300, "energyCost": 100, "movementScale": 0.5, "conditions": [],
+      "timeline": [
+        { "offsetTick":18, "effects":[{"kind":"projectile","radius":12,"speed":800,"lifetimeTicks":90,"reflectable":true,"hit":{"damage":8,"launchDeltaV":{"x":420,"y":240},"hitstunTicks":10,"hitGroup":"volley-one"}}] },
+        { "offsetTick":30, "effects":[{"kind":"projectile","radius":12,"speed":800,"lifetimeTicks":90,"reflectable":true,"hit":{"damage":8,"launchDeltaV":{"x":420,"y":240},"hitstunTicks":10,"hitGroup":"volley-two"}}] },
+        { "offsetTick":42, "effects":[{"kind":"projectile","radius":12,"speed":800,"lifetimeTicks":90,"reflectable":true,"hit":{"damage":8,"launchDeltaV":{"x":420,"y":240},"hitstunTicks":10,"hitGroup":"volley-three"}}] }
+      ],
+      "ai": { "predictorId": "volley", "preferredCenterDistance": [220,420], "purpose": "damage" }
+    }
+  ],
+  "statuses": [], "passives": [],
+  "profiles": [{
+    "id":"balanced","version":1,"aggression":0.5,"riskPreference":0.5,"spacing":0.5,"resourcePatience":0.5,
+    "reactionDelayTicks":9,"decisionIntervalTicks":6,"positionNoisePx":6,"velocityNoisePxPerSecond":18,"nearBestBand":0.8,"distancePreference":"mixed"
+  }],
+  "pacingProfiles": [{
+    "id":"initial-pace","version":1,"sampleIntervalTicks":30,"initialQuietTicks":120,"noInteractionThresholdTicks":180,
+    "repeatedMissThreshold":3,"readyHoldThresholdTicks":180,"cueDurationTicks":120,"rampTicks":30,"neutralBetweenCuesTicks":120,"maxCuesPerMatch":6
+  }],
+  "arenas": [{
+    "id":"square","version":1,"width":960,"height":960,"gravity":{"x":0,"y":-1500},
+    "spawnPositions":[{"x":240,"y":32},{"x":720,"y":32}]
+  }]
+}

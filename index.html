@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1v1 内容引擎 · Phase 0</title></head>
+<body>
+  <main>
+    <span class="tag">Phase 0 · 工程骨架</span>
+    <h1>1v1 自动对抗短视频内容引擎</h1>
+    <p>当前验证配置加载、600 tick 固定时钟和确定性 hash。角色保持静止；战斗、碰撞与 AI 从后续阶段开始实现。</p>
+    <form id="run-form"><label for="seed">Seed</label><input id="seed" name="seed" type="number" min="0" max="4294967295" value="17" required><button type="submit">运行 600 tick</button></form>
+    <canvas id="arena" width="480" height="480" aria-label="静态竞技场结构夹具"></canvas>
+    <pre id="output" aria-live="polite"></pre>
+    <p id="font-probe">Local font loading probe · 0123456789</p>
+  </main>
+  <script type="module" src="/src/web/main.ts"></script>
+</body>
+</html>

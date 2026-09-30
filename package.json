@@ -1,0 +1,33 @@
+{
+  "name": "one-v-one-content-engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.21.0",
+    "npm": "11.19.0"
+  },
+  "packageManager": "npm@11.19.0",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json && vite build",
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "simulate": "node dist/node/cli/simulate.js",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "test:determinism": "node scripts/verify-determinism.mjs",
+    "verify:browser": "node scripts/verify-browser.mjs",
+    "verify:phase0": "npm run typecheck && npm test && npm run build && npm run check:boundaries && npm run test:determinism && npm run verify:browser"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "playwright": "1.63.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.11"
+  }
+}
