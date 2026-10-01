@@ -11,7 +11,7 @@ await new Promise((accept,reject)=>{server.once('error',reject);server.listen(0,
 const browser=await chromium.launch({headless:true}),errors=[];
 try{
  const page=await browser.newPage({viewport:{width:1280,height:1180},deviceScaleFactor:1});page.on('pageerror',e=>errors.push(e.message));page.on('requestfailed',r=>errors.push(r.url()));
- await page.goto(`http://127.0.0.1:${server.address().port}/`,{waitUntil:'networkidle'});await page.waitForFunction(()=>document.documentElement.dataset.ready==='true');
+ await page.goto(`http://127.0.0.1:${server.address().port}/?controller-a=rush&controller-b=ranged`,{waitUntil:'networkidle'});await page.waitForFunction(()=>document.documentElement.dataset.ready==='true');
  const tick=async()=>Number(await page.locator('#output').getAttribute('data-tick'));
  assert.equal(await tick(),0);assert.equal(await page.locator('.fighter-card').count(),2);
  const pixels=await page.locator('#arena').evaluate(node=>{const c=node.getContext('2d');return [[...c.getImageData(240,944,1,1).data],[...c.getImageData(720,944,1,1).data]];});assert.deepEqual(pixels,[[75,145,237,255],[247,167,78,255]]);

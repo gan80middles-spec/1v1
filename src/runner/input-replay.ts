@@ -13,7 +13,7 @@ export function replayInputs(input: unknown, recordFrames = true): {
     if (!input || typeof input !== 'object')
         throw new Error('Bad replay envelope');
     const r = input as InputReplay;
-    if (r.replaySchemaVersion !== 2 || r.engineBuild !== FIGHTER_BUILD)
+    if (r.replaySchemaVersion !== 2 || ![FIGHTER_BUILD,'phase2-v1'].includes(r.engineBuild))
         throw new Error('Replay schema/build mismatch');
     const config = FighterConfigSchema.parse(r.config), content = compileFighterContent(ContentSourceSchema.parse(r.content));
     FighterResultSchema.parse(r.result);
@@ -21,7 +21,7 @@ export function replayInputs(input: unknown, recordFrames = true): {
         throw new Error('Replay content/plugin mismatch');
     if (!Array.isArray(r.inputs) || r.inputs.length > 3600 || !Array.isArray(r.events) || !Array.isArray(r.checkpoints))
         throw new Error('Bad replay arrays');
-    const sim = new FighterSimulation(content, config), frames: RenderFrame[] = [], events = [];
+    const sim = new FighterSimulation(content, config,undefined,r.engineBuild), frames: RenderFrame[] = [], events = [];
     if (recordFrames)
         frames.push(renderFrame(sim.snapshot()));
     const checks = new Map(r.checkpoints.map(c => [c.tick, c.worldHash]));

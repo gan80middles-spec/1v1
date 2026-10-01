@@ -60,7 +60,7 @@ export function moveBodies(entities: [
     width: number;
     height: number;
     gravity: Vec2;
-}, dt: number, onBounce: (bounce: Bounce) => void, onDiagnostic: (code: string, detail: string) => void = () => { }): [
+}, dt: number, onBounce: (bounce: Bounce) => void, onDiagnostic: (code: string, detail: string) => void = () => { },supportContacts=false): [
     Segment[],
     Segment[]
 ] {
@@ -70,6 +70,7 @@ export function moveBodies(entities: [
         body.position.x = Math.max(body.radius, Math.min(arena.width - body.radius, body.position.x));
         body.position.y = Math.max(body.radius, Math.min(arena.height - body.radius, body.position.y));
         const support = body.grounded && body.velocity.y <= 0 && Math.abs(body.position.y - body.radius) < EPSILON;
+        if(supportContacts&&support)body.velocity.y=0;
         if (!support) {
             body.grounded = false;
             body.velocity.y += arena.gravity.y * dt;
@@ -142,11 +143,13 @@ export function moveBodies(entities: [
             const dx = b.body.position.x - a.body.position.x, dy = b.body.position.y - a.body.position.y, d = Math.hypot(dx, dy), nx = d > EPSILON ? dx / d : 1, ny = d > EPSILON ? dy / d : 0;
             const relative = (b.body.velocity.x - a.body.velocity.x) * nx + (b.body.velocity.y - a.body.velocity.y) * ny;
             if (relative < 0) {
-                const impulse = -(1 + Math.min(materials[0].restitution, materials[1].restitution)) * relative / (1 / a.body.mass + 1 / b.body.mass);
+                const blockA=supportContacts&&a.body.grounded&&a.body.position.y<=a.body.radius+EPSILON&&ny>0,blockB=supportContacts&&b.body.grounded&&b.body.position.y<=b.body.radius+EPSILON&&ny<0;
+                const denominator=supportContacts?(nx*nx+(blockA?0:ny*ny))/a.body.mass+(nx*nx+(blockB?0:ny*ny))/b.body.mass:1/a.body.mass+1/b.body.mass;
+                const impulse = -(1 + Math.min(materials[0].restitution, materials[1].restitution)) * relative / denominator;
                 a.body.velocity.x -= impulse * nx / a.body.mass;
-                a.body.velocity.y -= impulse * ny / a.body.mass;
+                if(!blockA)a.body.velocity.y -= impulse * ny / a.body.mass;
                 b.body.velocity.x += impulse * nx / b.body.mass;
-                b.body.velocity.y += impulse * ny / b.body.mass;
+                if(!blockB)b.body.velocity.y += impulse * ny / b.body.mass;
             }
             separateBodies(entities, arena);
             limitVelocity(a.body.velocity);

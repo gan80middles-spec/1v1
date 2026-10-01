@@ -1,7 +1,7 @@
 import type { ContentBundle } from '../contracts/content.js';
 import type { RenderFrame, BattleEvent } from '../contracts/fighter.js';
 export const ABILITY_LABELS: Readonly<Record<string, string>> = { 'standard-jab': '直拳', 'standard-bolt': '火球', 'standard-push': '推击', 'standard-volley': '三连射', 'rubber-slap': '弹掌', 'rubber-dash': '弹性突进', 'rubber-cushion': '护垫', 'rubber-overdrive': '超弹模式' };
-export function drawArena(ctx: CanvasRenderingContext2D, frame: RenderFrame, events: readonly BattleEvent[], content: ContentBundle, overlay = false): void {
+export function drawArena(ctx: CanvasRenderingContext2D, frame: RenderFrame, events: readonly BattleEvent[], content: {source:Pick<ContentBundle['source'],'characters'|'arenas'>}, overlay = false): void {
     const arena = content.source.arenas[0]!, width = ctx.canvas.width, height = ctx.canvas.height;
     ctx.save();
     ctx.fillStyle = '#0b1421';

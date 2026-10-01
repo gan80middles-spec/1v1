@@ -1,0 +1,1747 @@
+{
+  "date": "2026-10-02",
+  "engineBuild": "phase2-v1",
+  "aiVersion": "utility-v1",
+  "branch": "codex/phase-2",
+  "baseCommit": "6a2b32bcc7c2803ee1086fc3d05b606637665944",
+  "specificationFileSha256": "402579e071e49a743ea848c878369f8ae49e760bd55e4f3232a82057401c62e4",
+  "rulesHash": "5c8871d6160df536a8f6056b59fbb0eae5393b5c7ee83eb9170cec089ebcde32",
+  "node": "v24.21.0",
+  "v8": "13.6.233.17-node.53",
+  "unitTests": {
+    "total": 113,
+    "passed": 113,
+    "failed": 0
+  },
+  "boundaries": {
+    "checkedFiles": 50,
+    "selfTests": 5,
+    "passed": true,
+    "errors": []
+  },
+  "browser": {
+    "passed": true,
+    "browserVersion": "153.0.8010.12",
+    "nodeBrowserMatching": [
+      {
+        "seed": 17,
+        "ticks": 1456,
+        "finalWorldHash": "db53d1f09875272bd809bc8f6a71deff8c439a37bbf4f4fdd8d1026b26439287"
+      },
+      {
+        "seed": 18,
+        "ticks": 1535,
+        "finalWorldHash": "675d9a21aa281632c0ac470e61a024dc7e58e7904179b96b0579972ecf834a39"
+      }
+    ],
+    "decisionReview": true,
+    "candidateScores": true,
+    "beliefOverlay": true,
+    "traceExportImportEqual": true,
+    "inputReplayImportEqual": true,
+    "mobileNoOverflow": true,
+    "h2BlindedClips": 20,
+    "h2PrivateKeyNotServed": true,
+    "h2RatingDownload": true,
+    "h2Status": "pending-human-review",
+    "pageErrors": []
+  },
+  "smoke": {
+    "aiVersion": "utility-v1",
+    "baselineMatches": 80,
+    "cliResumeByteEqual": true,
+    "configs": 30,
+    "contentHash": "2123af25fbf62655bd80a4404043dfdc9b37512ee1c013744c81964a9dbee192",
+    "coveredAbilities": [
+      "rubber-cushion",
+      "rubber-dash",
+      "rubber-slap",
+      "standard-bolt",
+      "standard-jab",
+      "standard-push",
+      "standard-volley"
+    ],
+    "datasetHash": "d0d1df027f4596c20a8e9011c881f7f2147de39c028d94175f3b0342103f8bb3",
+    "engineBuild": "phase2-v1",
+    "fullCheckpointTicks": [
+      120,
+      240,
+      "actual-end-minus-1"
+    ],
+    "h2": {
+      "counter": 10,
+      "index": "artifacts/phase-2/h2/index.json",
+      "matches": 20,
+      "pressure": 10,
+      "status": "pending-human-review"
+    },
+    "independentProcessesEqual": true,
+    "inputReplays": 30,
+    "node": "v24.21.0",
+    "passed": true,
+    "perTickWorldHashEqual": true,
+    "predictionTiming": {
+      "includes": "memory, prediction, selection and trace construction per actual decision; host timing excluded from state",
+      "meanMs": 0.2435268558950446,
+      "p95Ms": 0.5044999999954598,
+      "samples": 458,
+      "seed": 17
+    },
+    "repeatExecutions": 60,
+    "representative": {
+      "abilityId": "rubber-slap",
+      "caseId": "rubber-vs-rubber-0",
+      "castId": 3,
+      "requestId": 2,
+      "seed": 1245564233,
+      "tick": 41,
+      "trace": {
+        "entityId": 1,
+        "trace": {
+          "aiVersion": "utility-v1",
+          "belief": {
+            "adapted": false,
+            "age": 11,
+            "confidence": 0.8944444444444444,
+            "hypotheses": [
+              {
+                "kind": "keep",
+                "moveX": -1,
+                "weight": 0.5
+              },
+              {
+                "kind": "approach",
+                "moveX": -1,
+                "weight": 0.25
+              },
+              {
+                "kind": "retreat",
+                "moveX": 1,
+                "weight": 0.25
+              }
+            ],
+            "offsets": {
+              "vx": -6.9779149778187275,
+              "vy": 0.6719318144023418,
+              "x": -0.22118989378213882,
+              "y": -0.9557926468551159
+            },
+            "opponent": {
+              "characterId": "rubber",
+              "energyBand": "low",
+              "facing": -1,
+              "grounded": false,
+              "hpRatio": 1,
+              "id": 2,
+              "position": {
+                "x": 377.5724423602867,
+                "y": 44.70163125062361
+              },
+              "radius": 32,
+              "tell": {
+                "abilityId": "rubber-dash",
+                "phase": "active",
+                "visibleSinceTick": 18
+              },
+              "velocity": {
+                "x": -906.9779149778187,
+                "y": 9.395261367037904
+              },
+              "visibleStatusIds": []
+            }
+          },
+          "blockedMoveX": 0,
+          "candidates": [
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:basic:-1:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": -1,
+                "reason": null,
+                "slot": "basic",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": -25.67708028637078,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 7,
+                "hitTicks": [
+                  7
+                ],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.8063151873338181,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0.3561643835616438,
+                "D": 6.261111111111111,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": -0.29197508093907376,
+                "R": 0,
+                "Uraw": 2.595128359326007,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:basic:0:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": 0,
+                "reason": null,
+                "slot": "basic",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": -20.470524214823097,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 7,
+                "hitTicks": [
+                  7
+                ],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.8313522718635429,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0.3561643835616438,
+                "D": 6.261111111111111,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": -0.2168638273498995,
+                "R": 0,
+                "Uraw": 2.664230712628047,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:basic:1:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": 1,
+                "reason": null,
+                "slot": "basic",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": 0,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 7,
+                "hitTicks": [
+                  7
+                ],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.9289511200929942,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0.3561643835616438,
+                "D": 6.261111111111111,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": 0.07593271733845441,
+                "R": 0,
+                "Uraw": 2.933603533741333,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill1:-1:1",
+                "kind": "cast",
+                "legal": false,
+                "moveX": -1,
+                "reason": "cooldown",
+                "slot": "skill1",
+                "tag": "attack"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill1:0:1",
+                "kind": "cast",
+                "legal": false,
+                "moveX": 0,
+                "reason": "cooldown",
+                "slot": "skill1",
+                "tag": "attack"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill1:1:1",
+                "kind": "cast",
+                "legal": false,
+                "moveX": 1,
+                "reason": "cooldown",
+                "slot": "skill1",
+                "tag": "attack"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill2:-1:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": -1,
+                "reason": null,
+                "slot": "skill2",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": -9.386594786275694,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 1.47,
+                "positionQualityAfter": 0.885223095809736,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 4.2
+              },
+              "score": {
+                "B": 0,
+                "C": 1.2,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 2.1525,
+                "P": -0.0552513555113201,
+                "R": 0,
+                "Uraw": -3.5225812470704145,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill2:0:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": 0,
+                "reason": null,
+                "slot": "skill2",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": -7.942178332431617,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 1.47,
+                "positionQualityAfter": 0.8969854909189697,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 4.2
+              },
+              "score": {
+                "B": 0,
+                "C": 1.2,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 2.1525,
+                "P": -0.019964170183618957,
+                "R": 0,
+                "Uraw": -3.4901170365689294,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "cast:skill2:1:1",
+                "kind": "cast",
+                "legal": true,
+                "moveX": 1,
+                "reason": null,
+                "slot": "skill2",
+                "tag": "attack"
+              },
+              "outcome": {
+                "bandProgressPx": -0.1549735970600672,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 1.47,
+                "positionQualityAfter": 0.919218535040692,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 11,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 4.2
+              },
+              "score": {
+                "B": 0,
+                "C": 1.2,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 2.1525,
+                "P": 0.04673496218154771,
+                "R": 0,
+                "Uraw": -3.428753834792976,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "cast:ultimate:0:1",
+                "kind": "cast",
+                "legal": false,
+                "moveX": 0,
+                "reason": "resource",
+                "slot": "ultimate",
+                "tag": "commit-ultimate"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "jump:-1",
+                "kind": "jump",
+                "legal": false,
+                "moveX": -1,
+                "reason": "jump-unavailable",
+                "slot": null,
+                "tag": "evade"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "jump:0",
+                "kind": "jump",
+                "legal": false,
+                "moveX": 0,
+                "reason": "jump-unavailable",
+                "slot": null,
+                "tag": "evade"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": false,
+              "option": {
+                "aimX": 1,
+                "key": "jump:1",
+                "kind": "jump",
+                "legal": false,
+                "moveX": 1,
+                "reason": "jump-unavailable",
+                "slot": null,
+                "tag": "evade"
+              },
+              "outcome": null,
+              "score": null,
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "move:approach:1",
+                "kind": "move",
+                "legal": true,
+                "moveX": 1,
+                "reason": null,
+                "slot": null,
+                "tag": "approach"
+              },
+              "outcome": {
+                "bandProgressPx": 0,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.9367700481364257,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 9,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": 0.09938950146874903,
+                "R": 0,
+                "Uraw": -3.854811658648751,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "move:retreat:-1",
+                "kind": "move",
+                "legal": true,
+                "moveX": -1,
+                "reason": null,
+                "slot": null,
+                "tag": "retreat"
+              },
+              "outcome": {
+                "bandProgressPx": -22.42827015626071,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.8283801129728012,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 9,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": -0.22578030402212446,
+                "R": 0,
+                "Uraw": -4.153967879700355,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            },
+            {
+              "eligible": true,
+              "option": {
+                "aimX": 1,
+                "key": "move:wait:0",
+                "kind": "move",
+                "legal": true,
+                "moveX": 0,
+                "reason": null,
+                "slot": null,
+                "tag": "wait"
+              },
+              "outcome": {
+                "bandProgressPx": -16.061873690636514,
+                "budgetExceeded": false,
+                "confidence": 0.8944444444444444,
+                "deathLikelihood": 0,
+                "earlyRiskPct": 0,
+                "expectedDamageDealtPct": 0,
+                "hitTicks": [],
+                "killLikelihood": 0,
+                "meanDamageTakenPct": 2.4499999999999997,
+                "positionQualityAfter": 0.861832888715329,
+                "positionQualityBefore": 0.9036402143135094,
+                "residualExposurePct": 0,
+                "segmentsUsed": 9,
+                "setupConfidence": 0.6,
+                "setupReason": "none",
+                "setupValue": 0,
+                "worstDamageTakenPct": 7
+              },
+              "score": {
+                "B": 0,
+                "C": 0,
+                "D": 0,
+                "E": 0,
+                "K": 0,
+                "L": 3.5875,
+                "P": -0.12542197679454103,
+                "R": 0,
+                "Uraw": -4.061638218650978,
+                "X": 0,
+                "stuckBonus": 0,
+                "wC": 0.92,
+                "wD": 1.1400000000000001,
+                "wL": 1.1,
+                "wP": 0.92,
+                "wallCost": 0
+              },
+              "switchMargin": 0
+            }
+          ],
+          "choiceDraw": 0.3678811900317669,
+          "commitmentHeld": false,
+          "continuationKey": null,
+          "continuationScore": null,
+          "decisionIndex": 7,
+          "emergency": false,
+          "executionBefore": {
+            "activeAimX": 1,
+            "activeRequestId": null,
+            "activeSlot": null,
+            "activeStartedTick": null,
+            "expectedFinishTick": null,
+            "lastReceiptSeq": 3,
+            "minimumHoldUntilTick": 31,
+            "moveX": 1,
+            "nextRequestId": 2,
+            "optionKey": null,
+            "selectedTick": 18,
+            "triggerSent": false
+          },
+          "input": {
+            "cast": {
+              "aimX": 1,
+              "slot": "basic"
+            },
+            "jumpPressed": false,
+            "moveX": 0,
+            "requestId": 2
+          },
+          "nowTick": 41,
+          "poolKeys": [
+            "cast:basic:-1:1",
+            "cast:basic:0:1",
+            "cast:basic:1:1"
+          ],
+          "profileId": "pressure",
+          "profileVersion": 1,
+          "randomBits": 1877933115,
+          "requestId": 2,
+          "selectedKey": "cast:basic:0:1",
+          "sensedTick": 30,
+          "stuck": false,
+          "threats": [
+            {
+              "abilityId": "rubber-slap",
+              "endInTicks": 25,
+              "estimatedDamage": 7,
+              "id": "possible-basic:slap",
+              "kind": "possible-basic",
+              "likelihood": 0.35,
+              "origin": "possible",
+              "projectileId": null,
+              "reflectable": false,
+              "sourceId": 2,
+              "startInTicks": 20
+            }
+          ]
+        }
+      }
+    },
+    "results": [
+      {
+        "caseId": "rubber-vs-rubber-0",
+        "decisions": 416,
+        "emergencies": 0,
+        "finalRunnerHash": "880d5bbbee669071621cec24feb0c7822fdd623810eb874fbc64baab6adf9fe8",
+        "finalWorldHash": "44da3ce95bbd4d9f443b8cf4eca8ba4a33c906df8ad20c37c005726d916d8fe3",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1323,
+          "matchId": "rubber-vs-rubber-1245564233",
+          "reason": "ko",
+          "remainingHp": [
+            15,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "82c97b79b18c7bf916ca0e898a4e81015ab1f81c652951e8fd02abcb0a607145",
+        "seed": 1245564233,
+        "stuckDecisions": 41,
+        "ticks": 1323,
+        "worldSequenceHash": "56c240451cf68c989afbf755b39388fa857db08b226d5d02ed2192ad5515db49"
+      },
+      {
+        "caseId": "rubber-vs-rubber-1",
+        "decisions": 493,
+        "emergencies": 0,
+        "finalRunnerHash": "967a06136eda465e641eb98999c3d307aaaf36c15906b5b6afae78864c7ab22c",
+        "finalWorldHash": "5021b88005ccedce64e8924666ca90695f149dcf1894ef86572b2f627a25f438",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1563,
+          "matchId": "rubber-vs-rubber-1771317578",
+          "reason": "double-ko",
+          "remainingHp": [
+            0,
+            0
+          ],
+          "winnerParticipantId": null
+        },
+        "runnerSequenceHash": "6e3f492838a3abb82d6e6ecb7e24a84fddb9d23156ad3668c58b79ebaa273a76",
+        "seed": 1771317578,
+        "stuckDecisions": 40,
+        "ticks": 1563,
+        "worldSequenceHash": "b29c53320c27930c53e92f79e59b8d0eccbd1b33949e9cb4dc258378adfcaa2f"
+      },
+      {
+        "caseId": "rubber-vs-rubber-2",
+        "decisions": 417,
+        "emergencies": 0,
+        "finalRunnerHash": "51f3bab0578a723b682f2bad217a886b5f5d5303a5c35e17b93c1259bd37eff1",
+        "finalWorldHash": "cdfb9697fdd8ebaeeffc65cddcea94cbc2994600423c7a5117f2f73968693773",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1339,
+          "matchId": "rubber-vs-rubber-812169668",
+          "reason": "ko",
+          "remainingHp": [
+            8,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "d77085e924f7081480f3f0f3327c3c4302feef800ed6218f039412ffc15b37d8",
+        "seed": 812169668,
+        "stuckDecisions": 19,
+        "ticks": 1339,
+        "worldSequenceHash": "7ef83ac686e69499367bec238a79c83b91f535dacd5492e7d7ea6959d8b977c0"
+      },
+      {
+        "caseId": "rubber-vs-rubber-3",
+        "decisions": 542,
+        "emergencies": 0,
+        "finalRunnerHash": "581d023a4fa3e63b5b35573d1b93f8256146113522a6353cf9c8824d46398627",
+        "finalWorldHash": "8b76339cc8cde07bf15e3d7b90d95a2ece4b4d0423ec8a46fce8ab50ff1958ea",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1698,
+          "matchId": "rubber-vs-rubber-2787069005",
+          "reason": "ko",
+          "remainingHp": [
+            2,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "c0919e93a58815e888f02bb14c24396855ecf617712558301eddd118e98f6d81",
+        "seed": 2787069005,
+        "stuckDecisions": 89,
+        "ticks": 1698,
+        "worldSequenceHash": "5c71349c35215d5b79c711504e48402463f873f0dc2cd44e23132dde76f7a63c"
+      },
+      {
+        "caseId": "rubber-vs-rubber-4",
+        "decisions": 403,
+        "emergencies": 0,
+        "finalRunnerHash": "dd01dda3159b5022e33a252725fd9112308414691c5a044ef6d6d157f74be6e2",
+        "finalWorldHash": "d1837e988683cc0fa1d75d1d853d884b43dd7bb8c0be2c2627abef12b2abb055",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1304,
+          "matchId": "rubber-vs-rubber-433271023",
+          "reason": "double-ko",
+          "remainingHp": [
+            0,
+            0
+          ],
+          "winnerParticipantId": null
+        },
+        "runnerSequenceHash": "a70023bd5821a2b4ecec676f2da5629f29f38e6047574d897823a8f835f9472f",
+        "seed": 433271023,
+        "stuckDecisions": 17,
+        "ticks": 1304,
+        "worldSequenceHash": "2fe7b6ef803de37899a398188c35c5574e3e9dae57f8a8259251f75414a008db"
+      },
+      {
+        "caseId": "rubber-vs-rubber-5",
+        "decisions": 446,
+        "emergencies": 0,
+        "finalRunnerHash": "4b52ae64ee372559a1f6efffbd331358ecfdf9352aa962063466f0ee099a6032",
+        "finalWorldHash": "c52b5c68a514222c78fce96f9af6770797a47fc862e8ba7b1707994faf1aa519",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1420,
+          "matchId": "rubber-vs-rubber-1362445981",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            15
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "7318ee9da270b230af1efe376972acc6202fec2bd4a10027aff2dd414613e67a",
+        "seed": 1362445981,
+        "stuckDecisions": 48,
+        "ticks": 1420,
+        "worldSequenceHash": "9342f235c652e102b2cb05da012ac21e0ddc05d7b8280f2bfe94a033a3ff266a"
+      },
+      {
+        "caseId": "rubber-vs-rubber-6",
+        "decisions": 374,
+        "emergencies": 0,
+        "finalRunnerHash": "b50fc0a09f2f2f41a36289e093d083856e916e3be6928b5b9f27dc46fe4ac68d",
+        "finalWorldHash": "b416acbd02e694820ce918a0b4120d9d0be7c8f2afff1b1dbd74715543be7838",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1191,
+          "matchId": "rubber-vs-rubber-2555957171",
+          "reason": "ko",
+          "remainingHp": [
+            15,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "e882a406d87dac981ef4bc1af74ae6fcff9b4d7cadc7ca161507818b71c3bb5b",
+        "seed": 2555957171,
+        "stuckDecisions": 11,
+        "ticks": 1191,
+        "worldSequenceHash": "16213cd4cd05415a62be0d600d662d843788e208bd98b7d5a6ac7b12dd16289b"
+      },
+      {
+        "caseId": "rubber-vs-rubber-7",
+        "decisions": 620,
+        "emergencies": 0,
+        "finalRunnerHash": "233eab240a903a422d12ea665b43b8629d5b20bfc60e4f890750ea3daa3b234a",
+        "finalWorldHash": "2b3262c51536786316a53896bbc89bfb629968cd56063df1fa34d61ef23f0fd2",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1936,
+          "matchId": "rubber-vs-rubber-54770214",
+          "reason": "ko",
+          "remainingHp": [
+            15,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "b2e0526e93c851a24f25dc96417a3cfe03f3838e15599ead0f33c77fd5ede1ed",
+        "seed": 54770214,
+        "stuckDecisions": 112,
+        "ticks": 1936,
+        "worldSequenceHash": "cecaba85f45876765158d5fe5819393b8eba976bd199befd858eb4b7434ea3ea"
+      },
+      {
+        "caseId": "rubber-vs-rubber-8",
+        "decisions": 441,
+        "emergencies": 0,
+        "finalRunnerHash": "37ab9453a971299bddab2d44379f749ca6965ce84da2f3b3edd224fbc0119257",
+        "finalWorldHash": "d19dd5d11963d06a0ca7c4584cf1fbb398509ba7bbad712ea4dabc32f2911164",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1403,
+          "matchId": "rubber-vs-rubber-2163494403",
+          "reason": "ko",
+          "remainingHp": [
+            11,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "14e47e3e6a7c9a532c241426b671173ae4fec3005f0dd81aa020e98740b1eaff",
+        "seed": 2163494403,
+        "stuckDecisions": 56,
+        "ticks": 1403,
+        "worldSequenceHash": "d14788fa6fb92ce9362e2f9d319b88611915fc72047c5748bfdbde199d5b51d5"
+      },
+      {
+        "caseId": "rubber-vs-rubber-9",
+        "decisions": 372,
+        "emergencies": 0,
+        "finalRunnerHash": "cb5343ea7344b66301e14c6fe3cf5f2b00e966cd54cf9bc8e223ecb9cd5b007f",
+        "finalWorldHash": "0513267e8b8e858f4bc044b7e9eea8763bb02bb9437cded4e6b03066509fd18d",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1184,
+          "matchId": "rubber-vs-rubber-3906970050",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            21
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "b475952ae1e7ad562c2ec20c815c179896861ccd18ee96758ede6e5d419b178c",
+        "seed": 3906970050,
+        "stuckDecisions": 13,
+        "ticks": 1184,
+        "worldSequenceHash": "f7915ece0ddb6728c0f8be13cc183c34809d70d57d95ba40a836a5ed37199204"
+      },
+      {
+        "caseId": "rubber-vs-standard-0",
+        "decisions": 436,
+        "emergencies": 0,
+        "finalRunnerHash": "909500f39f77b88654e731ec0c5d2ceedcc3d5e1e491c4e9f890c1e25a9974df",
+        "finalWorldHash": "7fef492bbd58f3aa1b8af1186ce62d6600a4eb0c225f69a1934768ce8a83186a",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1370,
+          "matchId": "rubber-vs-standard-3103265340",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            59
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "8d528fd34664f8f23fca31e78e489e30981c4d0379b583907050516b110b45cf",
+        "seed": 3103265340,
+        "stuckDecisions": 26,
+        "ticks": 1370,
+        "worldSequenceHash": "8ce93d1a16ce92233a37e901f04b262c1a06a1ef80568434d294b167b4ddb9e7"
+      },
+      {
+        "caseId": "rubber-vs-standard-1",
+        "decisions": 447,
+        "emergencies": 0,
+        "finalRunnerHash": "8dd2df8ba07a135927baa24473de9d411185ce07c4f346402ce1c8a2d20ca3e1",
+        "finalWorldHash": "8aab1a08a2983c823096942672c087e1feb291ecced433b05bfd76583961f2da",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1412,
+          "matchId": "rubber-vs-standard-1941133956",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            39
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "8ac08108fc515233937d014355f6d2b2b31e56fe858f375c283f1e8d268ee1d0",
+        "seed": 1941133956,
+        "stuckDecisions": 32,
+        "ticks": 1412,
+        "worldSequenceHash": "bf14a42d36ef952572a3caa8478208de17d4a9ba26c8768b1176c866d5f17fa3"
+      },
+      {
+        "caseId": "rubber-vs-standard-2",
+        "decisions": 527,
+        "emergencies": 0,
+        "finalRunnerHash": "b00e88a28ac4fa14a2ef6625e9d1e47ab8af257a783c680000851ecaaa3f9446",
+        "finalWorldHash": "c8a6328f63d748df0c2781067a99b076e03bb4514adb3f6ba01aa0107dc2c308",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1648,
+          "matchId": "rubber-vs-standard-3001359567",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            52
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "d29ffad629c240005c03c43377aae15ef33ec4307b9c0f73f9944b6a8c5ff925",
+        "seed": 3001359567,
+        "stuckDecisions": 61,
+        "ticks": 1648,
+        "worldSequenceHash": "2efdd6fd4748bf6ece95c3c87df23a979c42f25cc0f744126e9d93b20a546f1c"
+      },
+      {
+        "caseId": "rubber-vs-standard-3",
+        "decisions": 341,
+        "emergencies": 0,
+        "finalRunnerHash": "b40c8941155802609a21d79352c8619a8d7a74b6e6034aaddbefb639a78da7f6",
+        "finalWorldHash": "d72c9d2d1418a630677850a5068cd956cef606d506f95dadbb971a772d693786",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1068,
+          "matchId": "rubber-vs-standard-1587002435",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            83
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "37f46d1f04c66cf8449278a4eaedfab9121973b3ec0959a5f61297bb0f694a4b",
+        "seed": 1587002435,
+        "stuckDecisions": 21,
+        "ticks": 1068,
+        "worldSequenceHash": "788f25cb2404f5bbc84cd89e6cd21574c6d65e289c0639cea34eb6bf30934062"
+      },
+      {
+        "caseId": "rubber-vs-standard-4",
+        "decisions": 622,
+        "emergencies": 0,
+        "finalRunnerHash": "bcce11bfea083317cc36117a78e1fd85ab139eea9bbfbebccd1a837d34a7e172",
+        "finalWorldHash": "47f0bafe67146e89a68321213a8e41c5f6b9ac01811758916371937921cf689b",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1965,
+          "matchId": "rubber-vs-standard-2474831301",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            4
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "436555ea1e678fdd22b51596b4cd91b33e895fa4d363fa2d428dec7a914b9e0f",
+        "seed": 2474831301,
+        "stuckDecisions": 16,
+        "ticks": 1965,
+        "worldSequenceHash": "4e58be3d9669c53831622ba6c0d19549a8f22320c83c6956152377ef6ae926b6"
+      },
+      {
+        "caseId": "rubber-vs-standard-5",
+        "decisions": 426,
+        "emergencies": 0,
+        "finalRunnerHash": "eb42357c6807b1b9de87b20d72c2fba2b8f863c9ec6d32fed963e21b95ca862a",
+        "finalWorldHash": "f5346267a3373d894b1a25c7b00ca080009758b2b067fb71a3374f7fe78daf78",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1353,
+          "matchId": "rubber-vs-standard-1962323973",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            39
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "4230d494af773ffe545adf3d9b2ea3f849a7c3fd16ab1ba9aeea210d2501ee46",
+        "seed": 1962323973,
+        "stuckDecisions": 11,
+        "ticks": 1353,
+        "worldSequenceHash": "76a46d628735849a1d5b3ee2672e870b92dd31d327b002a2ba28e60eb10b4f2e"
+      },
+      {
+        "caseId": "rubber-vs-standard-6",
+        "decisions": 382,
+        "emergencies": 0,
+        "finalRunnerHash": "7f220f9a8892a3f53f0fbd6697b22b3d7a80923f15297513e68a1186466da05a",
+        "finalWorldHash": "0af6fbdc65340412cda272e112e44c702875a9235649e769a230d07a6d523d2c",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1208,
+          "matchId": "rubber-vs-standard-1729672011",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            62
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "f0d1ed0b00422dd88a30cd89cf37cfbcf469502a19d1b69fd7d7c2b8f58b985f",
+        "seed": 1729672011,
+        "stuckDecisions": 10,
+        "ticks": 1208,
+        "worldSequenceHash": "30864318ad358fc5c047067f060afea10104b2cbac6a4896a651b117c647e8bd"
+      },
+      {
+        "caseId": "rubber-vs-standard-7",
+        "decisions": 565,
+        "emergencies": 0,
+        "finalRunnerHash": "8a1daf4710fd5f8f6ec2b35b1724a37d27c6c26478145b32fb6334a32309c464",
+        "finalWorldHash": "41918b7337a24707add959cc5c26269c65029d26d19f375f256e97f4a529191e",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1778,
+          "matchId": "rubber-vs-standard-1939190246",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            21
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "573bd640af2aee64f7ba63185e8af72129553ac81ff2d4e73ba68539feca0121",
+        "seed": 1939190246,
+        "stuckDecisions": 37,
+        "ticks": 1778,
+        "worldSequenceHash": "526eb9ad963dba0484d8511f0c7cbe0f3bc6415e7917c4acb07fb56ebf8564f2"
+      },
+      {
+        "caseId": "rubber-vs-standard-8",
+        "decisions": 434,
+        "emergencies": 0,
+        "finalRunnerHash": "4dff24607a35a399ac810b7e854275c7ad1871085dd63ac67bff6383e52dbdaa",
+        "finalWorldHash": "2b7591a60817cc17c3123161530293ebb9680c5ba13ab713ade0bdd5dd8be7c5",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1357,
+          "matchId": "rubber-vs-standard-4032878593",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            66
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "688b87d0ade95db3cbe41a540526929812cffb34822754b36a5c6f7ea3a7be6e",
+        "seed": 4032878593,
+        "stuckDecisions": 57,
+        "ticks": 1357,
+        "worldSequenceHash": "db63d3bc9895a79e5cb096052abbdb18a2896d29913410301b49aafb49272454"
+      },
+      {
+        "caseId": "rubber-vs-standard-9",
+        "decisions": 564,
+        "emergencies": 0,
+        "finalRunnerHash": "649bd467fd0538139933a4b42ce29d7fcce9e2c593d81e7beae5417ff91c31e0",
+        "finalWorldHash": "f13f176a715745393c8983655d7f48f97ccfa6ac680c3ab41b6b1f97be98cf8d",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1738,
+          "matchId": "rubber-vs-standard-869650417",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            86
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "d15143c4e69f294f53e42d52f7062ad13df131311607a73de3cfa6501085ef94",
+        "seed": 869650417,
+        "stuckDecisions": 53,
+        "ticks": 1738,
+        "worldSequenceHash": "b37ff13a1132c7e3d27c39349d14ae213914842cce3a52b2680a4f2862ff2920"
+      },
+      {
+        "caseId": "standard-vs-standard-0",
+        "decisions": 409,
+        "emergencies": 0,
+        "finalRunnerHash": "f5c4a8fa5ccba64836c1058fb1c1a6fcdba2fd04fb659bbf4de28e41b364501e",
+        "finalWorldHash": "ee28014f326083ae6edd510bd19a5d00985fa3e8507b9f4b06c89a2fcf671d99",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1295,
+          "matchId": "standard-vs-standard-899319004",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            7
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "20ae570065da0ceceada570a2b1b52f9e512180658af98d5ee8ba633f7699de6",
+        "seed": 899319004,
+        "stuckDecisions": 49,
+        "ticks": 1295,
+        "worldSequenceHash": "c10e773a3fae850e91e48180d83638c237cd37570c63e5f19775adcdb153d04d"
+      },
+      {
+        "caseId": "standard-vs-standard-1",
+        "decisions": 461,
+        "emergencies": 0,
+        "finalRunnerHash": "1cda3f995371805a0738922d18eeb7eb7415cffdd2ba6d361407418cfe70f46c",
+        "finalWorldHash": "0cfdf6e593fc19c4dae464d49965a73bfbe4bdbee5b905f3fc4653ed270df672",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1456,
+          "matchId": "standard-vs-standard-2841502335",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            29
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "4e610d320a7d98c4878c7eb9ab32ec9d1ac228146fd83bd72f68898683d55a09",
+        "seed": 2841502335,
+        "stuckDecisions": 59,
+        "ticks": 1456,
+        "worldSequenceHash": "e7f403c9a7d1dea28a6e6a4f71513eb2e9ed611ea250964a1a78dbfddfa6d42a"
+      },
+      {
+        "caseId": "standard-vs-standard-2",
+        "decisions": 419,
+        "emergencies": 0,
+        "finalRunnerHash": "f5973e73acb5c64941fbc65ffc30b098fd886d449c41deb5e20497957d697a47",
+        "finalWorldHash": "36af21c7f38dcb01a0d6a6df919ba4197383d9fc6456c7d85a77d0bc566ed6c5",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1325,
+          "matchId": "standard-vs-standard-1833780370",
+          "reason": "ko",
+          "remainingHp": [
+            12,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "5f06e0952f7a50b9adadb0d0d7183bfef5409fae96183fbb03249f72ba57ea30",
+        "seed": 1833780370,
+        "stuckDecisions": 70,
+        "ticks": 1325,
+        "worldSequenceHash": "c6ec90aa94aa40cf3059fa636541accfe8dcef05461e740a5382c4e8f99130e2"
+      },
+      {
+        "caseId": "standard-vs-standard-3",
+        "decisions": 405,
+        "emergencies": 0,
+        "finalRunnerHash": "7122dd64dc361181b580d0d037b2d990aa16e49540d0f7503feb64d53aca4e32",
+        "finalWorldHash": "abfe3f1ed63af49b97603f80b40d6d88547560d414013b1f85ab011a78f60393",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1275,
+          "matchId": "standard-vs-standard-557420913",
+          "reason": "ko",
+          "remainingHp": [
+            10,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "c3eadd77101b1d66c348b12194d32faa58c3f0588317b906374f9b9b71c71cae",
+        "seed": 557420913,
+        "stuckDecisions": 67,
+        "ticks": 1275,
+        "worldSequenceHash": "6fcdc2a378364d656307144f97cde075bd9319a73dfa6dc0aefce6a57a6233b0"
+      },
+      {
+        "caseId": "standard-vs-standard-4",
+        "decisions": 531,
+        "emergencies": 0,
+        "finalRunnerHash": "6decfdee2d2a0fbf884edf883026ea16582471f7041efc76f0046c102effe01b",
+        "finalWorldHash": "ef32ef4fe4f3ccff310ff289dffa1aff03e394e126622dd1b297850b083bca4c",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1660,
+          "matchId": "standard-vs-standard-1731574919",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            23
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "fa6fe5d0cdb39e59b8bf53e342df24a2f2254bec5e094224970bb2d74845580a",
+        "seed": 1731574919,
+        "stuckDecisions": 48,
+        "ticks": 1660,
+        "worldSequenceHash": "b428e736e253431b647f4f1c121f0c3c4eaa446cde2d4301806e966dbee2962b"
+      },
+      {
+        "caseId": "standard-vs-standard-5",
+        "decisions": 498,
+        "emergencies": 0,
+        "finalRunnerHash": "dc930ae6784a93f49c5c8c00af80313e6610bb5cf49f36ffd7aa7578de4b7a49",
+        "finalWorldHash": "9e49133e90dafe21a8bdfc28fab454dde78593ba1ce846581a1eebcd377337fa",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1562,
+          "matchId": "standard-vs-standard-3790731836",
+          "reason": "ko",
+          "remainingHp": [
+            15,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "5d455acfa148d4b12c83b3839739dcdedd769aac2d7dff90e20ad6186607d6f5",
+        "seed": 3790731836,
+        "stuckDecisions": 125,
+        "ticks": 1562,
+        "worldSequenceHash": "d61cbffd71ff19c924353661f537b2311c7cdb5561761d16b74f3223eb446139"
+      },
+      {
+        "caseId": "standard-vs-standard-6",
+        "decisions": 391,
+        "emergencies": 0,
+        "finalRunnerHash": "ad58de3ad605bf3d11902451944e9fd6af9b015798615b594b7670f29788641e",
+        "finalWorldHash": "742d99ba467b2b53d217c0a4ffbd077fa3dfdf480d59e17e648e2785cf2d8967",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1232,
+          "matchId": "standard-vs-standard-2434471776",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            37
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "068fa9f6e3ce04d3b8b11d56e10e34bb35743a22fa41b3322f3617f200d0a6a4",
+        "seed": 2434471776,
+        "stuckDecisions": 88,
+        "ticks": 1232,
+        "worldSequenceHash": "2b8e45c1dd56fb3304dc25679e0ec5a4587c9813ce826046e8c1fcc758a7ae72"
+      },
+      {
+        "caseId": "standard-vs-standard-7",
+        "decisions": 552,
+        "emergencies": 0,
+        "finalRunnerHash": "0dc853478ce401e896d86a4856650f37b3db89f25b40d9277ff17a1307e8cd02",
+        "finalWorldHash": "d52b888265d85b791a9ac0b5899f6a43ecc93997f3c8130c87aef3bc49e57952",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1708,
+          "matchId": "standard-vs-standard-236504966",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            48
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "616fb80ff4755e5f119020909d99f682325aafda5bb90f92861b54c3f16564c6",
+        "seed": 236504966,
+        "stuckDecisions": 39,
+        "ticks": 1708,
+        "worldSequenceHash": "aec71df283900b8670ac0de71beeb0314ffa5c160a899916c14991e92a54b6ce"
+      },
+      {
+        "caseId": "standard-vs-standard-8",
+        "decisions": 330,
+        "emergencies": 0,
+        "finalRunnerHash": "ed26254bdcd55466690713f79386e0ccd61c2de09d7320674647eae03f2d7051",
+        "finalWorldHash": "3deed8662548ba89664d0cf2d8ebdd2dadd2ff19028192612e5f305c53be6ed6",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1054,
+          "matchId": "standard-vs-standard-1063291484",
+          "reason": "ko",
+          "remainingHp": [
+            0,
+            26
+          ],
+          "winnerParticipantId": "B"
+        },
+        "runnerSequenceHash": "31501721d7219d8ee7915bc4da5e808a5b8acb9979e20f39ef601f7f6705c29e",
+        "seed": 1063291484,
+        "stuckDecisions": 47,
+        "ticks": 1054,
+        "worldSequenceHash": "ae65e9e3f708a1521baa0d99e90c40e5655dc9f80e090681efc291a4d3237105"
+      },
+      {
+        "caseId": "standard-vs-standard-9",
+        "decisions": 440,
+        "emergencies": 0,
+        "finalRunnerHash": "66fb9f59493f7781edc980dc3b55d7ab2025e00d8375dc2d694e8617efa3609f",
+        "finalWorldHash": "b43ec624abb0368b3836732b1c483979c94d5462f53f0fcb6bb1d51d3e3aa9f4",
+        "result": {
+          "diagnosticCode": null,
+          "endedAfterTicks": 1383,
+          "matchId": "standard-vs-standard-1362256244",
+          "reason": "ko",
+          "remainingHp": [
+            48,
+            0
+          ],
+          "winnerParticipantId": "A"
+        },
+        "runnerSequenceHash": "1b4ac5b76d87d4f2ad9e3b8e7831342bdcf1e50675ed3e186370f944baca5ff9",
+        "seed": 1362256244,
+        "stuckDecisions": 47,
+        "ticks": 1383,
+        "worldSequenceHash": "34abfd5ae23a6da327e8e1df45758e3d105b86a4eb9d77ff25585d7eddbb7dd4"
+      }
+    ],
+    "runnerHashAt60Equal": true,
+    "traceOnOffEqual": true
+  },
+  "baseline": {
+    "scope": "Phase 2 initial two-character subset; full frozen 800 matches belong to Phase 3",
+    "parentManifestHash": "c29f1bf4f32ddff51a9ff1622380089dedac0ddaa4f34af5be46d0a2376e43c9",
+    "subsetHash": "f6ce903e414dc4eb8dc7fa806ffac303ab523933c9a907befed14322f7dddfb2",
+    "n": 80,
+    "train": 40,
+    "holdout": 40,
+    "aggregates": [
+      {
+        "baseline": "rush",
+        "basicMissRate": 0.5892857142857143,
+        "character": "standard",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 1,
+        "meanFirstInteractionSeconds": 0.5999999999999999,
+        "n": 10,
+        "split": "train",
+        "wilson95": [
+          0.5958499732047615,
+          0.9821237869049271
+        ],
+        "winRate": 0.9,
+        "wins": 9
+      },
+      {
+        "baseline": "rush",
+        "basicMissRate": 0.5084745762711864,
+        "character": "standard",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5999999999999999,
+        "n": 10,
+        "split": "holdout",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "ranged",
+        "basicMissRate": 0.7301587301587301,
+        "character": "standard",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5999999999999999,
+        "n": 10,
+        "split": "train",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "ranged",
+        "basicMissRate": 0.6271186440677966,
+        "character": "standard",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5999999999999999,
+        "n": 10,
+        "split": "holdout",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "rush",
+        "basicMissRate": 0.4605263157894737,
+        "character": "rubber",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 1.025,
+        "n": 10,
+        "split": "train",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "rush",
+        "basicMissRate": 0.45985401459854014,
+        "character": "rubber",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5183333333333333,
+        "n": 10,
+        "split": "holdout",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "ranged",
+        "basicMissRate": 0.5163398692810458,
+        "character": "rubber",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5233333333333333,
+        "n": 10,
+        "split": "train",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      },
+      {
+        "baseline": "ranged",
+        "basicMissRate": 0.5328947368421053,
+        "character": "rubber",
+        "draws": 0,
+        "invalidRequestRate": 0,
+        "longWallStallMatches": 0,
+        "losses": 0,
+        "meanFirstInteractionSeconds": 0.5233333333333332,
+        "n": 10,
+        "split": "holdout",
+        "wilson95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "winRate": 1,
+        "wins": 10
+      }
+    ]
+  },
+  "h2": {
+    "status": "pending-human-review",
+    "matches": 20,
+    "sameReactionDelayTicks": 9,
+    "samePositionNoisePx": 6,
+    "sameVelocityNoisePxPerSecond": 18,
+    "indexSha256": "9a6f3c736151be2b1eb988160d52e36a0c8fde61129a3e14240e43e789017bd2",
+    "privateKeySha256": "1b30859a6e080f0a455a12cda5ebe5e54a779757659c84fb43cf06f7cfd42209"
+  },
+  "regressions": {
+    "phase0": {
+      "artifacts": [
+        "artifacts/phase-0/中文 路径/run-a.json",
+        "artifacts/phase-0/中文 路径/run-b.json"
+      ],
+      "changedSeedChangesState": true,
+      "contentHash": "4aba9b5cc636680d7b3174e6e2dcd72ed576e2780faa93f431522f92620010d5",
+      "engineBuild": "phase0-v1",
+      "eventSequenceHash": "b64d70d4a9977f7269451d4e4c2c5307ca41337d2d35471ce5d6436a82fd073b",
+      "finalWorldHash": "a6de98e7d34e9210ab249df0228e4fc06c0252e1d30f6ae96722b94d1f946601",
+      "frozenManifestsVerified": 5,
+      "fullReportBytesEqual": true,
+      "fullReportFileHash": "25c7931d256fb3b79726fbe904279c2c5cc88dc5b31411cab73a321514170385",
+      "inputCountPerRun": 600,
+      "invalidCliCasesPassed": 6,
+      "node": "v24.21.0",
+      "passed": true,
+      "recordingOnOffEqual": true,
+      "repetitions": 2,
+      "rulesHash": "66ea96581c98c9d1c26d6f3f06049d4ca84e1fa77e4af059102b1a626a98903d",
+      "seed": 17,
+      "stateCountPerRun": 601,
+      "stateSequenceHash": "ed6bef5db8dbe685b57769975e7a178221779b6247fb0d5c08155d3615f8b0aa",
+      "ticks": 600,
+      "v8": "13.6.233.17-node.53"
+    },
+    "phase1": {
+      "passed": true,
+      "contentHash": "3d1813e0c317f53f637dcabcbe4e722e89142588015d615706cf41fb7650a865",
+      "datasetHash": "d0d1df027f4596c20a8e9011c881f7f2147de39c028d94175f3b0342103f8bb3",
+      "cases": 30,
+      "coveredAbilities": [
+        "rubber-cushion",
+        "rubber-dash",
+        "rubber-overdrive",
+        "rubber-slap",
+        "standard-bolt",
+        "standard-jab",
+        "standard-push",
+        "standard-volley"
+      ],
+      "browser": {
+        "passed": true,
+        "browserVersion": "153.0.8010.12",
+        "nodeBrowserMatching": [
+          {
+            "seed": 17,
+            "finalWorldHash": "5476d2b700b93d55fe3ca5c300c23b815f3b3075217ba597b687aa34d7ef9123",
+            "ticks": 1554
+          },
+          {
+            "seed": 18,
+            "finalWorldHash": "cf4fc348d0a536c01b7eabe598e8c575501b12e56e940b81297e9e83e02e950c",
+            "ticks": 1359
+          }
+        ],
+        "pauseStable": true,
+        "singleStepExact": true,
+        "speedOverlayPreserveResult": true,
+        "inputExportImportEqual": true,
+        "replaySeek": true,
+        "mobileNoOverflow": true,
+        "fontFacesLoaded": 1,
+        "pageErrors": [],
+        "screenshot": "artifacts/phase-1/browser.png"
+      }
+    }
+  },
+  "g2": "passed",
+  "qualityGaps": [
+    "Initial baseline basic-miss rates exceed 45% target; further geometry/calibration and H2 review required.",
+    "Phase 3 retains reflection scenes AI-06/07 and full four-character/baseline/ablation validation."
+  ],
+  "artifactDigests": [
+    {
+      "path": "artifacts/phase-2/unit-tests.json",
+      "sha256": "cddaff8f8337eb3b1ed5c44f8bd7ce7f7aadbd5e3124a53870de1c904422b05b"
+    },
+    {
+      "path": "artifacts/phase-2/boundaries.json",
+      "sha256": "caf20ae4757fe95f853a6f0c158a04501ae16f5d222fee9be4312664985fd2ee"
+    },
+    {
+      "path": "artifacts/phase-2/smoke.json",
+      "sha256": "a5e18cf85b213a966981f7b8635b26f9040bdf1ccb273055c9418de7cf437b06"
+    },
+    {
+      "path": "artifacts/phase-2/browser.json",
+      "sha256": "8b8262bdb65301ae2cd5ce21159642e6320fa51794cbc2d922050def4c591f81"
+    },
+    {
+      "path": "artifacts/phase-2/baseline.json",
+      "sha256": "c1091e5e8b6c8807c5daf4060888c0d677efce30173aceb6b32e1a226cafb3e8"
+    }
+  ]
+}

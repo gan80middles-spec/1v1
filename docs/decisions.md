@@ -32,3 +32,13 @@
 - 普通内容版本、重力、速度、伤害、S/A/R、CD 和能量数值均沿用原规格。Phase 1 predictorId 是下一阶段预测器的声明式元数据；本阶段由只读 Observation 的脚本对手执行打法，不冒充 Utility AI。
 - 输入回放保存同构建版本、完整内容/插件版本、双方输入、事件、60 tick 检查点与最终 hash。导入重新执行输入并校验；播放器随后只读 RenderFrame。完整 runner 检查点、轨迹生产封装和视频仍按原计划交付。
 - 开发种子清单不变。30 个开发配置全部 KO；另增加 seed 17 双 idle 的超时测试样例，不把该样例混入冻结开发清单，也不为获取超时结果换 seed。
+
+## D0005 · Phase 2 的可恢复 Utility AI 与地面支撑（2026-10-02）
+
+- 增加 phase2-v1 / utility-v1；输入回放接受 phase1-v1 和 phase2-v1，并按保存构建选择规则。旧 Phase 1 的 seed 17/18、30 配置和 Phase 0 原 hash 回归保持一致。
+- 新内容只新增 counter/evasive 人格，技能数值不变。Utility 只读当前自身与延迟公共视图，不调用真实 Simulation。每次实际决策只消耗一个 RNG uint32，固定 hash 通道派生共用误差与抽签；trace 不属于未来状态。
+- FullCheckpoint 覆盖 World、控制器/RNG、观察 ring、成熟游标、待送达回执、执行/结果/encounter 记忆、配置与 recorderCursor；runnerHash 覆盖全部未来状态。可选 recording 只保存过去的输入/事件/checkpoint，排除在 runnerHash 外；CLI 携带它以生成完整续跑回放。
+- Phase 1 的非零移动会改变 Cast 中的 facing，不符合规格方向锁；phase2-v1 仅 free 时跟随 moveX。Phase 1 DamagePrevented 归因到来袭攻击，phase2-v1 归因到减伤状态的 sourceCastId。公共 bounce 增加可见墙面，避免将地面碰撞算成超弹增益的有效结果。
+- 最小失败来自冻结留出 seed 1780203690（standard-vs-rush-29-side-1）：落下的角色碰撞地面支撑角色，向下冲量与地面归零反复发生在同一时刻，耗尽诊断预算。phase2-v1 的法向冲量分母使用允许运动方向上的有效逆质量；支撑体保留水平运动、拒绝向地面穿入的竖直冲量。参数/恢复系数不变，旧构建保留旧求解方式。增加最小几何回归及同 seed 重跑。
+- 脱困必须预测向距离带取得正向进展；按 30 tick 内进展 / 20 px 比例限制到 +2，显示独立 stuckBonus/wallCost。避免远距位置质量饱和为零时，脱困分恰好卡在移动切换门槛。风险项和动作锁仍先约束选择。
+- 两角色基线仅为冻结清单的 80 场初评，普通攻击空挥率未达目标。H2 包为相同感知水平的 20 场无标签轨迹，人工结论保持待评；不宣称完成四角色评测、观感批准或视频生产。

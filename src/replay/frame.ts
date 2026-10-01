@@ -11,7 +11,7 @@ export function publicSnapshot(w: WorldView, events: readonly BattleEvent[], con
         switch (e.type) {
             case 'CastAccepted': return [{ ...base, detail: { kind: 'cast', castId: e.payload.castId, abilityId: e.payload.abilityId, slot: e.payload.slot } }];
             case 'DamageResolved': return [{ ...base, detail: { kind: 'damage', castId: e.payload.castId, amount: e.payload.amount } }];
-            case 'WallBounce': return [{ ...base, detail: { kind: 'bounce', incomingSpeed: e.payload.incomingNormalSpeed } }];
+            case 'WallBounce': return [{ ...base, detail: { kind: 'bounce', incomingSpeed: e.payload.incomingNormalSpeed, wall: e.payload.wall } }];
             case 'Jumped': return [{ ...base, detail: { kind: 'jump' } }];
             case 'DamagePrevented': return [{ ...base, detail: { kind: 'defend', castId: e.payload.castId, preventedDamage: e.payload.preventedDamage } }];
             case 'EntityDied': return [{ ...base, detail: { kind: 'death' } }];

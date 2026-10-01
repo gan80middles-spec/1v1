@@ -3,6 +3,7 @@ import type { DeepReadonly, ContentBundle } from './content.js';
 import type { Effect } from './content-schema.js';
 import type { Slot } from './versions.js';
 export const FIGHTER_BUILD = 'phase1-v1' as const;
+export type FighterEngineBuild='phase1-v1'|'phase2-v1';
 export type ActionState = {
     kind: 'free';
 } | {
@@ -345,6 +346,7 @@ export interface PublicEvent {
     } | {
         kind: 'bounce';
         incomingSpeed: number;
+        wall: 'left' | 'right' | 'ceiling' | 'floor';
     } | {
         kind: 'jump';
     } | {
@@ -442,7 +444,7 @@ export interface InputEntry {
 }
 export interface InputReplay {
     replaySchemaVersion: 2;
-    engineBuild: typeof FIGHTER_BUILD;
+    engineBuild: FighterEngineBuild;
     config: FighterConfig;
     content: ContentBundle['source'];
     pluginVersions: ContentBundle['pluginVersions'];

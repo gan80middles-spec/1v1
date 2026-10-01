@@ -37,7 +37,7 @@ function diagnose(text,path) {
       const targetPath = resolve(dirname(path),specifier);
       const target = relative(src,targetPath).replaceAll('\\','/');
       if (target.startsWith('../')) {
-        if (layer !== 'web' || !(target.startsWith('../content/fixtures/')||target==='../content/fighter-phase1.json')) report(node,`source import escapes src: ${specifier}`);
+        if (layer !== 'web' || !(target.startsWith('../content/fixtures/')||target==='../content/fighter-phase1.json'||target==='../content/fighter-phase2.json')) report(node,`source import escapes src: ${specifier}`);
       } else if (!allowed[layer]?.has(target.split('/')[0])) report(node,`${layer} may not depend on ${target.split('/')[0]} (${specifier})`);
     } else if (pure.has(layer)) {
       if (builtins.has(specifier)) report(node,`Node dependency forbidden in ${layer}: ${specifier}`);

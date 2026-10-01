@@ -1,7 +1,7 @@
 import type { ContentBundle } from '../contracts/content.js';
 import type { Effect } from '../contracts/content-schema.js';
 import type { ActionIntent, Vec2 } from '../contracts/state.js';
-import type { ActionReceipt, BattleEvent, CastRuntime, EventPayloads, FighterConfig, FighterEntity, FighterStep, FighterWorld, HitSpec, ReceiptReason, WorldView } from '../contracts/fighter.js';
+import type { ActionReceipt, BattleEvent, CastRuntime, EventPayloads, FighterConfig, FighterEntity, FighterStep, FighterWorld, HitSpec, ReceiptReason, WorldView, FighterEngineBuild } from '../contracts/fighter.js';
 import { ActionIntentSchema } from '../contracts/fighter-schema.js';
 import { deepFreeze } from '../math/canonical.js';
 import { hashCanonical } from '../math/hash.js';
@@ -19,14 +19,14 @@ interface Candidate {
 }
 export class FighterSimulation {
     private world: WorldView;
-    constructor(readonly content: ContentBundle, config: FighterConfig, initial?: unknown) {
-        this.world = initial ? validateFighterSnapshot(initial, content) : initialFighterState(config, content);
+    constructor(readonly content: ContentBundle, config: FighterConfig, initial?: unknown, readonly engineBuild:FighterEngineBuild='phase1-v1') {
+        this.world = initial ? validateFighterSnapshot(initial, content,engineBuild) : initialFighterState(config, content,engineBuild);
         if (hashCanonical(this.world.config) !== hashCanonical(config))
             throw new Error('Initial config mismatch');
     }
     snapshot(): WorldView { return this.world; }
     restore(input: unknown): void {
-        const w = validateFighterSnapshot(input, this.content);
+        const w = validateFighterSnapshot(input, this.content,this.engineBuild);
         if (hashCanonical(w.config) !== hashCanonical(this.world.config))
             throw new Error('Restore config mismatch');
         this.world = w;
@@ -92,7 +92,7 @@ export class FighterSimulation {
             w.projectiles = w.projectiles.filter(p => p.expiresTick > t);
             for (let i = 0; i < 2; i++) {
                 const e = w.entities[i]!, intent = intents[i]!;
-                if (intent.moveX !== 0 && phaseAt(e, t) !== 'hitstun' && e.hp > 0)
+                if (intent.moveX !== 0 && (this.engineBuild==='phase1-v1'?phaseAt(e,t)!=='hitstun':phaseAt(e,t)==='free') && e.hp > 0)
                     e.body.facing = intent.moveX;
                 if (intent.requestId === null)
                     continue;
@@ -238,7 +238,7 @@ export class FighterSimulation {
                     limitVelocity(b.entity.body.velocity);
                     emit('PassiveTriggered', { passiveId: r.passiveId, stacks: r.stacks, expiresTick: r.expiresTick }, b.entity.id, null, b.position, bounce);
                 }, (code, detail) => { if (w.diagnostics.length >= 64)
-                    throw new Error('diagnostic budget exceeded'); w.diagnostics.push({ tick: t, code, detail }); emit('Diagnostic', { code, detail }); });
+                    throw new Error('diagnostic budget exceeded'); w.diagnostics.push({ tick: t, code, detail }); emit('Diagnostic', { code, detail }); },this.engineBuild==='phase2-v1');
                 for (const h of w.hitboxes) {
                     const ownerIndex = w.entities.findIndex(e => e.id === h.ownerId), targetIndex = 1 - ownerIndex, owner = w.entities[ownerIndex]!, target = w.entities[targetIndex]!;
                     h.radius = h.baseRadius * effective(owner, this.content, t).meleeScale;
@@ -310,7 +310,7 @@ export class FighterSimulation {
                     remaining -= amount;
                     emit('DamageResolved', { castId: hit.castId, amount, hpBefore: before, hpAfter: remaining }, hit.sourceId, e.id, hit.position, parent);
                     if (nominal < hit.hit.damage)
-                        emit('DamagePrevented', { castId: hit.castId, preventedDamage: hit.hit.damage - nominal }, e.id, hit.sourceId, hit.position, parent);
+                        emit('DamagePrevented', { castId: this.engineBuild==='phase1-v1'?hit.castId:(e.statuses.find(s=>this.content.source.statuses.find(d=>d.id===s.definitionId)!.modifiers.damageTakenMultiplier<1)?.sourceCastId??hit.castId), preventedDamage: hit.hit.damage - nominal }, e.id, hit.sourceId, hit.position, parent);
                     energy[e.id - 1]! += amount * .55;
                     energy[hit.sourceId - 1]! += amount * .35;
                     launchX += hit.hit.launchDeltaV.x / e.body.mass * material.knockbackTaken;
