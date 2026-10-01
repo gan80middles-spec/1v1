@@ -2,7 +2,7 @@
 
 - 日期：2026-10-01，Asia/Shanghai。结论：**G1 通过，P1-01～P1-09 完成**。
 - 分支：`codex/phase-1`；基线：`be0d8d9`；构建：`phase1-v1`；content/world/replay schema：2。
-- 实现提交将在本轮本地提交后登记。精确证据：[phase-1-evidence.json](./phase-1-evidence.json)。规则接口补充：[D0004](../decisions.md)。
+- 实现提交：`c8094148d22ff452029bb65ab0b5dfbef802a59d`。精确证据：[phase-1-evidence.json](./phase-1-evidence.json)。规则接口补充：[D0004](../decisions.md)。
 
 ## 当前可见结果
 
