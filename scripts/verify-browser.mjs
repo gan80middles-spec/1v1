@@ -31,7 +31,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1100,height: 1080 },deviceScaleFactor: 1 });
   page.on('pageerror',(error) => failures.push(error.message));
   page.on('requestfailed',(request) => failures.push(`request failed ${request.url()}`));
-  await page.goto(`http://127.0.0.1:${address.port}/`,{ waitUntil: 'networkidle' });
+  await page.goto(`http://127.0.0.1:${address.port}/phase0.html`,{ waitUntil: 'networkidle' });
   await page.waitForFunction(() => document.documentElement.dataset.ready === 'true');
   const fontCount = await page.evaluate(async () => {
     await document.fonts.ready;

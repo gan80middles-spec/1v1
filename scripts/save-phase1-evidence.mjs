@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const read=async path=>JSON.parse(await readFile(path,'utf8'));
+const smoke=await read('artifacts/phase-1/smoke.json'),browser=await read('artifacts/phase-1/browser.json'),boundaries=await read('artifacts/phase-1/boundaries.json'),unit=await read('artifacts/phase-1/unit-tests.json'),phase0=await read('artifacts/phase-0/determinism.json');
+for(const r of [smoke,browser,boundaries,phase0])assert.equal(r.passed,true);assert.equal(unit.numFailedTests,0);assert.equal(unit.numTotalTests,72);
+const paths=['content/fighter-phase1.json','fixtures/seeds/dev-smoke.json','artifacts/phase-1/smoke.json','artifacts/phase-1/browser.json','artifacts/phase-1/boundaries.json','artifacts/phase-1/unit-tests.json','artifacts/phase-0/determinism.json'];
+const fileHashes=Object.fromEntries(await Promise.all(paths.map(async path=>[path,createHash('sha256').update(await readFile(path)).digest('hex')])));
+const evidence={date:'2026-10-01',engineBuild:'phase1-v1',node:process.version,v8:process.versions.v8,unitTests:{total:unit.numTotalTests,passed:unit.numPassedTests,failed:unit.numFailedTests},boundaries,browser,smoke,phase0Regression:{passed:phase0.passed,finalWorldHash:phase0.finalWorldHash,stateSequenceHash:phase0.stateSequenceHash,fullReportFileHash:phase0.fullReportFileHash},fileHashes};
+await writeFile('docs/reports/phase-1-evidence.json',JSON.stringify(evidence,null,2)+'\n');console.log('Saved reviewed Phase 1 evidence.');

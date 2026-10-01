@@ -1,0 +1,16 @@
+@font-face {
+  font-family: EngineProbe;
+  src: url('/fonts/engine-probe.ttf') format('truetype');
+  font-display: block;
+}
+:root { color-scheme: dark; font-family: system-ui,sans-serif; background:#0b1220; color:#e3eaf5; }
+body { max-width:880px; margin:48px auto; padding:0 24px; }
+h1 { font-size:28px; margin-bottom:12px; }
+p { line-height:1.7; color:#aabbd3; }
+.tag { display:inline-block; color:#ffca88; border:1px solid #73502c; border-radius:6px; padding:4px 10px; }
+form { display:flex; gap:12px; margin:24px 0; align-items:center; }
+input,button { font:inherit; padding:10px 14px; border:1px solid #344764; border-radius:8px; }
+button { background:#245da8; cursor:pointer; }
+canvas { width:min(100%,480px); height:auto; border-radius:8px; }
+pre { overflow:auto; line-height:1.6; background:#141f32; padding:16px; border-radius:8px; }
+#font-probe { font-family:EngineProbe,sans-serif; color:#8ba3c4; font-size:12px; }

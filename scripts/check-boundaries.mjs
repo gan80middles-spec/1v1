@@ -37,7 +37,7 @@ function diagnose(text,path) {
       const targetPath = resolve(dirname(path),specifier);
       const target = relative(src,targetPath).replaceAll('\\','/');
       if (target.startsWith('../')) {
-        if (layer !== 'web' || !target.startsWith('../content/fixtures/')) report(node,`source import escapes src: ${specifier}`);
+        if (layer !== 'web' || !(target.startsWith('../content/fixtures/')||target==='../content/fighter-phase1.json')) report(node,`source import escapes src: ${specifier}`);
       } else if (!allowed[layer]?.has(target.split('/')[0])) report(node,`${layer} may not depend on ${target.split('/')[0]} (${specifier})`);
     } else if (pure.has(layer)) {
       if (builtins.has(specifier)) report(node,`Node dependency forbidden in ${layer}: ${specifier}`);
@@ -81,7 +81,7 @@ const forbiddenExamples = [
 for (const [path,code] of forbiddenExamples) if (!diagnose(code,resolve(src,path)).length) throw new Error(`Boundary self-test failed: ${path} ${code}`);
 const paths = await files(src);
 const errors = (await Promise.all(paths.map(async (path) => diagnose(await readFile(path,'utf8'),path)))).flat();
-const reportPath = resolve(root,'artifacts/phase-0/boundaries.json');
+const reportPath = resolve(root,process.argv[2]??'artifacts/phase-0/boundaries.json');
 await mkdir(dirname(reportPath),{ recursive: true });
 await writeFile(reportPath,JSON.stringify({ checkedFiles: paths.length,selfTests: forbiddenExamples.length,passed: !errors.length,errors },null,2));
 if (errors.length) { console.error(errors.join('\n')); process.exitCode = 1; }

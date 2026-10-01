@@ -1,0 +1,3075 @@
+{
+  "date": "2026-10-01",
+  "engineBuild": "phase1-v1",
+  "node": "v24.21.0",
+  "v8": "13.6.233.17-node.53",
+  "unitTests": {
+    "total": 72,
+    "passed": 72,
+    "failed": 0
+  },
+  "boundaries": {
+    "checkedFiles": 33,
+    "selfTests": 5,
+    "passed": true,
+    "errors": []
+  },
+  "browser": {
+    "passed": true,
+    "browserVersion": "153.0.8010.12",
+    "nodeBrowserMatching": [
+      {
+        "seed": 17,
+        "finalWorldHash": "5476d2b700b93d55fe3ca5c300c23b815f3b3075217ba597b687aa34d7ef9123",
+        "ticks": 1554
+      },
+      {
+        "seed": 18,
+        "finalWorldHash": "cf4fc348d0a536c01b7eabe598e8c575501b12e56e940b81297e9e83e02e950c",
+        "ticks": 1359
+      }
+    ],
+    "pauseStable": true,
+    "singleStepExact": true,
+    "speedOverlayPreserveResult": true,
+    "inputExportImportEqual": true,
+    "replaySeek": true,
+    "mobileNoOverflow": true,
+    "fontFacesLoaded": 1,
+    "pageErrors": [],
+    "screenshot": "artifacts/phase-1/browser.png"
+  },
+  "smoke": {
+    "passed": true,
+    "engineBuild": "phase1-v1",
+    "node": "v24.21.0",
+    "contentHash": "3d1813e0c317f53f637dcabcbe4e722e89142588015d615706cf41fb7650a865",
+    "datasetHash": "d0d1df027f4596c20a8e9011c881f7f2147de39c028d94175f3b0342103f8bb3",
+    "cases": 30,
+    "repeatExecutions": 60,
+    "inputReplays": 30,
+    "fullWorldSequenceComparisons": 60,
+    "traceOnOffEqual": true,
+    "independentProcessesEqual": true,
+    "invalidCliFailurePackageVerified": true,
+    "failurePackagePath": "artifacts/phase-1/limit.json.failure.json",
+    "coveredAbilities": [
+      "rubber-cushion",
+      "rubber-dash",
+      "rubber-overdrive",
+      "rubber-slap",
+      "standard-bolt",
+      "standard-jab",
+      "standard-push",
+      "standard-volley"
+    ],
+    "representatives": {
+      "wallChase": {
+        "caseId": "rubber-vs-rubber-0",
+        "seed": 1245564233,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2912,
+        "result": {
+          "matchId": "rubber-vs-rubber-1245564233",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2912,
+          "remainingHp": [
+            21,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "760aec919ea47f1549ca9fa74a26bced6a257e0f6f58720528a51dd1b024a4a2",
+        "finalWorldHash": "a22dc846ae3e5c6f650b7a17eaf3bad0de9749a73a0943ffb6546ae5dfcb266e",
+        "eventCount": 532,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          731,
+          744,
+          812,
+          907,
+          1025,
+          1090,
+          1148,
+          1156,
+          1212,
+          1219,
+          1293,
+          1359,
+          1546,
+          1554,
+          1663,
+          1665,
+          1698,
+          1792,
+          1863,
+          1943,
+          2070,
+          2145,
+          2289,
+          2368,
+          2427,
+          2440,
+          2583,
+          2666,
+          2681,
+          2812,
+          2818
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 576,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 636,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 816,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 852,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 948,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 972,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-0.json"
+      },
+      "miss": {
+        "caseId": "rubber-vs-rubber-0",
+        "seed": 1245564233,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2912,
+        "result": {
+          "matchId": "rubber-vs-rubber-1245564233",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2912,
+          "remainingHp": [
+            21,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "760aec919ea47f1549ca9fa74a26bced6a257e0f6f58720528a51dd1b024a4a2",
+        "finalWorldHash": "a22dc846ae3e5c6f650b7a17eaf3bad0de9749a73a0943ffb6546ae5dfcb266e",
+        "eventCount": 532,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          731,
+          744,
+          812,
+          907,
+          1025,
+          1090,
+          1148,
+          1156,
+          1212,
+          1219,
+          1293,
+          1359,
+          1546,
+          1554,
+          1663,
+          1665,
+          1698,
+          1792,
+          1863,
+          1943,
+          2070,
+          2145,
+          2289,
+          2368,
+          2427,
+          2440,
+          2583,
+          2666,
+          2681,
+          2812,
+          2818
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 576,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 636,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 816,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 852,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 948,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 972,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-0.json"
+      },
+      "ko": {
+        "caseId": "rubber-vs-rubber-0",
+        "seed": 1245564233,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2912,
+        "result": {
+          "matchId": "rubber-vs-rubber-1245564233",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2912,
+          "remainingHp": [
+            21,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "760aec919ea47f1549ca9fa74a26bced6a257e0f6f58720528a51dd1b024a4a2",
+        "finalWorldHash": "a22dc846ae3e5c6f650b7a17eaf3bad0de9749a73a0943ffb6546ae5dfcb266e",
+        "eventCount": 532,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          731,
+          744,
+          812,
+          907,
+          1025,
+          1090,
+          1148,
+          1156,
+          1212,
+          1219,
+          1293,
+          1359,
+          1546,
+          1554,
+          1663,
+          1665,
+          1698,
+          1792,
+          1863,
+          1943,
+          2070,
+          2145,
+          2289,
+          2368,
+          2427,
+          2440,
+          2583,
+          2666,
+          2681,
+          2812,
+          2818
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 576,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 636,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 816,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 852,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 948,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 972,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-0.json"
+      },
+      "timeout": {
+        "seed": 17,
+        "a": "standard",
+        "b": "rubber",
+        "controllers": [
+          "idle",
+          "idle"
+        ],
+        "result": {
+          "matchId": "standard-vs-rubber-17",
+          "reason": "timeout",
+          "winnerParticipantId": null,
+          "endedAfterTicks": 3600,
+          "remainingHp": [
+            100,
+            100
+          ],
+          "diagnosticCode": null
+        },
+        "replayPath": "artifacts/phase-1/replays/timeout-idle.json"
+      }
+    },
+    "results": [
+      {
+        "caseId": "rubber-vs-rubber-0",
+        "seed": 1245564233,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2912,
+        "result": {
+          "matchId": "rubber-vs-rubber-1245564233",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2912,
+          "remainingHp": [
+            21,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "760aec919ea47f1549ca9fa74a26bced6a257e0f6f58720528a51dd1b024a4a2",
+        "finalWorldHash": "a22dc846ae3e5c6f650b7a17eaf3bad0de9749a73a0943ffb6546ae5dfcb266e",
+        "eventCount": 532,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          731,
+          744,
+          812,
+          907,
+          1025,
+          1090,
+          1148,
+          1156,
+          1212,
+          1219,
+          1293,
+          1359,
+          1546,
+          1554,
+          1663,
+          1665,
+          1698,
+          1792,
+          1863,
+          1943,
+          2070,
+          2145,
+          2289,
+          2368,
+          2427,
+          2440,
+          2583,
+          2666,
+          2681,
+          2812,
+          2818
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 576,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 636,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 816,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 852,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 948,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 972,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-0.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-1",
+        "seed": 1771317578,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2169,
+        "result": {
+          "matchId": "rubber-vs-rubber-1771317578",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2169,
+          "remainingHp": [
+            20,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "ac669e2f819bffbbffd30f19e22a534de5ca4d62c41180d0bac2b3c5f023debf",
+        "finalWorldHash": "f126996c4b09cad1e399a5931bb54ffd20eae70d8b730c3dec45d0f3da6ac86b",
+        "eventCount": 364,
+        "damageEvents": 19,
+        "wallGrowthTicks": [
+          70,
+          75,
+          160,
+          243,
+          384,
+          442,
+          612,
+          654,
+          780,
+          804,
+          884,
+          925,
+          971,
+          985,
+          1058,
+          1087,
+          1212,
+          1285,
+          1298,
+          1464,
+          1569,
+          1642,
+          1727,
+          1846,
+          1862,
+          1925,
+          2026,
+          2033,
+          2107
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 70,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 75,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 160,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 243,
+            "damageTick": 371
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 336,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 420,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 456,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 492,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 588,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 720,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-1.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-2",
+        "seed": 812169668,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2204,
+        "result": {
+          "matchId": "rubber-vs-rubber-812169668",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2204,
+          "remainingHp": [
+            24,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "c2cf2cbefbd7add3a5c7326ee274ce48527ab58e4d4d6594f40e7ed22478f7fe",
+        "finalWorldHash": "2da538ab5345541e03ddd2b34672030fc8157cecbb4666e3b75d019d6fb9ac83",
+        "eventCount": 404,
+        "damageEvents": 20,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          728,
+          819,
+          874,
+          878,
+          1073,
+          1157,
+          1307,
+          1337,
+          1414,
+          1451,
+          1458,
+          1501,
+          1527,
+          1571,
+          1602,
+          1649,
+          1667,
+          1803,
+          1964,
+          1999,
+          2070,
+          2111
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 612,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 660,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 684,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 912,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 936,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 1008,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 1044,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-2.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-3",
+        "seed": 2787069005,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2986,
+        "result": {
+          "matchId": "rubber-vs-rubber-2787069005",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 2986,
+          "remainingHp": [
+            20,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "307aa8394a36de43cd5fb70179782398eb6d71bca64e931ea6fe2bfe14ba3a84",
+        "finalWorldHash": "d859526528332e0d7df66de1d246baa99e1b4d93deac824288f8f321e971da00",
+        "eventCount": 465,
+        "damageEvents": 19,
+        "wallGrowthTicks": [
+          70,
+          75,
+          160,
+          243,
+          384,
+          442,
+          612,
+          654,
+          780,
+          804,
+          884,
+          925,
+          971,
+          985,
+          1058,
+          1087,
+          1212,
+          1285,
+          1298,
+          1464,
+          1569,
+          1642,
+          1727,
+          1845,
+          1860,
+          2014,
+          2015,
+          2091,
+          2096,
+          2222,
+          2431,
+          2438,
+          2645,
+          2797,
+          2832
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 70,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 75,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 160,
+            "damageTick": 212
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 243,
+            "damageTick": 371
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 336,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 420,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 456,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 492,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 588,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 720,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-3.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-4",
+        "seed": 433271023,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2360,
+        "result": {
+          "matchId": "rubber-vs-rubber-433271023",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 2360,
+          "remainingHp": [
+            0,
+            14
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "686cae1659cfd7a4766ba240f54cd25084fc45c6640123979e3a2ab67c736cfa",
+        "finalWorldHash": "c394e81f747bfda7dcec9780f0bcb1f969eaa75bbc37a2153e6c85118ed8b6af",
+        "eventCount": 444,
+        "damageEvents": 22,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          726,
+          741,
+          902,
+          1008,
+          1046,
+          1084,
+          1093,
+          1170,
+          1335,
+          1352,
+          1514,
+          1554,
+          1623,
+          1696,
+          1699,
+          1767,
+          1861,
+          1934,
+          1958,
+          2112,
+          2199,
+          2256,
+          2265,
+          2330
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 612,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 996,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1056,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1092,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1104,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1164,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-4.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-5",
+        "seed": 1362445981,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 3300,
+        "result": {
+          "matchId": "rubber-vs-rubber-1362445981",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 3300,
+          "remainingHp": [
+            24,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "01ee78809b131873e3d47bd30c56e11cfe6c67522eef08fa1c659a8d00c42aaa",
+        "finalWorldHash": "b198ff41a70f7abc64232697187215b26ac2ea10e9cf7113280a4f23e5dad08b",
+        "eventCount": 558,
+        "damageEvents": 19,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          389,
+          412,
+          442,
+          544,
+          671,
+          715,
+          805,
+          863,
+          871,
+          945,
+          1039,
+          1073,
+          1190,
+          1242,
+          1282,
+          1364,
+          1494,
+          1534,
+          1539,
+          1631,
+          1659,
+          1712,
+          1726,
+          1852,
+          1928,
+          1945,
+          2035,
+          2044,
+          2101,
+          2154,
+          2211,
+          2270,
+          2296,
+          2410,
+          2503,
+          2548,
+          2635,
+          2697,
+          2723,
+          2768,
+          2853,
+          2893,
+          2934,
+          2982,
+          3056,
+          3122,
+          3139
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 368
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 412,
+            "damageTick": 524
+          }
+        ],
+        "misses": [
+          {
+            "tick": 324,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 348,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 444,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 480,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 552,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 648,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 648,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-5.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-6",
+        "seed": 2555957171,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 3325,
+        "result": {
+          "matchId": "rubber-vs-rubber-2555957171",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 3325,
+          "remainingHp": [
+            0,
+            14
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "9797dd4dca1e880d882667fbd1f6454b4838c55298e08a59ac26aefd9cff6c94",
+        "finalWorldHash": "ae5f33dae35d036987ddbce6884601946a43f3c25dbb8c18e87b440a3e3bade7",
+        "eventCount": 585,
+        "damageEvents": 23,
+        "wallGrowthTicks": [
+          70,
+          81,
+          152,
+          228,
+          240,
+          306,
+          389,
+          456,
+          536,
+          567,
+          626,
+          741,
+          774,
+          821,
+          951,
+          1066,
+          1077,
+          1226,
+          1239,
+          1302,
+          1378,
+          1514,
+          1564,
+          1571,
+          1653,
+          1780,
+          1877,
+          1886,
+          1947,
+          2018,
+          2047,
+          2055,
+          2119,
+          2274,
+          2276,
+          2344,
+          2458,
+          2514,
+          2644,
+          2670,
+          2706,
+          2791,
+          2842,
+          3019,
+          3159,
+          3198,
+          3225
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 70,
+            "damageTick": 200
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 389,
+            "damageTick": 475
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 456,
+            "damageTick": 475
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 741,
+            "damageTick": 863
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 180,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 252,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 288,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 360,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 372,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 420,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-6.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-7",
+        "seed": 54770214,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 3323,
+        "result": {
+          "matchId": "rubber-vs-rubber-54770214",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 3323,
+          "remainingHp": [
+            3.599999999999998,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "9b1a31a576eb6f936c382b51f2e6d753b55db4a69d157fe9d923c6751549abec",
+        "finalWorldHash": "068d523081786ffb1bb3b6e42a585e667e16c3b12d14b71d87e9571a81d326dc",
+        "eventCount": 558,
+        "damageEvents": 23,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          588,
+          615,
+          742,
+          753,
+          909,
+          1022,
+          1083,
+          1155,
+          1251,
+          1330,
+          1390,
+          1463,
+          1582,
+          1645,
+          1651,
+          1732,
+          1812,
+          1816,
+          1900,
+          1970,
+          1972,
+          2067,
+          2162,
+          2246,
+          2378,
+          2475,
+          2550,
+          2579,
+          2655,
+          2722,
+          2761,
+          2828,
+          2855,
+          2904,
+          3002,
+          3060,
+          3131,
+          3173,
+          3233,
+          3237
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 564,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 720,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 852,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 888,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 924,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1020,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1056,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1140,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-7.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-8",
+        "seed": 2163494403,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 1757,
+        "result": {
+          "matchId": "rubber-vs-rubber-2163494403",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1757,
+          "remainingHp": [
+            54,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "d94e84f6a4cb034e1ba7c170f890d1cecaf2d1f8aaeaf4b9146e594745bd5987",
+        "finalWorldHash": "7b152d605dfa5c38817e1e471f90bc248144e8143ed3fa7ace8bb2b1e2bd46ca",
+        "eventCount": 318,
+        "damageEvents": 17,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          382,
+          405,
+          449,
+          535,
+          570,
+          573,
+          654,
+          726,
+          741,
+          902,
+          1008,
+          1035,
+          1043,
+          1098,
+          1123,
+          1139,
+          1163,
+          1243,
+          1265,
+          1347,
+          1498,
+          1555,
+          1612,
+          1640
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 362
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 246,
+            "damageTick": 362
+          }
+        ],
+        "misses": [
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 612,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1140,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 1224,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 1296,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 1380,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1404,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-8.json"
+      },
+      {
+        "caseId": "rubber-vs-rubber-9",
+        "seed": 3906970050,
+        "a": "rubber",
+        "b": "rubber",
+        "ticks": 2965,
+        "result": {
+          "matchId": "rubber-vs-rubber-3906970050",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 2965,
+          "remainingHp": [
+            0,
+            16
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "4860746c09983ba9ab9b338f42c053adfe05efc090e8f6822dcf71b0421a17fc",
+        "finalWorldHash": "fde9e65e0931ddfb209519eec43d3bc355f7eb88f5b8a48962325adc4f7c747d",
+        "eventCount": 491,
+        "damageEvents": 20,
+        "wallGrowthTicks": [
+          74,
+          83,
+          236,
+          246,
+          389,
+          412,
+          442,
+          508,
+          570,
+          574,
+          660,
+          663,
+          764,
+          815,
+          852,
+          948,
+          1071,
+          1172,
+          1265,
+          1332,
+          1373,
+          1423,
+          1442,
+          1512,
+          1623,
+          1701,
+          1771,
+          1776,
+          1930,
+          1976,
+          2055,
+          2155,
+          2328,
+          2341,
+          2485,
+          2594,
+          2671,
+          2838
+        ],
+        "wallChases": [
+          {
+            "entityId": 2,
+            "bounceTick": 74,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 83,
+            "damageTick": 197
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 236,
+            "damageTick": 368
+          },
+          {
+            "entityId": 2,
+            "bounceTick": 389,
+            "damageTick": 512
+          }
+        ],
+        "misses": [
+          {
+            "tick": 324,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 348,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 444,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 528,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 744,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 900,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 912,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 1044,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-rubber-9.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-0",
+        "seed": 3103265340,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1424,
+        "result": {
+          "matchId": "rubber-vs-standard-3103265340",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1424,
+          "remainingHp": [
+            0,
+            19
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "659dd20233665e52f3b87afad51b54f6b18b096068bc67576c2e8bf3c1d9a03f",
+        "finalWorldHash": "e4fbdcc3d42617d2c7a9b2a96ca09eee37a26ebd88a17c5e8e642ac66a3fd9f1",
+        "eventCount": 267,
+        "damageEvents": 20,
+        "wallGrowthTicks": [
+          171,
+          645,
+          697,
+          750,
+          814,
+          932
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 645,
+            "damageTick": 788
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 697,
+            "damageTick": 788
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 750,
+            "damageTick": 788
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 264,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 396,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 444,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 672,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 708,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 816,
+            "abilityId": "standard-push"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-0.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-1",
+        "seed": 1941133956,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1447,
+        "result": {
+          "matchId": "rubber-vs-standard-1941133956",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1447,
+          "remainingHp": [
+            0,
+            66
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "c988da6f7b132c48a12c4a88e44dbe1ece5ee6b5afc9ea7d4e05d3f4b17ed128",
+        "finalWorldHash": "72e3ee2ad41b35363cf7f0c4949836bd19540a479ebb86d689e921b53f19895a",
+        "eventCount": 263,
+        "damageEvents": 16,
+        "wallGrowthTicks": [
+          171,
+          615,
+          904,
+          1056,
+          1338
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 615,
+            "damageTick": 763
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 904,
+            "damageTick": 1033
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 264,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 384,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 408,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 444,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 528,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-1.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-2",
+        "seed": 3001359567,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1642,
+        "result": {
+          "matchId": "rubber-vs-standard-3001359567",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1642,
+          "remainingHp": [
+            0,
+            22
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "621715353438546d0f905a990632451834201b8c2bb042f97584e97f37c3eb5f",
+        "finalWorldHash": "71ad50a589f608f3d81e1515c78a1e52a9e8b4b32bd76455474c459da9963590",
+        "eventCount": 345,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          171,
+          655,
+          1151
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 655,
+            "damageTick": 781
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1151,
+            "damageTick": 1173
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 276,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 288,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 312,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 408,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 432,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 444,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-2.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-3",
+        "seed": 1587002435,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1189,
+        "result": {
+          "matchId": "rubber-vs-standard-1587002435",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1189,
+          "remainingHp": [
+            0,
+            53
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "81347ec10ef89bd5a3bee70bd28636cafc52066796355e2bb25f43e1a0ddf532",
+        "finalWorldHash": "afc04ae6616296cb5d0ef3bd300f30c9315ee24778d1ee759204aa7578721041",
+        "eventCount": 252,
+        "damageEvents": 16,
+        "wallGrowthTicks": [
+          171,
+          471,
+          1011,
+          1132
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1011,
+            "damageTick": 1027
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1132,
+            "damageTick": 1161
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 264,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 384,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 504,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 516,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 552,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 552,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-3.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-4",
+        "seed": 2474831301,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1310,
+        "result": {
+          "matchId": "rubber-vs-standard-2474831301",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1310,
+          "remainingHp": [
+            0,
+            59
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "b790e863448c1462450a54f7802e6d7518f8c6103fa9f0f15bdac81c68a592b0",
+        "finalWorldHash": "2f844994e3a743d144f7aa58d51beef649f18a7fdd2842e2d71ca27c580bfac0",
+        "eventCount": 237,
+        "damageEvents": 15,
+        "wallGrowthTicks": [
+          171,
+          302,
+          776
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 776,
+            "damageTick": 887
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 228,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 408,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 504,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 564,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 672,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 720,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-4.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-5",
+        "seed": 1962323973,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1474,
+        "result": {
+          "matchId": "rubber-vs-standard-1962323973",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1474,
+          "remainingHp": [
+            0,
+            25
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "bd27bb164675434f2146283ac92716238c469668126e026290138999a0492848",
+        "finalWorldHash": "69f553c384c99a23f74f253416b6c1b84a5337f49392b1a2c828d00b02614bc3",
+        "eventCount": 322,
+        "damageEvents": 20,
+        "wallGrowthTicks": [
+          171,
+          703,
+          1088
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1088,
+            "damageTick": 1174
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 264,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 384,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 420,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 444,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 492,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-bolt"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-5.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-6",
+        "seed": 1729672011,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1671,
+        "result": {
+          "matchId": "rubber-vs-standard-1729672011",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1671,
+          "remainingHp": [
+            0,
+            25
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "4cdf1591852348a41cc62c886fb0ad9ed9f19e08e56758c1f205cbf1b7ce95f2",
+        "finalWorldHash": "28c6c0e73950a1fdefd9f3648c74a10c1e6a1dc72330b881058d952248d5518d",
+        "eventCount": 342,
+        "damageEvents": 22,
+        "wallGrowthTicks": [
+          171,
+          437,
+          664,
+          1543,
+          1613
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 437,
+            "damageTick": 511
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 664,
+            "damageTick": 811
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1543,
+            "damageTick": 1583
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 264,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 468,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 576,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 612,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 696,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 696,
+            "abilityId": "standard-bolt"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-6.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-7",
+        "seed": 1939190246,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1819,
+        "result": {
+          "matchId": "rubber-vs-standard-1939190246",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1819,
+          "remainingHp": [
+            0,
+            28
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "a06a0a3b4e49beb3887fd893bead7ee39b08ad3256d23841c29d427cdbcecde0",
+        "finalWorldHash": "11ef5e4c08e1999bf97c9fe41a98dc7b1137fa7790c2ac9f2b1214a58230b45c",
+        "eventCount": 337,
+        "damageEvents": 20,
+        "wallGrowthTicks": [
+          683,
+          928,
+          1018,
+          1061,
+          1114,
+          1190,
+          1225,
+          1326,
+          1421,
+          1496,
+          1585,
+          1726
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 683,
+            "damageTick": 703
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1114,
+            "damageTick": 1246
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1190,
+            "damageTick": 1246
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 1225,
+            "damageTick": 1246
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 180,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 336,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 372,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 372,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 540,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 648,
+            "abilityId": "rubber-dash"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-7.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-8",
+        "seed": 4032878593,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1520,
+        "result": {
+          "matchId": "rubber-vs-standard-4032878593",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1520,
+          "remainingHp": [
+            24.200000000000003,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "698cb83a2c17d7119dc1cb47c88b2d89027901eada83c65359083daf07f3e1db",
+        "finalWorldHash": "41f9d4daa7b24424916c9451eab519ab5e097bb9bc714a9a3b1f0893de9f912f",
+        "eventCount": 325,
+        "damageEvents": 21,
+        "wallGrowthTicks": [
+          171,
+          786,
+          855,
+          982
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 171,
+            "damageTick": 243
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 786,
+            "damageTick": 826
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 855,
+            "damageTick": 997
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 982,
+            "damageTick": 997
+          }
+        ],
+        "misses": [
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 48,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 276,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 312,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 312,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 384,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 420,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 420,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-8.json"
+      },
+      {
+        "caseId": "rubber-vs-standard-9",
+        "seed": 869650417,
+        "a": "rubber",
+        "b": "standard",
+        "ticks": 1897,
+        "result": {
+          "matchId": "rubber-vs-standard-869650417",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1897,
+          "remainingHp": [
+            0,
+            56
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "3035e48d0840f8937f02cc8d34e58142229fbe85fd18cf25a587f1c388881d26",
+        "finalWorldHash": "d4bd615a4c8b7899197513fcb87dc4c9f33e167d03c85571df6d984c9d1c1e34",
+        "eventCount": 403,
+        "damageEvents": 17,
+        "wallGrowthTicks": [
+          68,
+          213,
+          287,
+          1013,
+          1060,
+          1127,
+          1455,
+          1523,
+          1785
+        ],
+        "wallChases": [
+          {
+            "entityId": 1,
+            "bounceTick": 213,
+            "damageTick": 388
+          },
+          {
+            "entityId": 1,
+            "bounceTick": 287,
+            "damageTick": 388
+          }
+        ],
+        "misses": [
+          {
+            "tick": 12,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 24,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 108,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 216,
+            "abilityId": "rubber-dash"
+          },
+          {
+            "tick": 504,
+            "abilityId": "rubber-slap"
+          },
+          {
+            "tick": 504,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 552,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 576,
+            "abilityId": "rubber-slap"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/rubber-vs-standard-9.json"
+      },
+      {
+        "caseId": "standard-vs-standard-0",
+        "seed": 899319004,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1382,
+        "result": {
+          "matchId": "standard-vs-standard-899319004",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1382,
+          "remainingHp": [
+            18,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "3edddd98ed1259a928e36565c2b07e647d0329ccb6c30d0371e55dacc9f254a6",
+        "finalWorldHash": "6fc739659a0bd6d36212c403a44d666d1b66aece2aaee55db2e90f4eae4d9a20",
+        "eventCount": 221,
+        "damageEvents": 18,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 168,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 204,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 300,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 492,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 516,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 564,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-0.json"
+      },
+      {
+        "caseId": "standard-vs-standard-1",
+        "seed": 2841502335,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1157,
+        "result": {
+          "matchId": "standard-vs-standard-2841502335",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1157,
+          "remainingHp": [
+            23,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "8bde991347f0b884cef148aa44e97c850904d2f9eed525460fbfd0a48ccd50c4",
+        "finalWorldHash": "789302c9f1555fdaf040ed7c8e15d9c339d42331cf997f8c8693d891bed5a0b8",
+        "eventCount": 196,
+        "damageEvents": 17,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 276,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 312,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 456,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 576,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 612,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 696,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-1.json"
+      },
+      {
+        "caseId": "standard-vs-standard-2",
+        "seed": 1833780370,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1102,
+        "result": {
+          "matchId": "standard-vs-standard-1833780370",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1102,
+          "remainingHp": [
+            0,
+            2
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "e8527101127b25ba17e701e71fd29e2301325165200135f709a76428fad262c1",
+        "finalWorldHash": "1050140fbba8fa68367d9fe0ee06ef0a95101ad6e149cc9f7a43eb6d76e83919",
+        "eventCount": 229,
+        "damageEvents": 21,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 420,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 492,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 732,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 780,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 780,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 816,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-2.json"
+      },
+      {
+        "caseId": "standard-vs-standard-3",
+        "seed": 557420913,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 917,
+        "result": {
+          "matchId": "standard-vs-standard-557420913",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 917,
+          "remainingHp": [
+            29,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "890cdb80ad812338cef993954118a10411baddf7556ed6eca0b7f95baab7fd5d",
+        "finalWorldHash": "89e310899216e696d0699492516c5a527bdbe136bda5cca96a01e05a0bedf381",
+        "eventCount": 148,
+        "damageEvents": 17,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 576,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 612,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 648,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 816,
+            "abilityId": "standard-bolt"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-3.json"
+      },
+      {
+        "caseId": "standard-vs-standard-4",
+        "seed": 1731574919,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1159,
+        "result": {
+          "matchId": "standard-vs-standard-1731574919",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1159,
+          "remainingHp": [
+            46,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "62947b6c721f813efcff03f31902b68b0014caca53909cc709b669b4bf49d240",
+        "finalWorldHash": "9fa480114319ca9e9af0e426e426b2ed709b62c332231af75740f95cf014b9ab",
+        "eventCount": 210,
+        "damageEvents": 16,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 168,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 300,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 336,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 396,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 540,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 588,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 672,
+            "abilityId": "standard-bolt"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-4.json"
+      },
+      {
+        "caseId": "standard-vs-standard-5",
+        "seed": 3790731836,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1129,
+        "result": {
+          "matchId": "standard-vs-standard-3790731836",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1129,
+          "remainingHp": [
+            4,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "64dbf23338aa28e11e02c8ae3aff637d13eb39e43e38f3406d498f7f773b9a5c",
+        "finalWorldHash": "cab3ef7706d2104518a0a23aa35331a2afb1fb18f25617dac152cc89dd611518",
+        "eventCount": 195,
+        "damageEvents": 19,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 144,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 144,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 180,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 564,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 564,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 852,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 852,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 996,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-5.json"
+      },
+      {
+        "caseId": "standard-vs-standard-6",
+        "seed": 2434471776,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1418,
+        "result": {
+          "matchId": "standard-vs-standard-2434471776",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1418,
+          "remainingHp": [
+            0,
+            21
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "2db777d92c67523e3d914a5da3b5e1e4ed5ffaaccde3366938a68a95f589f252",
+        "finalWorldHash": "25fc5ea6b5791c0fd1ead761218deb221908c1c35c0d172f18f5208dbc039570",
+        "eventCount": 262,
+        "damageEvents": 18,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 168,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 252,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 252,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 456,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 456,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 492,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 600,
+            "abilityId": "standard-jab"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-6.json"
+      },
+      {
+        "caseId": "standard-vs-standard-7",
+        "seed": 236504966,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1173,
+        "result": {
+          "matchId": "standard-vs-standard-236504966",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1173,
+          "remainingHp": [
+            48,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "71c88d47b1a351c52b6afcd823174b52d5f47d07f8a8c6df25cf354e79b450dc",
+        "finalWorldHash": "a4e4622e59383b8500ed4485765e33dda0ee5bb12f257bd721e101f42a4a54a6",
+        "eventCount": 194,
+        "damageEvents": 15,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 288,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 288,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 324,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 384,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 576,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 576,
+            "abilityId": "standard-push"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-7.json"
+      },
+      {
+        "caseId": "standard-vs-standard-8",
+        "seed": 1063291484,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1165,
+        "result": {
+          "matchId": "standard-vs-standard-1063291484",
+          "reason": "ko",
+          "winnerParticipantId": "B",
+          "endedAfterTicks": 1165,
+          "remainingHp": [
+            0,
+            18
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "e7623abb175927426f7b7b1d1c39a370d637073a3b649c24673fdc0bc2bf91bd",
+        "finalWorldHash": "b2d81fa257fd88c4ad8abcfcfae574ad2056c7b0aef14a2725254d0115a65f23",
+        "eventCount": 196,
+        "damageEvents": 18,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 132,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 168,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 276,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 276,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 408,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 432,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 444,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 600,
+            "abilityId": "standard-bolt"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-8.json"
+      },
+      {
+        "caseId": "standard-vs-standard-9",
+        "seed": 1362256244,
+        "a": "standard",
+        "b": "standard",
+        "ticks": 1173,
+        "result": {
+          "matchId": "standard-vs-standard-1362256244",
+          "reason": "ko",
+          "winnerParticipantId": "A",
+          "endedAfterTicks": 1173,
+          "remainingHp": [
+            15,
+            0
+          ],
+          "diagnosticCode": null
+        },
+        "worldSequenceHash": "fcfb76f8981a48e843716310eedce07195e4744b1f7425289ef081cae017fae9",
+        "finalWorldHash": "86f468eb9b8967184d0498196183a4c4f17a8a838caa70b4f02b3d520a06d236",
+        "eventCount": 216,
+        "damageEvents": 18,
+        "wallGrowthTicks": [],
+        "wallChases": [],
+        "misses": [
+          {
+            "tick": 144,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 144,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 432,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 468,
+            "abilityId": "standard-bolt"
+          },
+          {
+            "tick": 528,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 828,
+            "abilityId": "standard-jab"
+          },
+          {
+            "tick": 828,
+            "abilityId": "standard-push"
+          },
+          {
+            "tick": 864,
+            "abilityId": "standard-push"
+          }
+        ],
+        "replayPath": "artifacts/phase-1/replays/standard-vs-standard-9.json"
+      }
+    ]
+  },
+  "phase0Regression": {
+    "passed": true,
+    "finalWorldHash": "a6de98e7d34e9210ab249df0228e4fc06c0252e1d30f6ae96722b94d1f946601",
+    "stateSequenceHash": "ed6bef5db8dbe685b57769975e7a178221779b6247fb0d5c08155d3615f8b0aa",
+    "fullReportFileHash": "25c7931d256fb3b79726fbe904279c2c5cc88dc5b31411cab73a321514170385"
+  },
+  "fileHashes": {
+    "content/fighter-phase1.json": "d6eb29cb53d139baf74ce53c669a7244a6ad8966be37e2c15ac5a567ead20e0d",
+    "fixtures/seeds/dev-smoke.json": "1ba29ad514b3e00e122888504e75d1b1b48a1eb879a368ae19b52f51d182e2b1",
+    "artifacts/phase-1/smoke.json": "f5673d414fdfa55a8e98cee38315ec5df214d87eb1f6dd5b2ea655a177334868",
+    "artifacts/phase-1/browser.json": "011fe11ff04f140f6c85011b72259cb00c119f1213bcd0ac8a08eb4d9f87d05a",
+    "artifacts/phase-1/boundaries.json": "83571c9534aff9d719b5a77bee6268b81e1f72e9cf56f1b3e4219111e86bd2a3",
+    "artifacts/phase-1/unit-tests.json": "2dd94bc4b83fb0ba6fc79fdb8e3d653f88566c3230c273b03226f3a887f38627",
+    "artifacts/phase-0/determinism.json": "5fba29a564ecacae26f55091e3c66abbda57edda9b4dd6acd56aaf6ae54b4072"
+  }
+}

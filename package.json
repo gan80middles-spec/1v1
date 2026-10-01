@@ -18,7 +18,11 @@
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "test:determinism": "node scripts/verify-determinism.mjs",
     "verify:browser": "node scripts/verify-browser.mjs",
-    "verify:phase0": "npm run typecheck && npm test && npm run build && npm run check:boundaries && npm run test:determinism && npm run verify:browser"
+    "verify:phase0": "npm run typecheck && npm test && npm run build && npm run check:boundaries && npm run test:determinism && npm run verify:browser",
+    "test:phase1": "vitest run --outputFile.json=artifacts/phase-1/unit-tests.json",
+    "test:phase1-smoke": "node scripts/verify-phase1.mjs",
+    "verify:phase1-browser": "node scripts/verify-phase1-browser.mjs",
+    "verify:phase1": "npm run typecheck && npm run test:phase1 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-1/boundaries.json && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser"
   },
   "dependencies": {
     "zod": "4.6.5"

@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1v1 内容引擎 · Phase 0</title></head>
-<body>
-  <main>
-    <span class="tag">Phase 0 · 工程骨架</span>
-    <h1>1v1 自动对抗短视频内容引擎</h1>
-    <p>当前验证配置加载、600 tick 固定时钟和确定性 hash。角色保持静止；战斗、碰撞与 AI 从后续阶段开始实现。</p>
-    <form id="run-form"><label for="seed">Seed</label><input id="seed" name="seed" type="number" min="0" max="4294967295" value="17" required><button type="submit">运行 600 tick</button></form>
-    <canvas id="arena" width="480" height="480" aria-label="静态竞技场结构夹具"></canvas>
-    <pre id="output" aria-live="polite"></pre>
-    <p id="font-probe">Local font loading probe · 0123456789</p>
-  </main>
-  <script type="module" src="/src/web/main.ts"></script>
-</body>
-</html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1v1 · 双球竞技场</title></head>
+<body><main>
+ <header><div><span class="eyebrow">1V1 ARENA · PHASE 1</span><h1>双球竞技场</h1><p>标准的火力，橡胶的弹性。选一组对手，看它们交锋。</p></div><a href="/phase0.html">工程基线 ↗</a></header>
+ <form id="run-form" class="settings">
+  <label>A 方角色<select id="a"><option value="standard">标准 · 六边形</option><option value="rubber">橡胶 · 圆形</option></select></label>
+  <label>B 方角色<select id="b"><option value="rubber">橡胶 · 圆形</option><option value="standard">标准 · 六边形</option></select></label>
+  <label>A 方打法<select id="controller-a"><option value="rush">追击</option><option value="ranged">拉开距离</option><option value="idle">静止对手</option></select></label>
+  <label>B 方打法<select id="controller-b"><option value="ranged">拉开距离</option><option value="rush">追击</option><option value="idle">静止对手</option></select></label>
+  <label>Seed<input id="seed" type="number" min="0" max="4294967295" value="17" required></label><button type="submit" class="secondary">重置比赛</button>
+ </form>
+ <section class="battle"><div class="stage"><div class="stage-top"><span id="mode">准备就绪</span><span id="clock">00.00 / 60.00 秒</span></div><canvas id="arena" width="960" height="960" aria-label="标准与橡胶的固定镜头竞技场"></canvas><div class="controls"><button id="play" type="button">开始</button><button id="step" type="button" class="secondary">单步</button><label>速度<select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label><label class="check"><input id="overlay" type="checkbox">碰撞层</label><button id="finish" type="button" class="secondary">运行到结束</button></div></div>
+ <aside><div id="scoreboard"></div><div class="result" id="result" aria-live="polite">等待开赛</div><div class="replay-tools"><button id="replay" type="button" class="secondary" disabled>重播本场</button><button id="export" type="button" class="secondary" disabled>保存回放</button><label class="file-button">导入回放<input id="import" type="file" accept=".json,application/json"></label></div><label class="timeline">回放进度<input id="seek" type="range" min="0" max="0" value="0" disabled></label><h2>场上动态</h2><ol id="event-log"></ol><p class="note">追击与拉开距离为脚本打法；完整策略 AI 在下一阶段加入。</p></aside></section>
+ <p id="message" role="status"></p><details><summary>比赛记录与校验</summary><pre id="output"></pre></details><footer>固定竞技场 · 每秒 60 步 · 蓝色六边形 / 橙色圆形<span id="font-probe">1V1 · 0123456789</span></footer>
+</main><script type="module" src="/src/web/main.ts"></script></body></html>

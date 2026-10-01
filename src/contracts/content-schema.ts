@@ -15,7 +15,7 @@ const HitSchema = z.strictObject({
 const EffectSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('hitbox'), radius: finite.min(1).max(240), offset: Vec2Schema, durationTicks: duration, hit: HitSchema }),
   z.strictObject({ kind: z.literal('projectile'), radius: finite.min(8).max(120), speed: finite.min(0).max(1800), lifetimeTicks: duration.max(360), reflectable: z.boolean(), hit: HitSchema }),
-  z.strictObject({ kind: z.literal('impulse'), deltaV: z.strictObject({ x: finite.min(-1800).max(1800), y: finite.min(-1800).max(1800) }), target: z.enum(['self','hitTarget']) }),
+  z.strictObject({ kind: z.literal('impulse'), deltaV: z.strictObject({ x: finite.min(-1800).max(1800), y: finite.min(-1800).max(1800) }), target: z.enum(['self','hitTarget']), velocityMode: z.enum(['add','set-x']).optional() }),
   z.strictObject({ kind: z.literal('status'), statusId: id, target: z.enum(['self','hitTarget']) }),
   z.strictObject({ kind: z.literal('heal'), amount: finite.min(0).max(100), target: z.literal('self') }),
   z.strictObject({ kind: z.literal('plugin'), pluginId: id, params: z.record(z.string(), z.union([finite,z.string(),z.boolean()])) }),
@@ -42,6 +42,7 @@ const AbilitySchema = z.strictObject({
   allowedWhen: z.enum(['ground','air','both']), startupTicks: tick, activeTicks: duration, recoveryTicks: tick,
   cooldownTicks: tick, energyCost: finite.min(0).max(100), movementScale: finite.min(0).max(1),
   conditions: z.array(ConditionSchema).max(8),
+  scheduledPolicy: z.enum(['cancel-on-interrupt','before-first-emission']).optional(),
   timeline: z.array(z.strictObject({ offsetTick: tick, effects: z.array(EffectSchema).min(1).max(32) })).max(64),
   ai: z.strictObject({
     predictorId: z.enum(PREDICTOR_IDS), preferredCenterDistance: z.tuple([finite.min(0).max(1400),finite.min(0).max(1400)]),
@@ -79,7 +80,7 @@ const ArenaSchema = z.strictObject({
 });
 
 export const ContentSourceSchema = z.strictObject({
-  schemaVersion: z.literal(CONTENT_SCHEMA_VERSION), purpose: z.enum(['structural-fixture','production']),
+  schemaVersion: z.union([z.literal(CONTENT_SCHEMA_VERSION),z.literal(2)]), purpose: z.enum(['structural-fixture','production']),
   characters: z.array(CharacterSchema).min(1).max(64), abilities: z.array(AbilitySchema).min(1).max(256),
   statuses: z.array(StatusSchema).max(64), passives: z.array(PassiveSchema).max(64),
   profiles: z.array(ProfileSchema).min(1).max(64), pacingProfiles: z.array(PacingProfileSchema).max(16), arenas: z.array(ArenaSchema).min(1).max(16),
@@ -91,3 +92,7 @@ export type AbilityDefinition = ContentSource['abilities'][number];
 export type AIProfile = ContentSource['profiles'][number];
 export type Effect = AbilityDefinition['timeline'][number]['effects'][number];
 export type Condition = AbilityDefinition['conditions'][number];
+export const RubberWallParamsSchema = z.strictObject({
+  minIncomingSpeed: finite.min(250).max(1800), internalCooldownTicks: tick.min(6),
+  maxStacks: z.literal(3), durationTicks: duration.max(120), growthCoefficient: finite.min(0).max(0.1),
+});

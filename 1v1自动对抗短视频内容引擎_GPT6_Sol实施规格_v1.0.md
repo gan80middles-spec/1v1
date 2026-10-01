@@ -339,7 +339,8 @@ type Effect =
       durationTicks: number; hit: HitSpec }
   | { kind: "projectile"; radius: number; speed: number;
       lifetimeTicks: number; reflectable: boolean; hit: HitSpec }
-  | { kind: "impulse"; deltaV: Vec2; target: "self" | "hitTarget" }
+  | { kind: "impulse"; deltaV: Vec2; target: "self" | "hitTarget";
+      velocityMode?: "add" | "set-x" }
   | { kind: "status"; statusId: string; target: "self" | "hitTarget" }
   | { kind: "heal"; amount: number; target: "self" }
   | { kind: "plugin"; pluginId: string;
@@ -362,6 +363,7 @@ interface AbilityDefinition {
   energyCost: number;
   movementScale: number;
   conditions: readonly Condition[];
+  scheduledPolicy?: "cancel-on-interrupt" | "before-first-emission";
   timeline: readonly {
     offsetTick: number;
     effects: readonly Effect[];
@@ -401,6 +403,8 @@ interface StatusDefinition {
 ~~~
 
 大招沿用 AbilityDefinition，由 slot=ultimate 和能量成本区分，不再创造第二套施法引擎。timeline 的 offsetTick 相对于出招接受 tick；项目内容编译器检查事件是否落在允许区间。近战 hitbox 通常在 startupTicks 创建。
+
+Phase 1 接口补充：impulse 默认 add；set-x 将水平速度设置为 deltaV.x × aimX，垂直分量仍相加，用于落实橡胶突进的 900 水平速度，避免把已有自驱速度再次累加。scheduledPolicy 默认 cancel-on-interrupt；标准三连射显式使用 before-first-emission，首发前取消全部任务、首发后保留剩余任务。两个字段均是有限枚举，缺省不改变原有夹具的规范化数据。数值与技能时序不变。
 
 数据只有有限 discriminated union，没有任意表达式、eval、任意脚本 URL 或通用循环。status 定义提供有界的 damageTakenMultiplier、knockbackTakenMultiplier、moveSpeedMultiplier、restitutionOverride、reflect 和 bodyScale 字段；多个倍率相乘后 clamp 到各字段合法范围。反射状态取是否存在，体型缩放取最大值而非无限叠乘。
 

@@ -1,81 +1,86 @@
 # 1v1 自动对抗短视频内容引擎
 
-Phase 0 工程骨架已建立：严格 TypeScript、单 package ESM、内容校验、固定时钟、可序列化最小世界、版本化随机流和确定性验证。
+Phase 1 已完成：标准和橡胶各有四个技能槽，可以在浏览器中完整比赛、暂停、单步、倍速、查看碰撞层、保存和导入输入回放。Node 使用同一战斗核心进行权威模拟。
 
-当前只能运行明确标记的中立结构夹具：角色静止、能量按 60 Hz 增长，到指定 tick 结算超时。移动、碰撞、出招、AI、导演、正式回放和视频导出按后续阶段交付。页面上的两个圆是绘图探针，不代表角色美术已经完成。
+当前打法是基于延迟公共感知的脚本对手；完整 Utility AI 从 Phase 2 开始。导演、镜子/铁球、批量视频生产和 MP4 导出按后续阶段交付。
 
-开发顺序与唯一进度表：[开发执行计划](./开发执行计划.md)。规则依据：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收证据：[Phase 0 报告](./docs/reports/phase-0.md)。
+开发顺序：[开发执行计划](./开发执行计划.md)。规则：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收：[Phase 1 报告](./docs/reports/phase-1.md)、[Phase 0 报告](./docs/reports/phase-0.md)。
 
-## Windows 安装
+## 在 Cursor / PowerShell 中启动
 
-在项目根目录打开 PowerShell。本项目固定 Node 24.21.0 / npm 11.19.0，系统已有的 Node 22 不会被修改。
+在 `E:\1-1` 打开终端：
 
 ```powershell
-# 首次在新机器上安装项目内 Node；已有对应 .tools 时跳过下载
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-node.ps1
-
-# 每次打开新终端后激活本项目运行时
 . .\scripts\use-node.ps1
+npm.cmd run dev
+```
 
-# 用提交的 package-lock 安装依赖
+打开 [竞技场](http://127.0.0.1:5173/)。选择角色/打法/seed 后点“重置比赛”，再点“开始”。“暂停”保持当前 tick；“单步”前进一个 tick；“运行到结束”快速得到结果。比赛结束后可以重播、拖动回放进度、保存 JSON，或导入已保存的回放。
+
+工程基线保留在 [Phase 0 页面](http://127.0.0.1:5173/phase0.html)。默认端口被占用时以 Vite 实际打印的地址为准。
+
+## 首次安装
+
+项目锁定 Node 24.21.0 / npm 11.19.0；系统 Node 不会被修改。
+
+```powershell
+# 已有 .tools 对应版本时跳过第一行
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-node.ps1
+. .\scripts\use-node.ps1
 npm.cmd ci
 
-# P0 浏览器验证需要锁定的 Chromium，缓存保存在项目内
+# 浏览器验收需要 Chromium；实际浏览器缓存保存在项目内
 $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path (Get-Location) '.cache\ms-playwright'
 npx.cmd playwright install chromium
 ```
 
-已有缓存时，本次实际验证了 `npm.cmd ci --offline --no-audit` 从重新建立的 node_modules 安装成功。新机器的首次安装和浏览器下载需要网络。npm 11 对 esbuild 安装脚本的提示不影响本项目：Windows 平台二进制作为锁定的可选依赖安装，离线重装后的构建已验证。
+精确依赖由 package-lock.json 锁定。工具链、机器信息、Node ZIP hash 和浏览器版本见 [toolchain-lock.json](./toolchain-lock.json)。已有缓存的离线安装在 Phase 0 验证过；新机器首次安装需要网络。FFmpeg/ffprobe 留待视频导出阶段。
 
-完整工具链、Node 分发文件 hash、浏览器 revision 和机器实测信息见 [toolchain-lock.json](./toolchain-lock.json)。FFmpeg/ffprobe 正式导出工具留待 Phase 4；Playwright 自带的 FFmpeg 辅助程序尚未作为正式编码器验证。
-
-## 运行
+## Node 模拟与输入重放
 
 ```powershell
 . .\scripts\use-node.ps1
 npm.cmd run build
-npm.cmd run simulate -- --seed 17 --ticks 600
+npm.cmd run simulate -- --a standard --b rubber --seed 17 --output artifacts\phase-1\my-match.json
+npm.cmd run simulate -- --replay artifacts\phase-1\my-match.json
+
+# 可控对手与精确时间上限
+npm.cmd run simulate -- --a rubber --b standard --seed 18 --controller-a rush --controller-b idle --ticks 1200
+
+# 保留原 Phase 0 中立夹具命令与原 hash
 npm.cmd run simulate -- --seed 17 --ticks 600 --record-states --output "artifacts\中文 路径\示例.json"
-npm.cmd run dev
 ```
 
-开发页默认地址为 `http://127.0.0.1:5173`，提供 seed 输入、600 tick 运行和 hash 对照。CLI 的 `--help` 给出全部当前参数；seed 必须是 uint32，ticks 为 1～3600 整数。内容文件通过 `--content FILE` 指定，默认读取 `content/fixtures/phase0.json`。
+指定 `--a` 或 `--b` 启用 Fighter，两角色为 standard/rubber，默认时间上限 3600 tick；不指定角色则使用 Phase 0 中立夹具，默认 600 tick。打法为 rush/ranged/idle。`--content FILE` 可指定内容，`--help` 显示参数。seed 必须是 uint32，ticks 必须是 1～3600 的整数。
 
-成功退出码为 0，参数、内容或执行失败为 2。JSON 输出包含构建/算法版本、配置、内容/规则 hash、执行 tick、终局、每 60 tick 的检查点和状态/输入/事件序列 hash。加 `--record-states` 保存 S[0]～S[T]、全部输入和逐 tick hash；大文件存入忽略版本控制的 artifacts。
+Fighter 默认将回放写到 `artifacts/phase-1/replays/`。JSON 保存构建、内容/插件版本、配置、全部输入与事件、每 60 tick 检查点和最终 worldHash。导入从初始状态只用输入重跑，校验检查点、结果和事件，然后用缓存 RenderFrame 播放。
+
+成功退出码为 0，参数/内容错误及 invalid 比赛为 2。invalid 比赛额外写 `输出路径.failure.json`，含完整内容、当前有限状态、输入、事件和诊断。过多实体/派生效果不会被悄悄丢弃；边界接触预算则按规格诊断并停止该 substep 的剩余位移。
 
 ## 验证
 
 ```powershell
 . .\scripts\use-node.ps1
-npm.cmd run verify:phase0
+npm.cmd run verify:phase1
 ```
 
-这一命令执行 Node/Web 严格类型检查、单元测试、Node/Web 构建、模块依赖检查、两次独立进程的 600 tick 字节对照、记录开关对照、CLI 失败用例、冻结种子清单验证，以及真实 Chromium 的绘图/本地字体/Node-Web hash 验证。
+这会执行 Node/Web 类型检查、72 项测试、构建、33 个源文件的依赖边界检查、Phase 0 原 hash 回归、30 个冻结开发配置各两遍、全部输入重放和逐 tick 世界序列比较，以及 Chromium 控件/像素/字体/回放导入导出和 Node/Web 一致性验证。包括一份故意超投射物限额的 CLI 失败包，以及双 idle 超时样例。
 
-独立入口：`npm.cmd test`、`npm.cmd run typecheck`、`npm.cmd run build`、`npm.cmd run check:boundaries`、`npm.cmd run test:determinism`、`npm.cmd run verify:browser`。确定性和浏览器脚本需要先构建。
+结果在 `artifacts/phase-1/`；小型验收快照保存在 [phase-1-evidence.json](./docs/reports/phase-1-evidence.json)。截图、完整回放和大型输出忽略版本控制，可以由验收命令重新生成。独立命令：`typecheck`、`test:phase1`、`build`、`test:phase1-smoke`、`verify:phase1-browser`；后两项需要先构建。
 
-结果保存在 `artifacts/phase-0/`：unit-tests.json、boundaries.json、determinism.json、browser.json、browser.png 和 `中文 路径/run-a.json`/run-b.json。种子清单验证不会重新挑选 seed，失败也不会自动替换种子。
+## 模块与后续工作
 
-## 模块与内容
+- `contracts`：数据类型、严格 schema、版本与公共感知契约。
+- `math`：规范化 JSON、SHA-256、随机流、时间与相对扫掠几何。
+- `content`：声明式内容编译、引用/时序校验、注册插件和稳定 ID。
+- `sim`：固定 tick / 四 substep、圆碰撞、动作时间轴、命中/能量/状态/终局及完整世界快照。
+- `ai`：只消费 Observation 的脚本控制器；不依赖 sim 或真实敌方状态。
+- `runner`：先取同一个世界的双方感知，再求输入；延迟公共快照、回执投递与输入回放校验。
+- `replay` / `render`：只读帧适配和固定镜头 Canvas 绘制；绘制模块不执行战斗。
+- `cli` / `web`：Node 文件 I/O 和浏览器控件。
 
-- `src/contracts`：纯数据类型、声明式 schema 和版本；不执行比赛。
-- `src/math`：canonical serialization、无 Node I/O 的 SHA-256、PRNG、种子派生、时间换算。
-- `src/content`：字段/引用/时序/数值/注册约束校验，稳定 ID、只读 bundle 编译。
-- `src/sim`：最小世界、60 Hz step、结束边界、world snapshot/restore/hash。
-- `src/runner`：双中立输入组装和冻结评测清单定义。
-- `src/cli`、`src/web`：Node I/O 与页面宿主入口。
-- `scripts`：环境激活、模块边界、独立进程和浏览器验证。
+`content/fighter-phase1.json` 是两角色战斗内容，schema 2；`content/fixtures/phase0.json` 保留为 schema 1 结构夹具。predictorId 的声明式提示将由 Phase 2 实现预测与评分。反射机制在 Phase 3 加入；当前编译器会拒绝未实现的反射和其他被动，避免静默忽略效果。
 
-结构内容有完整四槽、技能 timeline、状态/被动/Profile/竞技场 schema。predictor/plugin 注册在本阶段验证结构契约，尚无战斗或预测执行器。正式内容必须随其真实效果、预测、回放与测试一起交付。不要将 purpose 改成 production 来冒充已完成能力；当前模拟器会拒绝正式内容。
+`fixtures/seeds/` 的 5 份冻结清单保持不变。本阶段运行的是 30 场开发 smoke，尚未执行后续 200/800/400 场正式评测。完整 AI/感知/导演的 runner 检查点续跑、生产轨迹文件、worker 和视频仍按计划推进。
 
-修改 JSON 后先运行相关测试；坏引用、缺槽、重复 ID、非法 tick、未知字段、越界数值会报告字段路径。内容键顺序和定义列表顺序不会改变规范化 bundleHash，效果数组保留业务顺序。时间输入用 `secondsToTicks` 编译为整数，不把浮点秒送入模拟。
-
-`fixtures/random-v1.json` 冻结算法向量；`fixtures/seeds` 保存开发、训练、留出、导演成对和性能清单。后者是未来评测输入，尚未运行 200/800/400 场正式战斗。清单版本变更必须记入 docs/decisions.md。
-
-## 诊断与当前限制
-
-先看 CLI 的具体字段路径或错误信息；确定性失配定位第一个不同 tick，不修改最后状态。依赖检查失败时修复导入方向；sim 不允许导入 Node、AI、UI 或内容编译器。所有影响未来的字段必须进入声明式 schema、snapshot/restore 与 worldHash。
-
-本阶段只有世界快照恢复。完整 Controller、感知 ring、回执和导演检查点在 P2-10/P3-11 实现；`RunnerHashInput` 只声明未来必须覆盖的组件。没有完整 Replay、worker 池或 MP4。
-
-确定性承诺限于同构建、固定 Node/V8、相同内容/seed/输入；两种 seed 在本机 Chromium 与 Node 一致是诊断证据，不承诺跨所有 CPU/浏览器位级一致。本地字体探针只有 Latin 字形，正式中文字体和音视频编码器要在导出阶段单独验收。
+确定性范围为同构建、固定 Node/V8、相同内容/输入。当前 Chromium 和 Node 对照通过，不承诺所有 CPU/浏览器都位级一致。本地字体探针仅含 Latin 字形；正式中文字体与视频编码器在导出阶段单独验收。
