@@ -9,6 +9,9 @@ import { limitVelocity, lerpPosition, sweepCircles } from '../math/geometry.js';
 import { initialFighterState, validateFighterSnapshot } from './fighter-state.js';
 import { applyBodyAttributes, castRejection, effective, phaseAt } from './abilities/effective.js';
 import { moveBodies, type Segment } from './physics/motion.js';
+import { speedImpactDamage } from '../math/ability-effects.js';
+import { projectileSubstep } from './abilities/projectile.js';
+import { rulesetFor } from './rulesets.js';
 interface Candidate {
     sourceId: number;
     targetId: number;
@@ -16,6 +19,7 @@ interface Candidate {
     hit: HitSpec;
     projectileId: number | null;
     position: Vec2;
+    cause?: Pick<BattleEvent,'seq'|'rootEventId'|'depth'>;
 }
 export class FighterSimulation {
     private world: WorldView;
@@ -127,7 +131,7 @@ export class FighterSimulation {
                 }
                 else if (intent.jumpPressed) {
                     const phase = phaseAt(e, t);
-                    if (phase !== 'free' || !e.body.grounded || e.hp <= 0) {
+                    if (phase !== 'free' || !e.body.grounded || e.hp <= 0 || !rulesetFor(w.config.rulesetId).capabilities().jump) {
                         reject(e.hp <= 0 ? 'dead' : phase === 'hitstun' ? 'hitstun' : phase !== 'free' ? 'busy' : 'air-ground');
                         continue;
                     }
@@ -175,6 +179,7 @@ export class FighterSimulation {
                         const def = this.content.source.statuses.find(s => s.id === fx.statusId)!, old = e.statuses.find(s => s.definitionId === def.id);
                         if (old && def.stacking !== 'replace') {
                             old.expiresTick = t + def.durationTicks;
+                            if(this.engineBuild==='phase3a-v1'){old.sourceCastId=c.castId;old.appliedTick=t;}
                             if (def.stacking === 'stack')
                                 old.stacks = Math.min(def.maxStacks, old.stacks + 1);
                             emit('StatusApplied', { statusId: def.id, expiresTick: old.expiresTick, stacks: old.stacks, castId: c.castId }, e.id);
@@ -238,7 +243,7 @@ export class FighterSimulation {
                     limitVelocity(b.entity.body.velocity);
                     emit('PassiveTriggered', { passiveId: r.passiveId, stacks: r.stacks, expiresTick: r.expiresTick }, b.entity.id, null, b.position, bounce);
                 }, (code, detail) => { if (w.diagnostics.length >= 64)
-                    throw new Error('diagnostic budget exceeded'); w.diagnostics.push({ tick: t, code, detail }); emit('Diagnostic', { code, detail }); },this.engineBuild==='phase2-v1');
+                    throw new Error('diagnostic budget exceeded'); w.diagnostics.push({ tick: t, code, detail }); emit('Diagnostic', { code, detail }); },this.engineBuild!=='phase1-v1');
                 for (const h of w.hitboxes) {
                     const ownerIndex = w.entities.findIndex(e => e.id === h.ownerId), targetIndex = 1 - ownerIndex, owner = w.entities[ownerIndex]!, target = w.entities[targetIndex]!;
                     h.radius = h.baseRadius * effective(owner, this.content, t).meleeScale;
@@ -248,12 +253,30 @@ export class FighterSimulation {
                             if (end < start)
                                 continue;
                             const offset = (p: Vec2): Vec2 => ({ x: p.x + h.localOffset.x * h.aimX, y: p.y + h.localOffset.y });
-                            if (sweepCircles(offset(interpolate(a, start)), offset(interpolate(a, end)), h.radius, interpolate(b, start), interpolate(b, end), target.body.radius) !== null)
-                                add({ sourceId: h.ownerId, targetId: target.id, castId: h.castId, hit: { ...h.hit, launchDeltaV: { x: h.hit.launchDeltaV.x * h.aimX, y: h.hit.launchDeltaV.y } }, projectileId: null, position: { ...target.body.position } });
+                            if (sweepCircles(offset(interpolate(a, start)), offset(interpolate(a, end)), h.radius, interpolate(b, start), interpolate(b, end), target.body.radius) !== null) {
+                                const velocity=(s:Segment)=>({x:(s.to.x-s.from.x)*240/(s.end-s.start||1),y:(s.to.y-s.from.y)*240/(s.end-s.start||1)}),va=velocity(a),vb=velocity(b);
+                                const runtime=w.casts.find(c=>c.castId===h.castId)!;
+                                const damage=this.engineBuild==='phase3a-v1'?speedImpactDamage(this.content,owner.characterId,runtime.abilityId,h.hit.damage,Math.hypot(va.x-vb.x,va.y-vb.y)):h.hit.damage;
+                                add({ sourceId: h.ownerId, targetId: target.id, castId: h.castId, hit: { ...h.hit,damage, launchDeltaV: { x: h.hit.launchDeltaV.x * h.aimX, y: h.hit.launchDeltaV.y } }, projectileId: null, position: { ...target.body.position } });
+                            }
                         }
                 }
                 const removed = new Set<number>();
                 for (const p of w.projectiles) {
+                    if(this.engineBuild==='phase3a-v1'){
+                        const contact=projectileSubstep(p,w.entities,paths,this.content,t,arena);
+                        if(contact.kind==='reflect'){
+                            const reflected=emit('ProjectileReflected',{projectileId:p.id,castId:p.sourceCastId,defenseCastId:contact.defenseCastId,previousOwnerId:contact.previousOwnerId,reflectionCount:p.reflectionCount,velocity:{...p.velocity},preventedDamage:p.hit.damage},contact.target.id,contact.previousOwnerId,contact.position,p.reflectionCause??cause(p.sourceCastId));
+                            p.reflectionCause={seq:reflected.seq,rootEventId:reflected.rootEventId,depth:reflected.depth};
+                        }else if(contact.kind==='dissipate'){
+                            removed.add(p.id);emit('ProjectileDissipated',{projectileId:p.id,castId:p.sourceCastId,defenseCastId:contact.defenseCastId,reflectionCount:p.reflectionCount},contact.target.id,contact.previousOwnerId,contact.position,p.reflectionCause??cause(p.sourceCastId));
+                        }else if(contact.kind==='hit'){
+                            const sign=p.velocity.x<0?-1:1;
+                            add({sourceId:p.ownerId,targetId:contact.target.id,castId:p.sourceCastId,hit:{...p.hit,launchDeltaV:{x:p.hit.launchDeltaV.x*sign,y:p.hit.launchDeltaV.y}},projectileId:p.id,position:contact.position,...(p.reflectionCause?{cause:p.reflectionCause}:{})});
+                            removed.add(p.id);emit('ProjectileExpired',{projectileId:p.id,reason:'hit'},p.ownerId);
+                        }else if(contact.kind==='wall'){removed.add(p.id);emit('ProjectileExpired',{projectileId:p.id,reason:'wall'},p.ownerId);}
+                        continue;
+                    }
                     const from = { ...p.position }, to = { x: from.x + p.velocity.x / 240, y: from.y + p.velocity.y / 240 };
                     let wallTime = 1;
                     if (to.x < p.radius)
@@ -305,7 +328,7 @@ export class FighterSimulation {
                 const material = effective(e, this.content, t);
                 let remaining = e.hp, launchX = 0, launchY = 0, stun = 0, lastCast: number | null = null;
                 for (const hit of hits) {
-                    const parent = emit('HitResolved', { castId: hit.castId, hitGroup: hit.hit.hitGroup, projectileId: hit.projectileId }, hit.sourceId, e.id, hit.position, cause(hit.castId));
+                    const parent = emit('HitResolved', { castId: hit.castId, hitGroup: hit.hit.hitGroup, projectileId: hit.projectileId }, hit.sourceId, e.id, hit.position, hit.cause??cause(hit.castId));
                     const nominal = hit.hit.damage * material.damageTaken, amount = Math.min(remaining, nominal), before = remaining;
                     remaining -= amount;
                     emit('DamageResolved', { castId: hit.castId, amount, hpBefore: before, hpAfter: remaining }, hit.sourceId, e.id, hit.position, parent);
@@ -350,12 +373,8 @@ export class FighterSimulation {
             w.casts = w.casts.filter(c => live.has(c.castId));
             w.hitRegistry = w.hitRegistry.filter(r => live.has(r.castId));
             w.tick = t + 1;
-            if (w.entities.some(e => e.hp <= 0) || w.tick >= w.config.maxTicks) {
-                const both = w.entities.every(e => e.hp <= 0), dead = w.entities.some(e => e.hp <= 0), difference = w.entities[0].hp * w.entities[1].maxHp - w.entities[1].hp * w.entities[0].maxHp;
-                const winner = both ? null : dead ? w.entities.find(e => e.hp > 0)!.participantId : Math.abs(difference) <= .005 * w.entities[0].maxHp * w.entities[1].maxHp ? null : w.entities[difference > 0 ? 0 : 1].participantId;
-                w.result = { matchId: w.config.matchId, reason: both ? 'double-ko' : dead ? 'ko' : 'timeout', winnerParticipantId: winner, endedAfterTicks: w.tick, remainingHp: [w.entities[0].hp, w.entities[1].hp], diagnosticCode: null };
-                emit('MatchEnded', { result: w.result });
-            }
+            w.result=rulesetFor(w.config.rulesetId).evaluateResult(w);
+            if(w.result)emit('MatchEnded',{result:w.result});
             this.world = deepFreeze(w);
         }
         catch (error) {

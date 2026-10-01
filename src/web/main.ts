@@ -1,5 +1,7 @@
 import source from '../../content/fighter-phase1.json';
 import utilitySource from '../../content/fighter-phase2.json';
+import phase3Source from '../../content/fighter-phase3a.json';
+import { compilePhase3AContent } from '../content/phase3a.js';
 import { compileFighterContent } from '../content/fighter.js';
 import { FighterRunner, fighterConfig } from '../runner/fighter.js';
 import { replayInputs } from '../runner/input-replay.js';
@@ -37,11 +39,11 @@ function show(): void {
     el('#clock').textContent = `${(frame.tick / 60).toFixed(2)} / ${((replay?.config.maxTicks ?? runner.config.maxTicks) / 60).toFixed(2)} 秒`;
     el('#mode').textContent = replaying ? '回放 · 输入校验通过' : playing ? '正在交锋' : frame.result ? '比赛结束' : '已暂停';
     play.textContent = playing ? '暂停' : frame.tick === 0 ? '开始' : '继续';
-    el('#scoreboard').innerHTML = frame.entities.map(e => { const c = content.source.characters.find(c => c.id === e.characterId)!, skills = SLOTS.map(s => { const cd = Math.max(0, e.cooldownReadyTick[s] - frame.tick); return `<span>${ABILITY_LABELS[c.slots[s]] ?? c.slots[s]} <b>${cd > 0 ? `${(cd / 60).toFixed(1)}s` : s === 'ultimate' && e.energy < 100 ? '充能' : '就绪'}</b></span>`; }).join(''); return `<div class="fighter-card"><div class="fighter-title" style="color:${c.visual.color}">${e.id === 1 ? 'A' : 'B'} · ${escapeHtml(c.name)}<small>${e.id === 1 ? '左侧出生' : '右侧出生'}</small></div><div class="meter"><span style="width:${e.hp / e.maxHp * 100}%;background:${c.visual.color}"></span></div><div class="meter energy"><span style="width:${e.energy}%;background:#8bdcbe"></span></div><div class="metrics"><span>HP ${e.hp.toFixed(1)}/${e.maxHp}</span><span>能量 ${e.energy.toFixed(1)}</span></div><div class="skills">${skills}</div><div class="state-label">${phaseLabels[e.actionPhase]}${e.wallStacks ? ` · 墙弹 ${e.wallStacks} 层` : ''}${e.visibleStatusIds.includes('cushion') ? ' · 护垫减伤' : ''}${e.visibleStatusIds.includes('overdrive') ? ' · 超弹模式' : ''}</div></div>`; }).join('');
+    el('#scoreboard').innerHTML = frame.entities.map(e => { const c = content.source.characters.find(c => c.id === e.characterId)!, skills = SLOTS.map(s => { const cd = Math.max(0, e.cooldownReadyTick[s] - frame.tick); return `<span>${ABILITY_LABELS[c.slots[s]] ?? c.slots[s]} <b>${cd > 0 ? `${(cd / 60).toFixed(1)}s` : s === 'ultimate' && e.energy < 100 ? '充能' : '就绪'}</b></span>`; }).join(''); return `<div class="fighter-card"><div class="fighter-title" style="color:${c.visual.color}">${e.id === 1 ? 'A' : 'B'} · ${escapeHtml(c.name)}<small>${e.id === 1 ? '左侧出生' : '右侧出生'}</small></div><div class="meter"><span style="width:${e.hp / e.maxHp * 100}%;background:${c.visual.color}"></span></div><div class="meter energy"><span style="width:${e.energy}%;background:#8bdcbe"></span></div><div class="metrics"><span>HP ${e.hp.toFixed(1)}/${e.maxHp}</span><span>能量 ${e.energy.toFixed(1)}</span></div><div class="skills">${skills}</div><div class="state-label">${phaseLabels[e.actionPhase]}${e.wallStacks ? ` · 墙弹 ${e.wallStacks} 层` : ''}${e.visibleStatusIds.includes('cushion') ? ' · 护垫减伤' : ''}${e.visibleStatusIds.includes('overdrive') ? ' · 超弹模式' : ''}${e.visibleStatusIds.includes('giant')?' · 巨人':''}${e.visibleStatusIds.includes('brace')?' · 稳固架势':''}${e.visibleStatusIds.includes('screen')?' · 反射屏障':''}${e.visibleStatusIds.includes('dome')?' · 镜面领域':''}</div></div>`; }).join('');
     const result = frame.result;
     el('#result').textContent = result ? result.reason === 'invalid' ? '比赛异常 · 查看诊断记录' : result.winnerParticipantId ? `${result.winnerParticipantId} 方获胜 · ${result.reason === 'ko' ? '击倒' : '时间结束'}` : `平局 · ${result.reason === 'double-ko' ? '同时击倒' : '时间结束'}` : frame.tick === 0 ? '等待开赛' : '比赛进行中';
-    const visible = events.filter(e => e.tick < frame.tick && ['CastAccepted', 'DamageResolved', 'PassiveTriggered', 'EntityDied'].includes(e.type)).slice(-7).reverse();
-    el('#event-log').replaceChildren(...visible.map(e => { const li = document.createElement('li'), who = e.sourceId === 1 ? 'A' : 'B'; li.textContent = `${(e.tick / 60).toFixed(1)}s · ${who} ${e.type === 'CastAccepted' ? `使出${ABILITY_LABELS[e.payload.abilityId] ?? e.payload.abilityId}` : e.type === 'DamageResolved' ? `命中，伤害 ${e.payload.amount.toFixed(1)}` : e.type === 'PassiveTriggered' ? `墙弹成长 ${e.payload.stacks} 层` : '倒下'}`; return li; }));
+    const visible = events.filter(e => e.tick < frame.tick && ['CastAccepted', 'DamageResolved', 'PassiveTriggered', 'ProjectileReflected', 'ProjectileDissipated', 'EntityDied'].includes(e.type)).slice(-7).reverse();
+    el('#event-log').replaceChildren(...visible.map(e => { const li = document.createElement('li'), who = e.sourceId === 1 ? 'A' : 'B'; li.textContent = `${(e.tick / 60).toFixed(1)}s · ${who} ${e.type === 'CastAccepted' ? `使出${ABILITY_LABELS[e.payload.abilityId] ?? e.payload.abilityId}` : e.type === 'DamageResolved' ? `命中，伤害 ${e.payload.amount.toFixed(1)}` : e.type === 'PassiveTriggered' ? `墙弹成长 ${e.payload.stacks} 层` : e.type==='ProjectileReflected'?`反射飞行物（第 ${e.payload.reflectionCount} 次）`:e.type==='ProjectileDissipated'?'屏障消散飞行物':'倒下'}`; return li; }));
     seek.value = String(frame.tick);
     el<HTMLButtonElement>('#replay').disabled = !replay;
     el<HTMLButtonElement>('#export').disabled = !replay;
@@ -73,8 +75,8 @@ function reset(): void {
     const kinds = [el<HTMLSelectElement>('#controller-a').value, el<HTMLSelectElement>('#controller-b').value] as [
         RunnerControllerKind,
         RunnerControllerKind
-    ], utility = kinds.includes('utility');
-    content = utility ? compileUtilityContent(utilitySource) : compileFighterContent(source);
+    ], build=new URLSearchParams(location.search).get('build'), utility=build!=='phase1-v1';
+    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):compilePhase3AContent(phase3Source);
     const config = fighterConfig(content, seed, el<HTMLSelectElement>('#a').value, el<HTMLSelectElement>('#b').value);
     if (utility) {
         config.participants[0].profileId = el<HTMLSelectElement>('#profile-a').value;
@@ -155,7 +157,13 @@ el<HTMLInputElement>('#import').addEventListener('change', async (e) => {
         replaying = true;
         replay = loaded.replay;
         frames = loaded.frames;
-        content = compileFighterContent(replay.content);
+        content = (replay.engineBuild==='phase3a-v1'?compilePhase3AContent:compileFighterContent)(replay.content);
+        el<HTMLInputElement>('#seed').value = String(replay.config.seed);
+        for (const [index, side] of ['a', 'b'].entries()) {
+            const participant = replay.config.participants[index]!;
+            el<HTMLSelectElement>('#' + side).value = participant.characterId;
+            el<HTMLSelectElement>('#profile-' + side).value = participant.profileId;
+        }
         traces = [];
         decisionCursor = -1;
         cursor = 0;
@@ -198,7 +206,7 @@ function reviewDecision(index: number): void { const own = traces.filter(t => t.
 el('#decision').addEventListener('input', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value)));
 el('#decision-prev').addEventListener('click', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value) - 1));
 el('#decision-next').addEventListener('click', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value) + 1));
-el('#export-trace').addEventListener('click', () => guard(() => { const blob = new Blob([canonicalSerialize({ engineBuild: replay?.engineBuild ?? 'phase2-v1', config: replay?.config ?? runner.config, contentHash: content.bundleHash, traces }) + '\n'], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `${runner.config.matchId}.trace.json`; a.click(); URL.revokeObjectURL(url); }));
+el('#export-trace').addEventListener('click', () => guard(() => { const blob = new Blob([canonicalSerialize({ engineBuild: replay?.engineBuild ?? (runner instanceof UtilityRunner?runner.engineBuild:'phase1-v1'), config: replay?.config ?? runner.config, contentHash: content.bundleHash, traces }) + '\n'], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `${runner.config.matchId}.trace.json`; a.click(); URL.revokeObjectURL(url); }));
 el<HTMLInputElement>('#import-trace').addEventListener('change', async (e) => { try {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file)
@@ -222,6 +230,11 @@ el<HTMLInputElement>('#import-trace').addEventListener('change', async (e) => { 
 catch (e) {
     message.textContent = e instanceof Error ? e.message : String(e);
 } });
+for(const side of ['a','b']){
+    const setProfile=()=>{const char=phase3Source.characters.find(c=>c.id===el<HTMLSelectElement>('#'+side).value);if(char)el<HTMLSelectElement>('#profile-'+side).value=char.aiProfileId;};
+    el('#'+side).addEventListener('change',setProfile);
+    if(!query.has('profile-'+side))setProfile();
+}
 reset();
 if (query.get('watch') === '1') {
     runner.run();

@@ -27,7 +27,13 @@
     "test:phase2-smoke": "node scripts/verify-phase2.mjs",
     "verify:phase2-browser": "node scripts/verify-phase2-browser.mjs",
     "review:h2": "node scripts/serve-h2.mjs",
-    "verify:phase2": "npm run typecheck && npm run test:phase2 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-2/boundaries.json && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser && npm run test:phase2-smoke && npm run verify:phase2-browser"
+    "verify:phase2": "npm run typecheck && npm run test:phase2 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-2/boundaries.json && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser && npm run test:phase2-smoke && npm run verify:phase2-browser",
+    "evaluate:ai": "node scripts/evaluate-ai.mjs",
+    "test:phase3a": "vitest run --outputFile.json=artifacts/phase-3a/unit-tests.json",
+    "test:phase3a-correctness": "node scripts/verify-phase3a.mjs",
+    "verify:phase3a-browser": "node scripts/verify-phase3a-browser.mjs",
+    "review:style": "node scripts/serve-h2.mjs --stage phase3a",
+    "verify:phase3a": "npm run typecheck && npm run test:phase3a && npm run build && node scripts/check-boundaries.mjs artifacts/phase-3a/boundaries.json && node scripts/create-seed-manifests.mjs --check && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser && npm run test:phase2-smoke && npm run verify:phase2-browser && npm run test:phase3a-correctness && npm run evaluate:ai -- --ablations && node scripts/create-phase3a-style.mjs && node scripts/record-phase3a-examples.mjs && npm run verify:phase3a-browser && node scripts/record-phase3a-evidence.mjs"
   },
   "dependencies": {
     "zod": "4.6.5"

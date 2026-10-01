@@ -8,6 +8,9 @@ import { actionPhase } from '../math/fighter-phase.js';
 import { abilityFor, attributes, clamp01, direction, distanceBand, positionQuality } from './abilities.js';
 import { contextAt, possibleBasicLikelihood } from './memory.js';
 import { advanceMotion, resolvePredictedContact } from './motion.js';
+import { statusGeometry, speedImpactDamage } from '../math/ability-effects.js';
+import { predictProjectile } from './projectile.js';
+import { staticOutcome } from './no-prediction.js';
 export interface PredictionContext {
     observation: Observation;
     content: ContentBundle;
@@ -118,11 +121,18 @@ export function predictionGrid(c: PredictionContext, option: Option, models: rea
             for (const f of e.effects)
                 if (f.kind === 'hitbox')
                     add(cast.start + e.offsetTick + f.durationTicks);
+                else if(f.kind==='status' && c.content.pluginVersions['speed-impact']===1)
+                    add(cast.start+e.offsetTick+c.content.source.statuses.find(s=>s.id===f.statusId)!.durationTicks);
         }
     }
     for (const m of models) {
         add(m.startInTicks);
         add(m.endInTicks);
+    }
+    if(c.content.pluginVersions['speed-impact']===1){
+        for(const s of c.observation.self.entity.statuses)add(s.expiresTick-c.observation.nowTick);
+        const tell=c.belief.opponent?.tell;
+        if(tell)for(const entry of c.content.source.abilities.find(a=>a.id===tell.abilityId)!.timeline)for(const fx of entry.effects)if(fx.kind==='status'){add(tell.visibleSinceTick-c.observation.nowTick+entry.offsetTick);add(tell.visibleSinceTick-c.observation.nowTick+entry.offsetTick+c.content.source.statuses.find(s=>s.id===fx.statusId)!.durationTicks);}
     }
     const own = bodyOf(c.observation);
     if (option.kind === 'jump') {
@@ -164,6 +174,27 @@ function ownParams(c: PredictionContext, cast: ReturnType<typeof selfCast>, tick
         params.moveSpeed *= cast.ability.movementScale;
     return params;
 }
+function ownGeometry(c:PredictionContext,cast:ReturnType<typeof selfCast>,tick:number){
+    const o=c.observation,extra=[];
+    if(cast)for(const entry of cast.ability.timeline)for(const fx of entry.effects)if(fx.kind==='status'&&cast.start+entry.offsetTick<=tick){const def=c.content.source.statuses.find(s=>s.id===fx.statusId)!;extra.push({definitionId:def.id,stacks:1,expiresTick:o.nowTick+cast.start+entry.offsetTick+def.durationTicks});}
+    const replaced=new Set(extra.map(s=>s.definitionId));
+    return statusGeometry(c.content,o.self.entity.characterId,[...o.self.entity.statuses.filter(s=>!replaced.has(s.definitionId)),...extra],o.nowTick+tick);
+}
+function enemyStatuses(c:PredictionContext,tick:number){
+    const enemy=c.belief.opponent!;let statuses=enemy.visibleStatusIds.map(definitionId=>({definitionId,stacks:1,expiresTick:Infinity}));
+    if(enemy.tell){const a=c.content.source.abilities.find(a=>a.id===enemy.tell!.abilityId)!;for(const entry of a.timeline)for(const fx of entry.effects)if(fx.kind==='status'&&enemy.tell.visibleSinceTick-c.observation.nowTick+entry.offsetTick<=tick){const def=c.content.source.statuses.find(s=>s.id===fx.statusId)!;statuses=statuses.filter(s=>s.definitionId!==def.id);statuses.push({definitionId:def.id,stacks:1,expiresTick:enemy.tell.visibleSinceTick+entry.offsetTick+def.durationTicks});}}
+    return statuses.filter(s=>s.expiresTick>c.observation.nowTick+tick);
+}
+function enemyGeometry(c:PredictionContext,tick:number){return statusGeometry(c.content,c.belief.opponent!.characterId,enemyStatuses(c,tick),c.observation.nowTick+tick);}
+function enemyAttributes(c:PredictionContext,tick:number){return attributes(c.content,{...c.belief.opponent!,visibleStatusIds:enemyStatuses(c,tick).map(s=>s.definitionId)},c.observation.nowTick+tick);}
+function projectileOutcome(c:PredictionContext,cast:ReturnType<typeof selfCast>,fx:DeepReadonly<Extract<Effect,{kind:'projectile'}>>,born:number,path:{own:Point[];enemy:Point[]},ownerId:number,aimX:-1|1,initial?:{position:Vec2;velocity:Vec2;reflectionCount?:number|undefined}){
+    const o=c.observation,owner=ownerId===o.self.entity.id?path.own:path.enemy,position=positionAt(owner,Math.max(0,born)),velocity=initial?.velocity??{x:fx.speed*aimX,y:0};
+    return predictProjectile({position:initial?.position??{x:position.x+48*aimX+(born<0?velocity.x*(-born)/60:0),y:position.y+8},velocity,radius:fx.radius,birth:initial?0:Math.max(0,born),expires:initial?30:born+fx.lifetimeTicks,ownerId,reflectionCount:initial?.reflectionCount??0,reflectable:fx.reflectable},[
+        {id:o.self.entity.id,points:path.own,shield:t=>ownGeometry(c,cast,t).reflectExtra},
+        {id:c.belief.opponent!.id,points:path.enemy,shield:t=>enemyGeometry(c,t).reflectExtra},
+    ],o.arena);
+}
+function relativeSpeed(path:{own:Point[];enemy:Point[]},tick:number):number {const a=path.own.findLast(p=>p.tick<=tick)!.body.velocity,b=path.enemy.findLast(p=>p.tick<=tick)!.body.velocity;return Math.hypot(a.x-b.x,a.y-b.y);}
 function trajectory(c: PredictionContext, option: Option, grid: readonly number[], hypothesis: Belief['hypotheses'][number]): {
     own: Point[];
     enemy: Point[];
@@ -197,11 +228,16 @@ function trajectory(c: PredictionContext, option: Option, grid: readonly number[
             impulse(a, cast.ability, cast.start, cast.aimX, appliedSelf);
         if (enemyCast)
             impulse(b, enemyCast, enemyStart, op.facing, appliedEnemy);
+        if(c.content.pluginVersions['speed-impact']===1){
+            const ga=ownGeometry(c,cast,t),gb=enemyGeometry(c,t);
+            a.radius=ga.radius;a.mass=ga.mass;b.radius=gb.radius;b.mass=gb.mass;
+            for(const body of [a,b]){body.position.x=Math.max(body.radius,Math.min(o.arena.width-body.radius,body.position.x));body.position.y=Math.max(body.radius,Math.min(o.arena.height-body.radius,body.position.y));}
+        }
         own.push({ tick: t, body: cloneMotion(a) });
         enemy.push({ tick: t, body: cloneMotion(b) });
         if (k === grid.length - 1)
             break;
-        const span = grid[k + 1]! - t, fromA = { ...a.position }, fromB = { ...b.position }, pa = ownParams(c, cast, t), pb = attributes(c.content, op, o.nowTick + t);
+        const span = grid[k + 1]! - t, fromA = { ...a.position }, fromB = { ...b.position }, pa = ownParams(c, cast, t), pb = c.content.pluginVersions['speed-impact']===1?enemyAttributes(c,t):attributes(c.content, op, o.nowTick + t);
         let ma: -1 | 0 | 1 | null = option.moveX, mb: -1 | 0 | 1 | null = hypothesis.moveX;
         if (cast && t < cast.start + cast.ability.startupTicks + cast.ability.activeTicks + cast.ability.recoveryTicks && (cast.ability.movementScale === 0 || cast.ability.tags.includes('mobility') && t >= cast.start + cast.ability.startupTicks && t < cast.start + cast.ability.startupTicks + cast.ability.activeTicks))
             ma = null;
@@ -229,14 +265,14 @@ function trajectory(c: PredictionContext, option: Option, grid: readonly number[
 }
 function hitboxHit(effect: DeepReadonly<Extract<Effect, {
     kind: 'hitbox';
-}>>, born: number, owner: readonly Point[], target: readonly Point[], aimX: -1 | 1): number | null {
+}>>, born: number, owner: readonly Point[], target: readonly Point[], aimX: -1 | 1,scale:(tick:number)=>number=()=>1): number | null {
     const end = born + effect.durationTicks;
     for (let i = 1; i < owner.length; i++) {
         const start = Math.max(owner[i - 1]!.tick, born, 0), stop = Math.min(owner[i]!.tick, end - 1e-7, 30);
         if (stop < start)
             continue;
         const offset = (p: Vec2): Vec2 => ({ x: p.x + effect.offset.x * aimX, y: p.y + effect.offset.y });
-        const fraction = sweepCircles(offset(positionAt(owner, start)), offset(positionAt(owner, stop)), effect.radius, positionAt(target, start), positionAt(target, stop), target[i]!.body.radius);
+        const fraction = sweepCircles(offset(positionAt(owner, start)), offset(positionAt(owner, stop)), effect.radius*scale(start), positionAt(target, start), positionAt(target, stop), target[i]!.body.radius);
         if (fraction !== null)
             return start + (stop - start) * fraction;
     }
@@ -283,6 +319,15 @@ function estimatedSetup(c: PredictionContext, option: Option, path: {
         if (!fx || fx.kind !== 'status')
             return { value: 0, reason: 'no-buff-effect' };
         const def = c.content.source.statuses.find(s => s.id === fx.statusId)!, vx = o.self.entity.body.velocity.x, speed = Math.abs(vx), gap = vx >= 0 ? o.arena.width - o.self.entity.body.radius - o.self.entity.body.position.x : o.self.entity.body.position.x - o.self.entity.body.radius;
+        if(def.modifiers.bodyScale>1){
+            const basic=abilityFor(c.content,o.self.entity.characterId,'basic'),hit=basic.timeline.flatMap(e=>e.effects).find(f=>f.kind==='hitbox');
+            if(!hit||hit.kind!=='hitbox')return {value:0,reason:'no-next-attack'};
+            const start=a.startupTicks+a.activeTicks+a.recoveryTicks+basic.startupTicks,d=Math.hypot(path.own.at(-1)!.body.position.x-path.enemy.at(-1)!.body.position.x,path.own.at(-1)!.body.position.y-path.enemy.at(-1)!.body.position.y),vertical=Math.abs(path.own.at(-1)!.body.position.y-path.enemy.at(-1)!.body.position.y);
+            const reach=Math.abs(hit.offset.x)+hit.radius*def.modifiers.meleeHitboxScale+enemy.radius,follow=Math.max(0,120-start)*attributes(c.content,o.self.entity,o.nowTick).moveSpeed*def.modifiers.moveSpeedMultiplier/60;
+            if(vertical>reach||d>reach+follow)return {value:0,reason:'giant: no reachable next attack'};
+            const reachGain=hit.radius*(def.modifiers.meleeHitboxScale-1),gain=clamp01((reach+follow-d)/80)*reachGain/8.5;
+            return {value:Math.min(2,gain*4*.6),reason:'giant: bounded next-attack reach/size summary, confidence 0.6'};
+        }
         const wallTicks = speed > 0 ? gap / speed * 60 : Infinity, activation = a.timeline.find(e => e.effects.includes(fx))!.offsetTick;
         if (speed < 250 || wallTicks < activation || wallTicks > 90)
             return { value: 0, reason: 'no-reachable-high-speed-wall-opportunity' };
@@ -308,16 +353,19 @@ function estimatedSetup(c: PredictionContext, option: Option, path: {
     return { value: 0, reason: 'none' };
 }
 export function predictOutcome(c: PredictionContext, option: Option, models = buildThreats(c)): OutcomeEstimate {
+    if(c.settings.prediction===false)return staticOutcome(c,option);
     const o = c.observation, enemy = c.belief.opponent;
     const empty: OutcomeEstimate = { expectedDamageDealtPct: 0, meanDamageTakenPct: 0, worstDamageTakenPct: 0, killLikelihood: 0, deathLikelihood: 0, positionQualityBefore: 0, positionQualityAfter: 0, bandProgressPx:0, residualExposurePct: 0, setupValue: 0, confidence: c.belief.confidence, earlyRiskPct: 0, hitTicks: [], segmentsUsed: 0, budgetExceeded: false, setupConfidence: .6, setupReason: 'none' };
     if (!enemy)
         return empty;
     const grid = predictionGrid(c, option, models), cast = selfCast(c, option), branches: Branch[] = [], quiet = o.nowTick - c.memory.lastEffectiveInteractionTick, band = distanceBand(o, c.content, c.profile, quiet, models.some(m => m.kind === 'committed')), enemyMax = c.content.source.characters.find(d => d.id === enemy.characterId)!.stats.maxHp, enemyHp = enemy.hpRatio * enemyMax;
     for (const hypothesis of c.belief.hypotheses) {
+        const phase3=c.content.pluginVersions['speed-impact']===1;
         const path = trajectory(c, option, grid.ticks, hypothesis), attacks: {
             tick: number;
             amount: number;
         }[] = [], groups = new Set<string>(), targetMultiplier = attributes(c.content, enemy, o.nowTick).damageTaken;
+        const reflectedLoss:{tick:number;amount:number;likelihood:number;origin:ThreatModel['origin']}[]=[];
         if (cast)
             for (const entry of cast.ability.timeline)
                 for (const fx of entry.effects)
@@ -326,26 +374,31 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
                             continue;
                         if (groups.has(fx.hit.hitGroup))
                             continue;
-                        const tick = attackHit(fx, cast.start + entry.offsetTick, path.own, path.enemy, cast.aimX, o.arena);
+                        const reflected=phase3&&fx.kind==='projectile'?projectileOutcome(c,cast,fx,cast.start+entry.offsetTick,path,o.self.entity.id,cast.aimX):null;
+                        if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile'});
+                        const tick = reflected?(reflected.hit?.targetId===enemy.id?reflected.hit.tick:null):phase3&&fx.kind==='hitbox'?hitboxHit(fx,cast.start+entry.offsetTick,path.own,path.enemy,cast.aimX,t=>ownGeometry(c,cast,t).meleeScale):attackHit(fx, cast.start + entry.offsetTick, path.own, path.enemy, cast.aimX, o.arena);
                         if (tick !== null) {
                             groups.add(fx.hit.hitGroup);
-                            attacks.push({ tick, amount: fx.hit.damage * targetMultiplier });
+                            attacks.push({ tick, amount: (phase3&&fx.kind==='hitbox'?speedImpactDamage(c.content,o.self.entity.characterId,cast.ability.id,fx.hit.damage,relativeSpeed(path,tick)):fx.hit.damage) * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier) });
                         }
                     }
         for (const p of o.projectiles.filter(p => p.ownerId === o.self.entity.id)) {
             const a = c.content.source.abilities.find(a => a.id === p.abilityId)!, fx = a.timeline.flatMap(t => t.effects).find(f => f.kind === 'projectile');
             if (!fx || fx.kind !== 'projectile')
                 continue;
-            const age = Math.min(18, c.belief.age ?? 0), tick = projectileHit(fx, 0, path.own, path.enemy, direction(p.velocity.x), o.arena, { position: { x: p.position.x + p.velocity.x * age / 60, y: p.position.y + p.velocity.y * age / 60 }, velocity: p.velocity });
+            const age = Math.min(18, c.belief.age ?? 0),initial={position:{x:p.position.x+p.velocity.x*age/60,y:p.position.y+p.velocity.y*age/60},velocity:p.velocity,reflectionCount:p.reflectionCount};
+            const reflected=phase3?projectileOutcome(c,cast,fx,0,path,p.ownerId,direction(p.velocity.x),initial):null;
+            if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile'});
+            const tick = reflected?(reflected.hit?.targetId===enemy.id?reflected.hit.tick:null):projectileHit(fx, 0, path.own, path.enemy, direction(p.velocity.x), o.arena, initial);
             if (tick !== null)
-                attacks.push({ tick, amount: fx.hit.damage * targetMultiplier });
+                attacks.push({ tick, amount: fx.hit.damage * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier) });
         }
         const hits: {
             tick: number;
             amount: number;
             likelihood: number;
             origin: ThreatModel['origin'];
-        }[] = [];
+        }[] = [...reflectedLoss];
         for (const m of models) {
             let initial: undefined | {
                 position: Vec2;
@@ -355,10 +408,13 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
                 const p = m.publicProjectile, age = Math.min(18, c.belief.age ?? 0);
                 initial = { position: { x: p.position.x + p.velocity.x * age / 60, y: p.position.y + p.velocity.y * age / 60 }, velocity: p.velocity };
             }
-            const tick = attackHit(m.effect, m.birth, path.enemy, path.own, m.aimX, o.arena, initial);
+            const reflected=phase3&&m.effect.kind==='projectile'?projectileOutcome(c,cast,m.effect,m.birth,path,enemy.id,m.aimX,initial?{...initial,reflectionCount:m.publicProjectile?.reflectionCount}:undefined):null;
+            if(reflected?.hit?.targetId===enemy.id)attacks.push({tick:reflected.hit.tick,amount:m.effect.hit.damage*enemyAttributes(c,reflected.hit.tick).damageTaken});
+            const tick = reflected?(reflected.hit?.targetId===o.self.entity.id?reflected.hit.tick:null):phase3&&m.effect.kind==='hitbox'?hitboxHit(m.effect,m.birth,path.enemy,path.own,m.aimX,t=>enemyGeometry(c,t).meleeScale):attackHit(m.effect, m.birth, path.enemy, path.own, m.aimX, o.arena, initial);
             if (tick !== null) {
                 const multiplier = ownParams(c, cast, tick).damageTaken;
-                hits.push({ tick, amount: m.estimatedDamage * multiplier, likelihood: m.likelihood, origin: m.origin });
+                const amount=phase3&&m.effect.kind==='hitbox'?speedImpactDamage(c.content,enemy.characterId,m.abilityId,m.estimatedDamage,relativeSpeed(path,tick)):m.estimatedDamage;
+                hits.push({ tick, amount: amount * multiplier, likelihood: m.likelihood, origin: m.origin });
             }
         }
         attacks.sort((a, b) => a.tick - b.tick);
@@ -382,7 +438,7 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
             }
         }
         const earned = Math.min(enemyHp, attacks.filter(h => h.tick <= deathAt).reduce((sum, h) => sum + h.amount, 0)), earlyRisk = Math.min(o.self.entity.hp, effectiveHits.filter(h => h.tick <= 12).reduce((sum, h) => sum + h.amount * h.likelihood, 0));
-        const recoveryEnd = cast ? cast.start + cast.ability.startupTicks + cast.ability.activeTicks + cast.ability.recoveryTicks : 0, extra = Math.max(0, Math.min(30, recoveryEnd - 30)), endOwn = path.own.at(-1)!.body, endEnemy = path.enemy.at(-1)!.body, basic = abilityFor(c.content, enemy.characterId, 'basic'), basicFx = basic.timeline.flatMap(t => t.effects).find(f => f.kind === 'hitbox'), reach = basicFx?.kind === 'hitbox' ? Math.abs(basicFx.offset.x) + basicFx.radius + endOwn.radius : 0, endDistance = Math.hypot(endOwn.position.x - endEnemy.position.x, endOwn.position.y - endEnemy.position.y), known = c.memory.opponentCooldownEstimates.find(m => m.abilityId === basic.id), available = !known || known.earliestReadyTick <= o.nowTick + 30 + extra;
+        const recoveryEnd = cast ? cast.start + cast.ability.startupTicks + cast.ability.activeTicks + cast.ability.recoveryTicks : 0, extra = Math.max(0, Math.min(30, recoveryEnd - 30)), endOwn = path.own.at(-1)!.body, endEnemy = path.enemy.at(-1)!.body, basic = abilityFor(c.content, enemy.characterId, 'basic'), basicFx = basic.timeline.flatMap(t => t.effects).find(f => f.kind === 'hitbox'), reach = basicFx?.kind === 'hitbox' ? Math.abs(basicFx.offset.x) + basicFx.radius + endOwn.radius : 0, endDistance = Math.hypot(endOwn.position.x - endEnemy.position.x, endOwn.position.y - endEnemy.position.y), known = c.memory.opponentCooldownEstimates.find(m => m.abilityId === basic.id), visibleBusy=phase3&&enemy.tell?enemy.tell.visibleSinceTick-o.nowTick+(()=>{const a=c.content.source.abilities.find(a=>a.id===enemy.tell!.abilityId)!;return a.startupTicks+a.activeTicks+a.recoveryTicks;})():0, available = (!known || known.earliestReadyTick <= o.nowTick + 30 + extra)&&visibleBusy<=30+extra;
         const residual = extra && available && endDistance <= reach + attributes(c.content, enemy, o.nowTick).moveSpeed * extra / 60 ? Math.min(12, (basicFx?.kind === 'hitbox' ? basicFx.hit.damage : 8) * possibleBasicLikelihood(c.memory, contextAt(o), c.settings.memory) * extra / 12 * 100 / o.self.entity.maxHp) : 0;
         const setup = estimatedSetup(c, option, path, cast);
         const beforeDistance=Math.hypot(o.self.entity.body.position.x-enemy.position.x,o.self.entity.body.position.y-enemy.position.y),progress=Math.max(0,beforeDistance-band[1])-Math.max(0,endDistance-band[1]);

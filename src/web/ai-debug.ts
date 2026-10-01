@@ -34,7 +34,7 @@ export function displayTrace(entry: TraceEntry | null, events: readonly BattleEv
     }
     const request = t.requestId, accepted = request === null ? undefined : events.find(e => e.type === 'CastAccepted' && e.sourceId === entry.entityId && e.payload.requestId === request);
     if (accepted?.type === 'CastAccepted') {
-        const castId = accepted.payload.castId, related = events.filter(e => e.rootEventId === accepted.seq && e.tick >= accepted.tick), damage = related.filter(e => e.type === 'DamageResolved'), defense = events.filter(e => e.type === 'DamagePrevented' && e.sourceId === entry.entityId && e.payload.castId === castId), interrupt = related.find(e => e.type === 'CastInterrupted');
+        const castId = accepted.payload.castId, related = events.filter(e => e.rootEventId === accepted.seq && e.tick >= accepted.tick), damage = related.filter(e => e.type === 'DamageResolved').filter(e=>e.sourceId===entry.entityId), defense = events.filter(e => e.sourceId === entry.entityId && (e.type==='DamagePrevented'&&e.payload.castId===castId||e.type==='ProjectileReflected'&&e.payload.defenseCastId===castId)), interrupt = related.find(e => e.type === 'CastInterrupted');
         outcome.textContent = `request ${request} → cast ${castId} 已接受（tick ${accepted.tick}） → ${damage.length ? `命中 ${damage.length} 次，伤害 ${damage.reduce((s, e) => s + e.payload.amount, 0).toFixed(1)}` : defense.length ? `防御 ${defense.length} 次` : '未记录伤害/防御'}${interrupt ? ` · 被打断（tick ${interrupt.tick}）` : ''}。无伤害可能来自失误、位移或增益，请结合候选预测与事件核对。`;
     }
     else

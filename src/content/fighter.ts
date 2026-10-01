@@ -1,14 +1,16 @@
 import { RubberWallParamsSchema } from '../contracts/content-schema.js';
 import { compileContent } from './compile.js';
 import type { ContentBundle } from '../contracts/content.js';
+import type { PluginRegistration } from './compile.js';
 export const FIGHTER_PLUGINS = {
     'rubber-wall-growth': { version: 1, validateParams: (params: Readonly<Record<string, number | string | boolean>>): string | null => {
             const result = RubberWallParamsSchema.safeParse(params);
             return result.success ? null : result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; ');
         } },
 };
-export function compileFighterContent(input: unknown): ContentBundle {
-    const bundle = compileContent(input, { plugins: FIGHTER_PLUGINS });
+export function compileFighterContent(input: unknown, plugins: Readonly<Record<string,PluginRegistration>> = FIGHTER_PLUGINS): ContentBundle {
+    const phase3 = plugins['speed-impact'] !== undefined;
+    const bundle = compileContent(input, { plugins });
     if (bundle.source.purpose !== 'production' || bundle.source.schemaVersion !== 2)
         throw new Error('Fighter requires production content schemaVersion=2');
     for (const ability of bundle.source.abilities)
@@ -22,12 +24,16 @@ export function compileFighterContent(input: unknown): ContentBundle {
                     throw new Error('Phase 1 impulse timeline target must be self');
             }
     for (const passive of bundle.source.passives) {
+        if(phase3 && passive.id==='speed-impact') {
+            if(passive.trigger!=='damageDealt'||passive.conditions.length||passive.internalCooldownTicks!==0||passive.effects.length!==1||passive.effects[0]?.kind!=='plugin'||passive.effects[0].pluginId!=='speed-impact') throw new Error('Invalid speed-impact passive');
+            continue;
+        }
         if (passive.id !== 'rubber-wall-growth' || passive.trigger !== 'wallBounce' || passive.effects.length !== 1 || passive.effects[0]?.kind !== 'plugin' || passive.effects[0].pluginId !== 'rubber-wall-growth')
             throw new Error('Unimplemented Phase 1 passive mechanism');
         if (passive.conditions.length !== 0 || passive.internalCooldownTicks !== passive.effects[0].params['internalCooldownTicks'])
             throw new Error('Phase 1 rubber passive requires unconditional trigger and matching cooldown');
     }
-    if (bundle.source.statuses.some(s => s.reflect !== null))
+    if (!phase3 && bundle.source.statuses.some(s => s.reflect !== null))
         throw new Error('Projectile reflection belongs to Phase 3');
     return bundle;
 }

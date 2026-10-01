@@ -142,6 +142,14 @@ export function consumeMemory(m: AIMemory, e: ExecutionMemory, o: Observation, c
             if (p && d.preventedDamage > 0)
                 p.effective = 'defended';
         }
+        if(d.kind==='reflect'&&v.sourceId===own.id){
+            const p=m.pendingOwnResults.find(p=>p.castId===d.defenseCastId);
+            if(p&&d.preventedDamage>0)p.effective='defended';
+            m.lastEffectiveInteractionTick=Math.max(m.lastEffectiveInteractionTick,v.sourceTick);
+        }
+        if(d.kind==='damage'&&d.amount>0&&v.sourceId===own.id&&content.pluginVersions['speed-impact']===1){
+            for(const p of m.pendingOwnResults){const a=content.source.abilities.find(a=>a.id===p.abilityId)!;if(a.ai.predictorId==='self-buff'&&a.timeline.some(t=>t.effects.some(f=>f.kind==='status'&&content.source.statuses.find(s=>s.id===f.statusId)!.modifiers.meleeHitboxScale>1))&&v.sourceTick>=p.startedTick+a.startupTicks&&v.sourceTick<p.finalEffectTick)p.effective='hit';}
+        }
         if (d.kind === 'cast') {
             if (v.sourceId === own.id) {
                 const p = m.pendingOwnResults.find(p => p.slot === d.slot && p.startedTick === v.sourceTick);
@@ -158,7 +166,7 @@ export function consumeMemory(m: AIMemory, e: ExecutionMemory, o: Observation, c
         }
         if (d.kind === 'bounce' && d.wall !== undefined && d.wall !== 'floor' && v.sourceId === own.id && d.incomingSpeed >= 250) {
             for (const p of m.pendingOwnResults)
-                if (content.source.abilities.find(a => a.id === p.abilityId)!.tags.includes('buff') && v.sourceTick >= p.startedTick + 12 && v.sourceTick < p.finalEffectTick)
+                if (content.source.abilities.find(a => a.id === p.abilityId)!.tags.includes('buff') && (content.pluginVersions['speed-impact']!==1||content.source.abilities.find(a=>a.id===p.abilityId)!.timeline.some(t=>t.effects.some(f=>f.kind==='status'&&content.source.statuses.find(s=>s.id===f.statusId)!.modifiers.wallGrowthCoefficientOverride!==null))) && v.sourceTick >= p.startedTick + 12 && v.sourceTick < p.finalEffectTick)
                     p.effective = 'repositioned';
         }
         if (settings.memory && m.pendingEncounter && v.sourceId === o.opponent?.id && v.sourceTick >= m.pendingEncounter.startedSourceTick && v.sourceTick <= m.pendingEncounter.startedSourceTick + 30 && m.pendingEncounter.observedOutcome === null) {

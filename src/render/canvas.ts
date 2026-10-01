@@ -1,7 +1,7 @@
 import type { ContentBundle } from '../contracts/content.js';
 import type { RenderFrame, BattleEvent } from '../contracts/fighter.js';
-export const ABILITY_LABELS: Readonly<Record<string, string>> = { 'standard-jab': '直拳', 'standard-bolt': '火球', 'standard-push': '推击', 'standard-volley': '三连射', 'rubber-slap': '弹掌', 'rubber-dash': '弹性突进', 'rubber-cushion': '护垫', 'rubber-overdrive': '超弹模式' };
-export function drawArena(ctx: CanvasRenderingContext2D, frame: RenderFrame, events: readonly BattleEvent[], content: {source:Pick<ContentBundle['source'],'characters'|'arenas'>}, overlay = false): void {
+export const ABILITY_LABELS: Readonly<Record<string, string>> = { 'standard-jab': '直拳', 'standard-bolt': '火球', 'standard-push': '推击', 'standard-volley': '三连射', 'rubber-slap': '弹掌', 'rubber-dash': '弹性突进', 'rubber-cushion': '护垫', 'rubber-overdrive': '超弹模式','iron-smash':'重砸','iron-charge':'铁球冲撞','iron-brace':'稳固架势','iron-giant':'巨人','mirror-jab':'镜击','mirror-shard':'镜片','mirror-screen':'反射屏障','mirror-dome':'镜面领域' };
+export function drawArena(ctx: CanvasRenderingContext2D, frame: RenderFrame, events: readonly BattleEvent[], content: {source:Pick<ContentBundle['source'],'characters'|'arenas'>&{statuses?:ContentBundle['source']['statuses']}}, overlay = false): void {
     const arena = content.source.arenas[0]!, width = ctx.canvas.width, height = ctx.canvas.height;
     ctx.save();
     ctx.fillStyle = '#0b1421';
@@ -45,10 +45,13 @@ export function drawArena(ctx: CanvasRenderingContext2D, frame: RenderFrame, eve
             ctx.shadowColor = '#63f8d4';
             ctx.shadowBlur = 25;
         }
+        const reflectExtra=content.source.statuses?.filter(s=>e.visibleStatusIds.includes(s.id)&&s.reflect).reduce((r,s)=>Math.max(r,s.reflect!.extraRadius),0)??0;
+        if(reflectExtra){ctx.beginPath();ctx.arc(x,y,r+reflectExtra,0,Math.PI*2);ctx.fillStyle='#a18fff14';ctx.fill();ctx.strokeStyle=events.some(ev=>ev.type==='ProjectileReflected'&&ev.sourceId===e.id&&frame.tick-ev.tick<=8)?'#f5edff':'#b7aaff';ctx.lineWidth=e.visibleStatusIds.includes('dome')?5:3;ctx.stroke();}
         ctx.beginPath();
-        if (char.visual.shape === 'hexagon') {
-            for (let i = 0; i < 6; i++) {
-                const a = i * Math.PI / 3, px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
+        if (char.visual.shape !== 'circle') {
+            const sides=char.visual.shape==='hexagon'?6:char.visual.shape==='square'?4:3,rotation=char.visual.shape==='square'?Math.PI/4:char.visual.shape==='triangle'?-Math.PI/2:0;
+            for (let i = 0; i < sides; i++) {
+                const a = rotation+i * Math.PI *2/sides, px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
                 i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
             }
             ctx.closePath();

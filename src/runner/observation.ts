@@ -1,5 +1,6 @@
 import type { ActionReceipt, BattleEvent, Observation, PublicSnapshot, WorldView } from '../contracts/fighter.js';
 import type { ContentBundle } from '../contracts/content.js';
+import { rulesetFor } from '../sim/rulesets.js';
 import { SLOTS } from '../contracts/versions.js';
 import { deepFreeze } from '../math/canonical.js';
 import { publicSnapshot } from '../replay/frame.js';
@@ -30,7 +31,7 @@ export class ObservationBuffer {
         const receipts = this.pending.filter(r => r.entityId === e.id);
         this.pending = this.pending.filter(r => r.entityId !== e.id);
         const arena = this.content.source.arenas.find(a => a.id === w.config.arenaId)!, phase = phaseAt(e, w.tick);
-        return deepFreeze({ nowTick: w.tick, sensedTick: sensed?.tick ?? null, self: { entity: e, legalSlots: SLOTS.filter(s => castRejection(e, s, this.content, w.tick) === null), canMove: phase !== 'dead' && phase !== 'hitstun', canJump: phase === 'free' && e.body.grounded, receipts, passives: w.passiveRuntime.filter(r => r.entityId === e.id) }, opponent: sensed?.fighters.find(f => f.id !== e.id) ?? null, projectiles: sensed?.projectiles ?? [], visibleEvents, arena: { width: arena.width, height: arena.height, gravity: arena.gravity }, capabilities: { jump: true, horizontalMove: true } });
+        return deepFreeze({ nowTick: w.tick, sensedTick: sensed?.tick ?? null, self: { entity: e, legalSlots: SLOTS.filter(s => castRejection(e, s, this.content, w.tick) === null), canMove: phase !== 'dead' && phase !== 'hitstun', canJump: rulesetFor(w.config.rulesetId).capabilities().jump && phase === 'free' && e.body.grounded, receipts, passives: w.passiveRuntime.filter(r => r.entityId === e.id) }, opponent: sensed?.fighters.find(f => f.id !== e.id) ?? null, projectiles: sensed?.projectiles ?? [], visibleEvents, arena: { width: arena.width, height: arena.height, gravity: arena.gravity }, capabilities: rulesetFor(w.config.rulesetId).capabilities() });
     }
     snapshot(): ObservationSnapshot { return deepFreeze({ version: 1, ring: [...this.ring], pending: [...this.pending], lastSensed: [this.lastSensed[0]!, this.lastSensed[1]!] }); }
     restore(input: unknown): void {

@@ -2,6 +2,7 @@ import type { ContentBundle } from '../../contracts/content.js';
 import type { FighterEntity, WorldView, ReceiptReason } from '../../contracts/fighter.js';
 import type { Slot } from '../../contracts/versions.js';
 import type { Material } from '../physics/motion.js';
+import { statusGeometry } from '../../math/ability-effects.js';
 import { actionPhase } from '../../math/fighter-phase.js';
 export const phaseAt = actionPhase;
 export function effective(entity: WorldView['entities'][number], content: ContentBundle, tick: number): Material {
@@ -38,16 +39,8 @@ export function applyBodyAttributes(entity: FighterEntity, content: ContentBundl
     width: number;
     height: number;
 }): void {
-    const base = content.source.characters.find((item) => item.id === entity.characterId)!;
-    let scale = 1, mass = 1;
-    for (const instance of entity.statuses)
-        if (instance.expiresTick > tick) {
-            const m = content.source.statuses.find((item) => item.id === instance.definitionId)!.modifiers;
-            scale = Math.max(scale, m.bodyScale);
-            mass *= m.massMultiplier;
-        }
-    entity.body.radius = base.body.radius * Math.min(3, scale);
-    entity.body.mass = base.body.mass * Math.max(.1, Math.min(3, mass));
+    const geometry=statusGeometry(content,entity.characterId,entity.statuses,tick);
+    entity.body.radius=geometry.radius;entity.body.mass=geometry.mass;
     entity.body.position.x = Math.max(entity.body.radius, Math.min(arena.width - entity.body.radius, entity.body.position.x));
     entity.body.position.y = Math.max(entity.body.radius, Math.min(arena.height - entity.body.radius, entity.body.position.y));
 }

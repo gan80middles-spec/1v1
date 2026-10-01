@@ -96,3 +96,4 @@ export const RubberWallParamsSchema = z.strictObject({
   minIncomingSpeed: finite.min(250).max(1800), internalCooldownTicks: tick.min(6),
   maxStacks: z.literal(3), durationTicks: duration.max(120), growthCoefficient: finite.min(0).max(0.1),
 });
+export const SpeedImpactParamsSchema=z.strictObject({thresholdSpeed:finite.min(0).max(1800),speedScale:finite.positive().max(1800),maxBonus:finite.min(0).max(.75)});

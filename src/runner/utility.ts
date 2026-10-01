@@ -1,6 +1,7 @@
+import { isPhase3AContent } from '../content/phase3a.js';
 import type { ContentBundle } from '../contracts/content.js';
 import type { BattleEvent, FighterConfig, InputEntry, InputReplay, RenderFrame } from '../contracts/fighter.js';
-import { AI_VERSION, UTILITY_BUILD, DEFAULT_UTILITY_SETTINGS, type AITrace, type FullCheckpoint, type UtilityRunnerOptions } from '../contracts/ai.js';
+import { AI_VERSION, UTILITY_BUILD, PHASE3A_BUILD, PHASE3A_AI_VERSION, DEFAULT_UTILITY_SETTINGS, type AITrace, type FullCheckpoint, type UtilityRunnerOptions } from '../contracts/ai.js';
 import { FullCheckpointSchema } from '../contracts/ai-schema.js';
 import { deepFreeze, canonicalSerialize } from '../math/canonical.js';
 import { hashCanonical } from '../math/hash.js';
@@ -13,6 +14,8 @@ import { ObservationBuffer } from './observation.js';
 import { renderFrame } from '../replay/frame.js';
 export class UtilityRunner {
     readonly sim: FighterSimulation;
+    readonly engineBuild: typeof UTILITY_BUILD|typeof PHASE3A_BUILD;
+    readonly aiVersion:typeof AI_VERSION|typeof PHASE3A_AI_VERSION;
     readonly controllers: readonly [
         UtilityController | BaselineController,
         UtilityController | BaselineController
@@ -36,8 +39,10 @@ export class UtilityRunner {
         this.options = { kinds: options.kinds ?? ['utility', 'utility'], settings: options.settings ?? { ...DEFAULT_UTILITY_SETTINGS }, trace: options.trace ?? false, recordFrames: options.recordFrames ?? true };
         if (config.pacing.mode !== 'off')
             throw new Error('Phase 2 requires pacing off');
-        this.sim = new FighterSimulation(content, config, undefined, UTILITY_BUILD);
-        const make = (index: 0 | 1): UtilityController | BaselineController => { const seed = deriveParticipantSeed(config.seed, config.participants[index].participantId), kind = this.options.kinds[index]; return kind === 'utility' ? new UtilityController(seed, content, content.source.profiles.find(p => p.id === config.participants[index].profileId)!, this.options.settings, this.options.trace) : new BaselineController(kind, seed, content); };
+        this.engineBuild=isPhase3AContent(content)?PHASE3A_BUILD:UTILITY_BUILD;
+        this.aiVersion=isPhase3AContent(content)?PHASE3A_AI_VERSION:AI_VERSION;
+        this.sim = new FighterSimulation(content, config, undefined, this.engineBuild);
+        const make = (index: 0 | 1): UtilityController | BaselineController => { const seed = deriveParticipantSeed(config.seed, config.participants[index].participantId), kind = this.options.kinds[index]; return kind === 'utility' ? new UtilityController(seed, content, content.source.profiles.find(p => p.id === config.participants[index].profileId)!, this.options.settings, this.options.trace) : new BaselineController(kind, seed, content, { noise: this.options.settings.noise, profileId: config.participants[index].profileId }); };
         this.controllers = [make(0), make(1)];
         this.observations = new ObservationBuffer(content);
         this.observations.push(this.sim.snapshot(), [], []);
@@ -68,10 +73,10 @@ export class UtilityRunner {
     run(): InputReplay { while (!this.sim.snapshot().result)
         this.step(); return this.replay(); }
     replay(): InputReplay { const result = this.sim.snapshot().result; if (!result || !this.recordingComplete)
-        throw new Error('Replay requires completed match and complete input recording'); return deepFreeze({ replaySchemaVersion: 2, engineBuild: UTILITY_BUILD, config: this.config, content: this.content.source, pluginVersions: this.content.pluginVersions, inputs: [...this.inputs], events: [...this.events], checkpoints: [...this.checkpoints], finalWorldHash: fighterWorldHash(this.sim.snapshot()), result }); }
+        throw new Error('Replay requires completed match and complete input recording'); return deepFreeze({ replaySchemaVersion: 2, engineBuild: this.engineBuild, config: this.config, content: this.content.source, pluginVersions: this.content.pluginVersions, inputs: [...this.inputs], events: [...this.events], checkpoints: [...this.checkpoints], finalWorldHash: fighterWorldHash(this.sim.snapshot()), result }); }
     snapshot(includeRecording = false): FullCheckpoint {
         const controllers = this.controllers.map((c, i) => ({ kind: this.options.kinds[i], data: c.snapshot() })) as unknown as FullCheckpoint['controllers'];
-        const future = { checkpointVersion: 1 as const, engineBuild: UTILITY_BUILD, aiVersion: AI_VERSION, contentHash: this.content.bundleHash, config: this.config, nextTick: this.sim.snapshot().tick, world: this.sim.snapshot(), controllers, observations: this.observations.snapshot(), settings: this.options.settings, pacingDirector: null, recorderCursor: this.recorderCursor };
+        const future = { checkpointVersion: 1 as const, engineBuild: this.engineBuild, aiVersion: this.aiVersion, contentHash: this.content.bundleHash, config: this.config, nextTick: this.sim.snapshot().tick, world: this.sim.snapshot(), controllers, observations: this.observations.snapshot(), settings: this.options.settings, pacingDirector: null, recorderCursor: this.recorderCursor };
         return deepFreeze({ ...future, runnerHash: hashCanonical(future), ...(includeRecording && this.recordingComplete ? { recording: { inputs: [...this.inputs], events: [...this.events], checkpoints: [...this.checkpoints] } } : {}) });
     }
     runnerHash(): string { return this.snapshot().runnerHash; }
@@ -79,7 +84,7 @@ export class UtilityRunner {
         const cp = FullCheckpointSchema.parse(input), { runnerHash, recording, ...future } = cp;
         if (hashCanonical(future) !== runnerHash)
             throw new Error('Checkpoint runnerHash mismatch');
-        if (cp.contentHash !== this.content.bundleHash || canonicalSerialize(cp.config) !== canonicalSerialize(this.config) || canonicalSerialize(cp.settings) !== canonicalSerialize(this.options.settings) || cp.nextTick !== cp.world.tick || cp.recorderCursor !== cp.nextTick)
+        if (cp.engineBuild!==this.engineBuild||cp.aiVersion!==this.aiVersion||cp.contentHash !== this.content.bundleHash || canonicalSerialize(cp.config) !== canonicalSerialize(this.config) || canonicalSerialize(cp.settings) !== canonicalSerialize(this.options.settings) || cp.nextTick !== cp.world.tick || cp.recorderCursor !== cp.nextTick)
             throw new Error('Checkpoint config/cursor mismatch');
         if (cp.observations.ring.at(-1)?.tick !== cp.nextTick || cp.observations.pending.some(r => r.tick >= cp.nextTick))
             throw new Error('Checkpoint observation/receipt cursor mismatch');

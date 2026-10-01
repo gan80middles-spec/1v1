@@ -5,11 +5,17 @@ import type { ActionIntent, RngState, Vec2 } from './state.js';
 import type { Slot } from './versions.js';
 export const UTILITY_BUILD = 'phase2-v1' as const;
 export const AI_VERSION = 'utility-v1' as const;
+export const PHASE3A_BUILD='phase3a-v1' as const;
+export const PHASE3A_AI_VERSION='utility-v2' as const;
+export type AIVersion=typeof AI_VERSION|typeof PHASE3A_AI_VERSION;
+export type UtilityBuild=typeof UTILITY_BUILD|typeof PHASE3A_BUILD;
 export type RunnerControllerKind = ControllerKind | 'utility';
 export interface UtilitySettings {
     noise: boolean;
     randomChoice: boolean;
     memory: boolean;
+    prediction?: boolean;
+    hysteresis?: boolean;
 }
 export const DEFAULT_UTILITY_SETTINGS: UtilitySettings = { noise: true, randomChoice: true, memory: true };
 export type ContextKind = 'near-ground' | 'far-ground' | 'air';
@@ -93,7 +99,7 @@ export interface ExecutionMemory {
 }
 export interface UtilitySnapshot {
     version: 1;
-    aiVersion: typeof AI_VERSION;
+    aiVersion: AIVersion;
     contentHash: string;
     profile: AIProfile;
     settings: UtilitySettings;
@@ -213,7 +219,7 @@ export interface CandidateTrace {
     eligible: boolean;
 }
 export interface AITrace {
-    aiVersion: typeof AI_VERSION;
+    aiVersion: AIVersion;
     nowTick: number;
     sensedTick: number | null;
     decisionIndex: number;
@@ -263,8 +269,8 @@ export interface UtilityRunnerOptions {
 }
 export interface FullCheckpoint {
     checkpointVersion: 1;
-    engineBuild: typeof UTILITY_BUILD;
-    aiVersion: typeof AI_VERSION;
+    engineBuild: UtilityBuild;
+    aiVersion: AIVersion;
     contentHash: string;
     config: FighterConfig;
     nextTick: number;

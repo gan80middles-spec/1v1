@@ -3,7 +3,7 @@ import type { DeepReadonly, ContentBundle } from './content.js';
 import type { Effect } from './content-schema.js';
 import type { Slot } from './versions.js';
 export const FIGHTER_BUILD = 'phase1-v1' as const;
-export type FighterEngineBuild='phase1-v1'|'phase2-v1';
+export type FighterEngineBuild='phase1-v1'|'phase2-v1'|'phase3a-v1';
 export type ActionState = {
     kind: 'free';
 } | {
@@ -62,7 +62,7 @@ export interface FighterEntity {
 export interface FighterConfig {
     matchId: string;
     seed: number;
-    rulesetId: 'fighter';
+    rulesetId: 'fighter' | 'free-bounce-fixture';
     rulesetVersion: 1;
     arenaId: string;
     contentHash: string;
@@ -118,6 +118,8 @@ export interface Projectile {
     expiresTick: number;
     reflectionCount: number;
     ignoreOwnerUntilOutside: boolean;
+    ignoreRadius?: number | undefined;
+    reflectionCause?: Pick<EventMeta,'seq'|'rootEventId'|'depth'> | undefined;
     hit: HitSpec;
 }
 export interface Hitbox {
@@ -241,6 +243,8 @@ export interface EventPayloads {
         hitGroup: string;
         projectileId: number | null;
     };
+    ProjectileReflected: { projectileId:number; castId:number; defenseCastId:number|null; previousOwnerId:number; reflectionCount:number; velocity:Vec2; preventedDamage:number };
+    ProjectileDissipated: { projectileId:number; castId:number; defenseCastId:number|null; reflectionCount:number };
     DamageResolved: {
         castId: number;
         amount: number;
@@ -328,6 +332,7 @@ export interface PublicProjectile {
     velocity: Vec2;
     radius: number;
     reflectable: boolean;
+    reflectionCount?: number | undefined;
 }
 export interface PublicEvent {
     seq: number;
@@ -355,6 +360,13 @@ export interface PublicEvent {
         preventedDamage: number;
     } | {
         kind: 'death';
+    } | {
+        kind: 'reflect';
+        projectileId:number;
+        castId:number;
+        defenseCastId:number|null;
+        reflectionCount:number;
+        preventedDamage:number;
     };
 }
 export interface PublicSnapshot {
