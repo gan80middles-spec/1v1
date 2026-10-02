@@ -12,9 +12,12 @@ export function createRenderJob(manifest:ReplayManifest,manifestHash:string,opti
 export function videoFrameSource(job:RenderJob,n:number):{sourceTick:number;kind:TimelineSegment['kind']} {
   if(!Number.isInteger(n)||n<0||n>=job.totalFrames)throw new Error('Video frame out of bounds');
   const segment=job.timeline.find(s=>n>=s.startFrame&&n<s.endFrameExclusive)!;
-  return {kind:segment.kind,sourceTick:segment.kind==='battle'?segment.sourceStartTick+(n-segment.startFrame)/(segment.endFrameExclusive-segment.startFrame-1)*(segment.sourceEndTick-segment.sourceStartTick):segment.sourceStartTick};
+  const sourceTick=segment.kind!=='battle'?segment.sourceStartTick:job.rendererVersion==='canvas-video-v1'?segment.sourceStartTick+(n-segment.startFrame)/(segment.endFrameExclusive-segment.startFrame-1)*(segment.sourceEndTick-segment.sourceStartTick):segment.sourceStartTick+(n-segment.startFrame)*(segment.sourceEndTick-segment.sourceStartTick)/(segment.endFrameExclusive-segment.startFrame-1);
+  return {kind:segment.kind,sourceTick};
 }
 export function sourceBoundaryVideoFrame(job:RenderJob,sourceTick:number):number {
   const segment=job.timeline.find(s=>s.kind==='battle'&&sourceTick>=s.sourceStartTick&&sourceTick<=s.sourceEndTick);if(!segment)throw new Error('Event boundary outside battle');
-  return segment.startFrame+Math.ceil((sourceTick-segment.sourceStartTick)/(segment.sourceEndTick-segment.sourceStartTick)*(segment.endFrameExclusive-segment.startFrame-1));
+  // Multiply the integer offsets first. Dividing before multiplying can round an exact
+  // tick slightly upward, making ceil delay a sound by a complete video frame.
+  return segment.startFrame+Math.ceil(job.rendererVersion==='canvas-video-v1'?(sourceTick-segment.sourceStartTick)/(segment.sourceEndTick-segment.sourceStartTick)*(segment.endFrameExclusive-segment.startFrame-1):(sourceTick-segment.sourceStartTick)*(segment.endFrameExclusive-segment.startFrame-1)/(segment.sourceEndTick-segment.sourceStartTick));
 }
