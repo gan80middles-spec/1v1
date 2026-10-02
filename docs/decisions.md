@@ -80,3 +80,14 @@
 - 持久化采用同卷临时文件/fsync/rename、manifest最后提交、PID/token独占锁与死进程恢复。轨道重建先用输入验证world/事件，再单独Controller/Director复现输入/runnerHash生成完整检查点；old/new manifest hash journal覆盖manifest已提交但batch未更新的间隙。PNG索引严格编号/hash；有效PNG/编码可复用，MP4存在不等于complete。
 - FFmpeg固定libx264/medium/CRF20/yuv420p/60、AAC48k双声道/目标192k、faststart。候选MP4通过ffprobe帧数/规格/一帧时长容差、完整解码和抽帧后才重命名；音频WAV和源PNG索引也纳入完整产物校验。可选清理只删除本job已验证的明确编号PNG，保存pre/post索引hash和清理intent，覆盖删除途中及索引提交后的恢复间隙。
 - 锁定FFmpeg9.0.2、Chromium153/Playwright1.63、deviceScaleFactor1、Noto Sans SC/OFL及原创解析音效；下载URL/许可/字节hash均保存，编码工具不依赖系统PATH。只承诺固定工具链/环境内确定性，不声称跨CPU/浏览器位级一致。
+
+## D0009 · Phase 5 测量、渲染修正与最终交付（2026-10-03）
+
+- 用户授权完成 Phase 5，并明确将招式、血量、大招充能平衡留到之后。四角色生产内容、AI、战斗和导演未调整，仍为 phase3b-v1/utility-v3/off；保留原五份冻结清单与旧构建。阶段性“感觉挺好的”按实际观看范围记录，不能冒充完整盲评结果。
+- 性能使用冻结 performance-v1 的10预热/100测量配置，另编译 maxHp=1000 的专用 benchmark 内容快照，断言每场恰好2700tick/timeout，避免早死缩短工作量；这一快照从不用于正式视频。纯输入模拟、AI off/observe/pace、逐tick轨道/120tick检查点、gzip/I/O、完整trace及四个常驻预热worker分别测量；主机计时不进入未来状态。
+- 固定1080p/字体/deviceScale截图对照先测100同帧、交替顺序，确认locator与CDP PNG逐字节相同后，媒体宿主采用Playwright CDP Page.captureScreenshot。画布原点/尺寸先检查，继续逐帧PNG/fsync/index、编码与恢复。优化没有减少帧数或改变正式规格；真实导出保存各分项时间。
+- 最终全视频音效对照发现旧归一化映射先除后乘再ceil会让精确tick偏移一帧，例如T=1260/sourceTick848返回909而应为908。新renderer canvas-video-v2先乘整数偏移再除，所有S[0..T]和音效边界逐tick回归；旧v1 job明确保持旧语义读取，v2使用新exportId，旧产物保留追溯。最终十条按v2重新导出。
+- 当前构建重跑200配置双跑/输入重放与800未经筛选基线，并生成真实惩罚/失误/反射/脱困trace。45份战斗/AI/导演关键源码与Phase3B相同、840份原始比赛/观看文件hash相同，故复用400次导演对照和20对观看包；效果目标差距继续保留。
+- 评分偏好包仅取冻结正确性训练集，高/中/随机各10场、15对隐藏标签；风格包40场统一反应/误差/决策预算。没有用留出选择参数，也没有用自动浏览器生成的评级作人类证据。
+- 最终生产100场，按原有多样性筛选十条、七组对阵，每组不超过两条；验证源帧、音频cue一次性/样本偏移、规格与完整解码，并检查输入/轨道/视频重复。视觉抽帧覆盖每2秒和片头/中段/KO/片尾；完整人工观看仍待做。
+- 干净安装从确切Git blob树重建新的node_modules/dist/artifacts目录，npm ci使用独立缓存；Windows tar中文文件名不可靠，改用包含路径检查的UTF8 Git原始内容写入。锁定Node与现有便携媒体工具在新路径复核，没有声称重新联网下载所有工具。操作文档与工程/行为/性能/观感状态分开交付；MVP总体批准保留待评/未达项。

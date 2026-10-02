@@ -66,6 +66,8 @@ npm.cmd run verify:phase4
 
 本阶段未改变战斗参数、AI 规则、实时导演或五份冻结清单。版本保持 `phase3b-v1 / utility-v3`，rulesHash/contentHash 与 Phase 3B 相同。新增包 schema 3、presentation 1、interesting-v1、canvas-video-v1；实现细则见 [D0008](../decisions.md)。
 
+后续修正：Phase 5 对所有实际音效帧做更严格核对，发现 canvas-video-v1 的浮点映射在部分长度下可能延后一帧。当前新导出使用 canvas-video-v2 修复精确边界；旧 v1 文件与读取语义保留追溯。上述 Phase 4 检查结果是当时覆盖范围，不能据此声称旧版全部 cue 精确对齐；最终十条 v2 视频见 Phase 5 报告。
+
 反射采用碰撞附近的保存状态与入射速度作最多 30 tick 的直线相对扫掠，记录参数；缺少前接触状态则不计有效反射。墙弹追击按真实伤害来源处理反射后的归属。大招必须产生已验证的伤害、防御、位置改善或增益收益；微小伤害不能独立创建交锋。同分按 matchId，多样性与短缺原因明确保存。
 
 12 张图片经过模型视觉检查，未观察到中文缺字、重要文字越界或结果错位；全部媒体完整解码通过。尚未收集人工全片观看、音效喜好和 InterestingScore 与人工偏好的相关性。Phase 3B 冷场 p90 改善仅 2.61%，效果目标与 H2/风格/节奏观感仍待评，默认 off。完整性能 benchmark、留出指标校准和至少十条最终成片属于 Phase 5；下一步为 P5-01。

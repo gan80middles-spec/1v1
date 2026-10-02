@@ -1,8 +1,8 @@
 # 1v1 自动对抗短视频内容引擎
 
-Phase 4 已完成，G4 工程验收通过：完整回放包、独立播放器、批量模拟、赛后评分、多样性筛选、故障恢复和本地视频制作工作台已接通。324 项测试通过；30 场正式批次选出三组对阵并生成三条 1080×1920 / 60 FPS MP4，全部通过完整解码和规格检查。累计 49/54；下一阶段为性能与观感校准。导演默认 off，既有 H2、风格与节奏人工评审仍待完成。
+Phase 5 工程交付已完成：326 项测试、当前构建的 200 配置正确性/800 场基线、完整检查点/worker/恢复、固定工作量 benchmark 和干净安装已验证。最终生产 100 场选出十条 1080×1920 / 60 FPS 视频，覆盖七组对阵。54/54 实现任务已交付；完整人工观看与盲评仍待记录，行为和性能目标差距保留，不宣称 MVP 全部验收通过。导演默认 off；按用户安排，招式、血量和大招充能平衡留在 Phase 5 后。
 
-路线：[开发执行计划](./开发执行计划.md)。规则：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收：[Phase 4 与成片](./docs/reports/phase-4.md)、[Phase 3B](./docs/reports/phase-3b.md)、[Phase 3 汇总](./docs/reports/phase-3.md)、[Phase 3A](./docs/reports/phase-3a.md)、[Phase 2](./docs/reports/phase-2.md)、[Phase 1](./docs/reports/phase-1.md)、[Phase 0](./docs/reports/phase-0.md)。
+路线：[开发执行计划](./开发执行计划.md)。规则：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收：[Phase 5 与最终成片](./docs/reports/phase-5.md)、[最终证据](./docs/reports/phase-5-evidence.json)、[操作与诊断](./docs/operations.md)、[Phase 4](./docs/reports/phase-4.md)、[Phase 3B](./docs/reports/phase-3b.md)、[Phase 3 汇总](./docs/reports/phase-3.md)、[Phase 3A](./docs/reports/phase-3a.md)、[Phase 2](./docs/reports/phase-2.md)、[Phase 1](./docs/reports/phase-1.md)、[Phase 0](./docs/reports/phase-0.md)。
 
 ## 制作工作台与一键视频
 
@@ -19,15 +19,28 @@ npm.cmd run studio
 powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-export.ps1
 # 执行完整链路，已有批次从已验证产物继续
 npm.cmd run produce -- --config production.example.json --resume
+# 最终十条配置：十组对阵各十场，默认四 worker
+npm.cmd run produce -- --config production.final.json --resume
 # 也可分开执行 batch / rank / render / verify，各自使用相同 --config 和 --resume
 npm.cmd run verify -- --config production.example.json --resume
 ```
 
 例配置默认四个 worker、三组对阵各十场、筛选三条正式 1080p 视频、导演 off、保留 PNG、生成完整检查点。修改参数建立新 id/output；原批次配置和内容冻结，恢复时核对 hash。MP4 只有通过视频/音轨/帧数/时长和完整解码检查后才标为完成。
 
-已生成视频在 `artifacts/phase-4/正式视频 production v1/exports/`；三个入口与 hash 见 [Phase 4 报告](./docs/reports/phase-4.md) 和 [证据清单](./docs/reports/phase-4-evidence.json)。artifacts/dist/.tools 不提交 Git；中文字体与原创音效随源码提交，便携 FFmpeg 下载包与可执行文件以 hash 锁定。
+最终视频在 `artifacts/phase-5/最终视频 final v1/exports/`，十条入口、版本和 hash 见 Phase 5 报告与证据。当前使用 canvas-video-v2，修正旧 v1 浮点映射可能导致的音效延后一帧；旧 job 按明确 v1 语义读取，v2 使用不同 exportId，旧产物保留追溯。artifacts/dist/.tools 不提交 Git；中文字体与原创音效随源码提交，便携 FFmpeg 下载包与可执行文件以 hash 锁定。
 
-`npm run verify:phase4` 运行全套类型/324 项测试/构建/边界、20 个 worker 配置对照、三模式生产包/实际检查点续跑、正式链路、故障/清理恢复和浏览器导入导出。工具链与资源见 [export-toolchain.json](./content/export-toolchain.json)、[audio-assets.json](./content/audio-assets.json)；重新安装先按下方步骤启用锁定 Node。
+`npm run verify:phase4` 运行全套类型/当前全部单元测试/构建/边界、20 个 worker 配置对照、三模式生产包/实际检查点续跑、正式链路、故障/清理恢复和浏览器导入导出。工具链与资源见 [export-toolchain.json](./content/export-toolchain.json)、[audio-assets.json](./content/audio-assets.json)；重新安装先按下方步骤启用锁定 Node。
+
+```powershell
+npm.cmd run verify:phase5
+npm.cmd run benchmark -- --manifest fixtures/seeds/performance-v1.json
+npm.cmd run review:selection
+# http://127.0.0.1:5178/，30场隐藏分数组别/15对偏好
+npm.cmd run review:final-style
+# http://127.0.0.1:5179/，40场等信息预算风格
+```
+
+verify:phase5 运行固定 2700 tick/100 场 benchmark、100 帧截图前后对照、当前构建的完整200/800验证、实际媒体恢复、十条成片核验和盲评页面。它会创建新的验证目录，正式批次恢复现有产物；需预留足够磁盘空间。干净安装检查另运行 `npm run verify:phase5-install -- --implementation-commit <完整SHA>`，证据生成使用相同源码 SHA。盲评表保存在本机并可下载；组别钥匙不通过观看服务器提供，自动浏览器测试表不作为人工评价。
 
 ## 在 Cursor / PowerShell 中启动
 
