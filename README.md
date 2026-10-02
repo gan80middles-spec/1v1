@@ -1,8 +1,33 @@
 # 1v1 自动对抗短视频内容引擎
 
-Phase 3B 已完成，G3 工程验收通过：四角色 16 槽加入实时节奏导演、同 seed 开关对照、提示时间线与完整恢复。277 项测试、400 次正式对照、54 次导演检查点恢复和浏览器检查通过。冷场 p90 仅缩短约 2.6%，未达到 20% 目标；默认保持导演 off，20 对回放观感仍待人工评审。
+Phase 4 已完成，G4 工程验收通过：完整回放包、独立播放器、批量模拟、赛后评分、多样性筛选、故障恢复和本地视频制作工作台已接通。324 项测试通过；30 场正式批次选出三组对阵并生成三条 1080×1920 / 60 FPS MP4，全部通过完整解码和规格检查。累计 49/54；下一阶段为性能与观感校准。导演默认 off，既有 H2、风格与节奏人工评审仍待完成。
 
-路线：[开发执行计划](./开发执行计划.md)。规则：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收：[Phase 3B](./docs/reports/phase-3b.md)、[Phase 3 汇总](./docs/reports/phase-3.md)、[Phase 3A](./docs/reports/phase-3a.md)、[Phase 2](./docs/reports/phase-2.md)、[Phase 1](./docs/reports/phase-1.md)、[Phase 0](./docs/reports/phase-0.md)。正式视频生产留在 Phase 4。
+路线：[开发执行计划](./开发执行计划.md)。规则：[实施规格](./1v1自动对抗短视频内容引擎_GPT6_Sol实施规格_v1.0.md)。验收：[Phase 4 与成片](./docs/reports/phase-4.md)、[Phase 3B](./docs/reports/phase-3b.md)、[Phase 3 汇总](./docs/reports/phase-3.md)、[Phase 3A](./docs/reports/phase-3a.md)、[Phase 2](./docs/reports/phase-2.md)、[Phase 1](./docs/reports/phase-1.md)、[Phase 0](./docs/reports/phase-0.md)。
+
+## 制作工作台与一键视频
+
+```powershell
+. .\scripts\use-node.ps1
+npm.cmd run build
+npm.cmd run studio
+```
+
+打开 [制作工作台](http://127.0.0.1:5177/production.html)。可从 JSON 配置开始批量模拟，查看评分/筛选原因、导出进度与故障，再取消或恢复任务。[独立回放](http://127.0.0.1:5177/replay.html) 支持导入包含 manifest.json 的文件夹、原配置显示、任意时间定位、交锋与事件跳转、两种模板以及本地视频导出。这个 Node 本地服务负责文件持久化、worker 和 FFmpeg 任务；页面负责显示和操作。
+
+```powershell
+# 首次准备便携编码环境，已有 .tools 和 Chromium 可跳过
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-export.ps1
+# 执行完整链路，已有批次从已验证产物继续
+npm.cmd run produce -- --config production.example.json --resume
+# 也可分开执行 batch / rank / render / verify，各自使用相同 --config 和 --resume
+npm.cmd run verify -- --config production.example.json --resume
+```
+
+例配置默认四个 worker、三组对阵各十场、筛选三条正式 1080p 视频、导演 off、保留 PNG、生成完整检查点。修改参数建立新 id/output；原批次配置和内容冻结，恢复时核对 hash。MP4 只有通过视频/音轨/帧数/时长和完整解码检查后才标为完成。
+
+已生成视频在 `artifacts/phase-4/正式视频 production v1/exports/`；三个入口与 hash 见 [Phase 4 报告](./docs/reports/phase-4.md) 和 [证据清单](./docs/reports/phase-4-evidence.json)。artifacts/dist/.tools 不提交 Git；中文字体与原创音效随源码提交，便携 FFmpeg 下载包与可执行文件以 hash 锁定。
+
+`npm run verify:phase4` 运行全套类型/324 项测试/构建/边界、20 个 worker 配置对照、三模式生产包/实际检查点续跑、正式链路、故障/清理恢复和浏览器导入导出。工具链与资源见 [export-toolchain.json](./content/export-toolchain.json)、[audio-assets.json](./content/audio-assets.json)；重新安装先按下方步骤启用锁定 Node。
 
 ## 在 Cursor / PowerShell 中启动
 
@@ -34,7 +59,7 @@ $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path (Get-Location) '.cache\ms-playwright'
 npx.cmd playwright install chromium
 ```
 
-依赖由 package-lock.json 锁定；环境记录见 [toolchain-lock.json](./toolchain-lock.json)。新机器首次安装需要网络；FFmpeg/中文导出字体在视频阶段单独准备。
+依赖由 package-lock.json 锁定；环境记录见 [toolchain-lock.json](./toolchain-lock.json)。新机器首次安装需要网络；视频编码另运行 bootstrap-export.ps1，中文字体已随源码保存。
 
 ## Node 模拟、trace、检查点和输入重放
 
@@ -103,7 +128,7 @@ npm.cmd run review:style
 
 ## 模块和确定性边界
 
-contracts 定义严格数据契约；content 编译声明式技能；math 提供几何/hash/RNG；sim 执行权威战斗；ai 只读 Observation 和公开内容；director 只消费成熟公共快照；runner 组装双方同时决策与检查点；analysis 提取评测指标；replay/render 只读表现帧；cli/web 负责宿主 I/O。
+contracts 定义严格数据契约；content 编译声明式技能；math 提供几何/hash/RNG；sim 执行权威战斗；ai 只读 Observation 和公开内容；director 只消费成熟公共快照；runner 组装双方同时决策与检查点；analysis 提取评测指标与选片评分；replay/render 只读保存内容和表现帧；jobs 承担文件/锁/worker/本地 HTTP/编码；cli/web 提供任务入口。
 
 `content/fighter-phase3a.json` 增加铁球/镜子、状态和两个专用插件，其余两角色及人格数值保持原配置。内容版本、插件、构建、AI 和 rulesHash 一起冻结；共享效果数学用于模拟与预测，见 [D0006](./docs/decisions.md)。旧 phase1/phase2 内容及 Phase 0 夹具保留，回放按保存构建执行。
 

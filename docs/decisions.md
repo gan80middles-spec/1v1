@@ -68,3 +68,15 @@
 - behavior-v2 区分实际普攻命中、有效伤害/防御/反射/接近/增益，明确 null 分母、平局、invalid、首次实际交锋、60 tick 窗口、无威胁卡墙和 ready 区间截尾；保留旧初评指标函数，不能直接混算。控制 800 场、固定 96 场四项消融、40 场同预算匿名风格包分别报告。
 - 无预测取消未来积分，无迟滞取消保持/切换门槛但保留动作规则，无记忆取消习惯适应，无延迟仅改 Utility 感知预算，明确作为研究对照。没有用留出样本选择参数。短期记忆收益和主观角色风格仍未证实。
 - world/runner 的全部未来字段在实际巨人和飞行中反射完整检查点中验证；调试、浏览器导入和 trace 不消耗额外战斗随机数。大型输入/事件记录留在 artifacts，版本控制保存复现脚本及摘要/清单/文件树 hash。
+
+## D0008 · Phase 4 生产包、媒体边界与恢复事务（2026-10-03）
+
+- 用户授权完成 Phase 4。战斗、AI、导演、五份种子清单与既有 rulesHash/contentHash 不变；默认导演 off。G4 检查工程链路，人工偏好、既有导演效果和最终性能留在 Phase 5。
+- 正式包 replaySchemaVersion=3、presentationVersion=1；原输入回放 schema2 继续由原按构建解析器验证，早期缺少 pacing 的已支持构建显式迁移为 off。包补充 aiVersion/pluginVersions、完整末态 world/runner hash，以及 hashes/analysis 两个 role；输入、事件、director 始终保存，轨道和真正完整检查点仅入选时保存。压缩文件 hash 是完整 gzip 字节 hash；内嵌内容 hash 同 compiler 的 source/stableIds/pluginVersions 指纹。
+- 呈现轨道保留实际弹体 owner/原 sourceCast/ability/速度、命中体归属、盾/增益几何和寿命；独立播放/导出不执行 AI、物理或导演。未知 engineBuild 有兼容轨道可播放，未知包/呈现 schema 拒绝；未知构建的输入日志不能冒用当前规则重建。Director 有独立文件与版本/hash，off 文件为空、检查点状态 null。
+- 赛后按照 cast/target 累计 HP≥1 回指首笔伤害，间隔>90分段。DamagePrevented 必须实际正收益，反射用前接触保存速度作30tick线性相对扫掠并保留假设，缺状态不猜测。大招必须有实际收益。重复统计等待动作/弹体/状态收益窗口结算，终局尚未结算的截尾。评分采用规格原公式，胜者多样性按角色；反射引发墙弹按真实伤害来源归因，不把保留原castId误解为原施法者。TopK 不足直接报告，不补无效样本。
+- Intro=60、battle=T+1（完整S[0..T]）、KO hold=6、outro=90，各区间半开且连续；KO总帧数T+157。事件属于tick t，在S[t+1]首次跨越映射至视频帧；冻结hold不重复音效。随机外观只用视觉seed/事件seq/粒子索引hash，字体加载完成再绘制；深/浅模板共享同一轨道。
+- 用严格 JSON 配置统一承载参数，CLI均为 --config ... [--resume]，与规格示意的分散参数提供等价功能；Editor追加本地Node HTTP 5177，通过参数数组发起同一CLI，文件输出限artifacts。并发参数可变化，比赛seed/config/内容不可变化。默认四个worker，模拟任务父进程预生成，一场始终在一个常驻worker中顺序执行，模拟失败最多原配置重试一次。
+- 持久化采用同卷临时文件/fsync/rename、manifest最后提交、PID/token独占锁与死进程恢复。轨道重建先用输入验证world/事件，再单独Controller/Director复现输入/runnerHash生成完整检查点；old/new manifest hash journal覆盖manifest已提交但batch未更新的间隙。PNG索引严格编号/hash；有效PNG/编码可复用，MP4存在不等于complete。
+- FFmpeg固定libx264/medium/CRF20/yuv420p/60、AAC48k双声道/目标192k、faststart。候选MP4通过ffprobe帧数/规格/一帧时长容差、完整解码和抽帧后才重命名；音频WAV和源PNG索引也纳入完整产物校验。可选清理只删除本job已验证的明确编号PNG，保存pre/post索引hash和清理intent，覆盖删除途中及索引提交后的恢复间隙。
+- 锁定FFmpeg9.0.2、Chromium153/Playwright1.63、deviceScaleFactor1、Noto Sans SC/OFL及原创解析音效；下载URL/许可/字节hash均保存，编码工具不依赖系统PATH。只承诺固定工具链/环境内确定性，不声称跨CPU/浏览器位级一致。
