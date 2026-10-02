@@ -19,7 +19,7 @@ export function displayTrace(entry: TraceEntry | null, events: readonly BattleEv
         const tr = document.createElement('tr');
         if (c.option.key === t.selectedKey)
             tr.className = 'chosen';
-        const cells = [c.option.key, c.option.legal ? '合法' : c.option.reason ?? '过滤', ...(['D', 'L', 'P', 'K', 'X', 'C', 'E', 'R', 'B', 'stuckBonus', 'wallCost', 'Uraw'] as const).map(k => number(c.score?.[k])), number(c.outcome?.confidence), number(c.switchMargin), c.eligible ? '入池' : '—'];
+        const cells = [c.option.key, c.option.legal ? '合法' : c.option.reason ?? '过滤', ...(['D', 'L', 'P', 'K', 'X', 'C', 'E', 'R', 'B', 'stuckBonus', 'wallCost', 'Uraw'] as const).map(k => number(c.score?.[k])), number(c.score?.Ubase??c.score?.Uraw),number(c.score?.director?.raw??0),number(c.score?.director?.applied??0),c.score?.director?`${c.score.director.baseAllowed?'基础分通过':'基础分过滤'} / ${c.score.director.riskAllowed?'风险通过':'风险过滤'} · ${c.score.director.reason} · 上限 ${number(c.score.director.stackCap)}`:'—',number(c.outcome?.confidence), number(c.switchMargin), c.eligible ? '入池' : '—'];
         for (const value of cells) {
             const td = document.createElement('td');
             td.textContent = value;

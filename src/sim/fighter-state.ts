@@ -12,7 +12,9 @@ export const PHASE3A_RULES_HASH=hashCanonical({...FIGHTER_RULES,build:'phase3a-v
 export const fighterRulesHash=(build:FighterEngineBuild):string=>build==='phase1-v1'?FIGHTER_RULES_HASH:build==='phase2-v1'?UTILITY_RULES_HASH:PHASE3A_RULES_HASH;
 export function initialFighterState(input: FighterConfig, content: ContentBundle,build:FighterEngineBuild='phase1-v1'): WorldView {
     const config = FighterConfigSchema.parse(input);
-    if(config.rulesetId==='free-bounce-fixture' && build!=='phase3a-v1') throw new Error('Fixture requires Phase 3A build');
+    if(build!=='phase3b-v1'&&config.pacing.mode!=='off')throw new Error('Legacy build requires pacing off');
+    if(config.pacing.mode!=='off'&&!content.source.pacingProfiles.some(p=>p.id===config.pacing.profileId))throw new Error('Unknown pacing profile');
+    if(config.rulesetId==='free-bounce-fixture' && !['phase3a-v1','phase3b-v1'].includes(build)) throw new Error('Fixture requires Phase 3A build');
     if (config.contentHash !== content.bundleHash || content.source.purpose !== 'production')
         throw new Error('Fighter content identity mismatch');
     const arena = content.source.arenas.find(a => a.id === config.arenaId);

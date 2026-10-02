@@ -11,12 +11,18 @@ export class ObservationBuffer {
     private ring: PublicSnapshot[] = [];
     private pending: ActionReceipt[] = [];
     private lastSensed = [-1, -1];
-    constructor(private content: ContentBundle) { }
+    constructor(private content: ContentBundle,readonly capacity=64) {if(capacity<64||capacity>128)throw new Error('Observation capacity out of bounds');}
+    maturedSince(lastTick:number|null,cutoff:number):readonly PublicSnapshot[]{
+        if(cutoff<0)return [];
+        const first=(lastTick??-1)+1,frames=this.ring.filter(s=>s.tick>=first&&s.tick<=cutoff);
+        if(frames.length!==Math.max(0,cutoff-first+1))throw new Error('Director public ring interval missing');
+        return frames;
+    }
     push(w: WorldView, events: readonly BattleEvent[], receipts: readonly ActionReceipt[]): void {
         if (this.ring.length && w.tick !== this.ring.at(-1)!.tick + 1)
             throw new Error('Observation source snapshots must be contiguous');
         this.ring.push(publicSnapshot(w, events, this.content));
-        if (this.ring.length > 64)
+        if (this.ring.length > this.capacity)
             this.ring.shift();
         this.pending.push(...receipts);
     }
@@ -36,6 +42,7 @@ export class ObservationBuffer {
     snapshot(): ObservationSnapshot { return deepFreeze({ version: 1, ring: [...this.ring], pending: [...this.pending], lastSensed: [this.lastSensed[0]!, this.lastSensed[1]!] }); }
     restore(input: unknown): void {
         const data = ObservationSnapshotSchema.parse(input);
+        if(data.ring.length>this.capacity)throw new Error('Observation capacity mismatch');
         if (data.ring.some((s, i) => i > 0 && s.tick !== data.ring[i - 1]!.tick + 1) || data.lastSensed.some(t => t > (data.ring.at(-1)?.tick ?? -1)))
             throw new Error('Observation ring/cursor mismatch');
         for (const s of data.ring) {

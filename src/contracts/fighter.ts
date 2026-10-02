@@ -3,7 +3,7 @@ import type { DeepReadonly, ContentBundle } from './content.js';
 import type { Effect } from './content-schema.js';
 import type { Slot } from './versions.js';
 export const FIGHTER_BUILD = 'phase1-v1' as const;
-export type FighterEngineBuild='phase1-v1'|'phase2-v1'|'phase3a-v1';
+export type FighterEngineBuild='phase1-v1'|'phase2-v1'|'phase3a-v1'|'phase3b-v1';
 export type ActionState = {
     kind: 'free';
 } | {
@@ -67,8 +67,8 @@ export interface FighterConfig {
     arenaId: string;
     contentHash: string;
     pacing: {
-        mode: 'off';
-        profileId: null;
+        mode: import('./pacing.js').PacingMode;
+        profileId: string | null;
     };
     participants: [
         {
@@ -307,6 +307,7 @@ export interface FighterStep {
     receipts: readonly ActionReceipt[];
 }
 export interface PublicFighter {
+    visibleEffects?:readonly {castId:number|null;statusId:string;expiresTick:number}[]|undefined;
     id: number;
     characterId: string;
     position: Vec2;
@@ -360,6 +361,10 @@ export interface PublicEvent {
         preventedDamage: number;
     } | {
         kind: 'death';
+    } | { kind:'cast-ended';castId:number;interrupted:boolean
+    } | { kind:'status';castId:number|null;statusId:string;expiresTick:number
+    } | { kind:'growth';stacks:number
+    } | { kind:'dissipate';projectileId:number;castId:number;defenseCastId:number|null;reflectionCount:number
     } | {
         kind: 'reflect';
         projectileId:number;
@@ -376,6 +381,7 @@ export interface PublicSnapshot {
     events: readonly PublicEvent[];
 }
 export interface Observation {
+    directorCue?: import('./pacing.js').DirectorCue;
     nowTick: number;
     sensedTick: number | null;
     self: {
@@ -455,6 +461,7 @@ export interface InputEntry {
     ];
 }
 export interface InputReplay {
+    directorRecords?: readonly import('./pacing.js').DirectorRecord[];
     replaySchemaVersion: 2;
     engineBuild: FighterEngineBuild;
     config: FighterConfig;

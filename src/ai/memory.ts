@@ -142,9 +142,9 @@ export function consumeMemory(m: AIMemory, e: ExecutionMemory, o: Observation, c
             if (p && d.preventedDamage > 0)
                 p.effective = 'defended';
         }
-        if(d.kind==='reflect'&&v.sourceId===own.id){
+        if((d.kind==='reflect'||d.kind==='dissipate')&&v.sourceId===own.id){
             const p=m.pendingOwnResults.find(p=>p.castId===d.defenseCastId);
-            if(p&&d.preventedDamage>0)p.effective='defended';
+            if(p&&(d.kind==='dissipate'||d.preventedDamage>0))p.effective='defended';
             m.lastEffectiveInteractionTick=Math.max(m.lastEffectiveInteractionTick,v.sourceTick);
         }
         if(d.kind==='damage'&&d.amount>0&&v.sourceId===own.id&&content.pluginVersions['speed-impact']===1){

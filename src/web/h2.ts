@@ -17,6 +17,7 @@ let clip: Clip | null = null, entries: {
     label: string;
     url: string;
 }[] = [], cursor = 0, playing = false, last = 0, accumulator = 0, base = '';
+let paired=false;
 let reviewKey='h2-style-review-v1',ratings:Record<string,Record<string,string>>={};
 const indexUrl = new URLSearchParams(location.search).get('index') ?? (import.meta.env.DEV ? '/artifacts/phase-2/h2/index.json' : '/review-data/index.json');
 function show(): void { if (!clip)
@@ -33,6 +34,7 @@ async function load(): Promise<void> { try {
     seek.max = String(clip.frames.length - 1);
     for (const field of ['readability', 'pursuit', 'idle', 'style', 'notes'])
         (form.elements.namedItem(field) as HTMLInputElement).value = ratings[item.label]?.[field] ?? '';
+    if(paired)(form.elements.namedItem('preference') as HTMLInputElement).value=ratings[item.label.slice(0,-2)]?.['preference']??'';
     show();
     el('#message').textContent = '';
 }
@@ -40,7 +42,7 @@ catch (e) {
     el('#message').textContent = e instanceof Error ? e.message : String(e);
 } }
 form.addEventListener('input', () => { if (!clip)
-    return; ratings[clip.label] = Object.fromEntries([...new FormData(form)].map(([k, v]) => [k, String(v)])); localStorage.setItem(reviewKey, JSON.stringify(ratings)); });
+    return; ratings[clip.label] = Object.fromEntries([...new FormData(form)].map(([k, v]) => [k, String(v)])); if(paired)ratings[clip.label.slice(0,-2)]={preference:String(new FormData(form).get('preference')??'')}; localStorage.setItem(reviewKey, JSON.stringify(ratings)); });
 select.addEventListener('change', () => { void load(); });
 el('#next').addEventListener('click', () => { select.value = String((Number(select.value) + 1) % entries.length); void load(); });
 el('#play').addEventListener('click', () => { if (clip && cursor === clip.frames.length - 1)
@@ -66,6 +68,7 @@ try {
     if (!response.ok)
         throw new Error('请先生成对应阶段的观感观看包');
     const data = await response.json() as {
+        paired?:boolean;
         title?:string;
         reviewId?:string;
         entries: {
@@ -73,11 +76,11 @@ try {
             url: string;
         }[];
     };
-    entries = data.entries;
+    entries = data.entries;paired=data.paired??false;el('#pair-preference').hidden=!paired;
     reviewKey=data.reviewId??'h2-style-review-v1';
     ratings=JSON.parse(localStorage.getItem(reviewKey)??'{}') as typeof ratings;
     el('h1').textContent=data.title??'两角色观感盲评';
-    el('header p').textContent=`观看 ${entries.length} 场隐藏人格的比赛。重点观察 A 方；双方能力相同，感知水平固定。`;
+    el('header p').textContent=paired?`观看 ${entries.length/2} 对隐藏模式的比赛。每对 X/Y 使用相同 seed 和角色，请比较节奏、双方参与和可读性。`:`观看 ${entries.length} 场隐藏人格的比赛。重点观察 A 方；双方能力相同，感知水平固定。`;
     base = new URL(indexUrl, location.href).href;
     for (let i = 0; i < entries.length; i++) {
         const option = document.createElement('option');

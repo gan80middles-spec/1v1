@@ -2,6 +2,8 @@ import { FIGHTER_BUILD, type InputReplay, type RenderFrame } from '../contracts/
 import { FighterConfigSchema, ActionIntentSchema, FighterResultSchema } from '../contracts/fighter-schema.js';
 import { ContentSourceSchema } from '../contracts/content-schema.js';
 import { compilePhase3AContent } from '../content/phase3a.js';
+import { compilePhase3BContent } from '../content/phase3b.js';
+import { DirectorRecordSchema } from '../contracts/ai-schema.js';
 import { compileFighterContent } from '../content/fighter.js';
 import { FighterSimulation } from '../sim/fighter.js';
 import { fighterWorldHash } from '../sim/fighter-state.js';
@@ -13,10 +15,12 @@ export function replayInputs(input: unknown, recordFrames = true): {
 } {
     if (!input || typeof input !== 'object')
         throw new Error('Bad replay envelope');
-    const r = input as InputReplay;
-    if (r.replaySchemaVersion !== 2 || ![FIGHTER_BUILD,'phase2-v1','phase3a-v1'].includes(r.engineBuild))
+    const envelope = input as InputReplay;
+    const r:InputReplay = ['phase1-v1','phase2-v1','phase3a-v1'].includes(envelope.engineBuild)&&envelope.config?.pacing===undefined?{...envelope,config:{...envelope.config,pacing:{mode:'off',profileId:null}}}:envelope;
+    if (r.replaySchemaVersion !== 2 || ![FIGHTER_BUILD,'phase2-v1','phase3a-v1','phase3b-v1'].includes(r.engineBuild))
         throw new Error('Replay schema/build mismatch');
-    const config = FighterConfigSchema.parse(r.config), content = (r.engineBuild==='phase3a-v1'?compilePhase3AContent:compileFighterContent)(ContentSourceSchema.parse(r.content));
+    const config = FighterConfigSchema.parse(r.config), content = (r.engineBuild==='phase3b-v1'?compilePhase3BContent:r.engineBuild==='phase3a-v1'?compilePhase3AContent:compileFighterContent)(ContentSourceSchema.parse(r.content));
+    if(r.directorRecords){if(r.directorRecords.length>18)throw new Error('Replay director log budget exceeded');r.directorRecords.forEach(record=>DirectorRecordSchema.parse(record));}
     FighterResultSchema.parse(r.result);
     if (config.contentHash !== content.bundleHash || canonicalSerialize(r.pluginVersions) !== canonicalSerialize(content.pluginVersions))
         throw new Error('Replay content/plugin mismatch');

@@ -4,6 +4,7 @@ import type { ContentSource } from '../src/contracts/content-schema.js';
 import type { Observation, FighterWorld } from '../src/contracts/fighter.js';
 import type { CandidateTrace, OutcomeEstimate, Option } from '../src/contracts/ai.js';
 import { compileUtilityContent } from '../src/content/utility.js';
+import { compilePhase3BContent } from '../src/content/phase3b.js';
 import { compilePhase3AContent } from '../src/content/phase3a.js';
 import { initialFighterState, fighterWorldHash } from '../src/sim/fighter-state.js';
 import { FighterSimulation } from '../src/sim/fighter.js';
@@ -22,9 +23,9 @@ import { attributes } from '../src/ai/abilities.js';
 import { advanceMotion } from '../src/ai/motion.js';
 import { Xoshiro128ss } from '../src/math/random.js';
 import { NEUTRAL_INTENT } from '../src/contracts/state.js';
-describe.each(['phase2-v1', 'phase3a-v1'] as const)('%s generic Utility scenarios', build => {
-const compile = build === 'phase3a-v1' ? compilePhase3AContent : compileUtilityContent;
-const source = JSON.parse(readFileSync(`content/fighter-${build === 'phase3a-v1' ? 'phase3a' : 'phase2'}.json`, 'utf8')) as ContentSource;
+describe.each(['phase2-v1', 'phase3a-v1','phase3b-v1'] as const)('%s generic Utility scenarios', build => {
+const compile = build==='phase3b-v1'?compilePhase3BContent:build === 'phase3a-v1' ? compilePhase3AContent : compileUtilityContent;
+const source = JSON.parse(readFileSync(`content/fighter-${build==='phase3b-v1'?'phase3b':build === 'phase3a-v1' ? 'phase3a' : 'phase2'}.json`, 'utf8')) as ContentSource;
 const diagnostic = structuredClone(source);
 for (const p of diagnostic.profiles) {
     p.reactionDelayTicks = 0;

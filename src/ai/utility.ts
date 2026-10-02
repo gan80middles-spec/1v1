@@ -1,7 +1,7 @@
 import type { ContentBundle } from '../contracts/content.js';
 import type { AIProfile } from '../contracts/content-schema.js';
 import type { Observation } from '../contracts/fighter.js';
-import { AI_VERSION, PHASE3A_AI_VERSION, DEFAULT_UTILITY_SETTINGS, type AITrace, type UtilitySettings, type UtilitySnapshot, type CandidateTrace } from '../contracts/ai.js';
+import { AI_VERSION, PHASE3A_AI_VERSION, PHASE3B_AI_VERSION, DEFAULT_UTILITY_SETTINGS, type AITrace, type UtilitySettings, type UtilitySnapshot, type CandidateTrace } from '../contracts/ai.js';
 import { UtilitySnapshotSchema } from '../contracts/ai-schema.js';
 import { NEUTRAL_INTENT, type ActionIntent } from '../contracts/state.js';
 import { deepFreeze } from '../math/canonical.js';
@@ -15,10 +15,11 @@ import { emptyMemory, emptyExecution, consumeMemory, beginOwnResult } from './me
 import { generateOptions } from './options.js';
 import { buildThreats, describeThreats, predictOutcome, type PredictionContext } from './prediction.js';
 import { scoreOption } from './score.js';
+import { applyDirectorScores } from './director-score.js';
 import { continuation, eligiblePool, choose } from './selection.js';
 export class UtilityController {
     private rng: Xoshiro128ss;
-    private get aiVersion(){return this.content.pluginVersions['speed-impact']===1?PHASE3A_AI_VERSION:AI_VERSION;}
+    private get aiVersion(){return this.content.source.pacingProfiles.some(p=>p.id==='gentle-v1')?PHASE3B_AI_VERSION:this.content.pluginVersions['speed-impact']===1?PHASE3A_AI_VERSION:AI_VERSION;}
     private memory = emptyMemory();
     private execution = emptyExecution();
     private decisionIndex = 0;
@@ -50,6 +51,7 @@ export class UtilityController {
         const candidates: CandidateTrace[] = options.map(option => { if (!option.legal)
             return { option, outcome: null, score: null, switchMargin: 0, eligible: false }; const outcome = predictOutcome(c, option, models); return { option, outcome, score: scoreOption(c, option, outcome), switchMargin: 0, eligible: false }; });
         const current = continuation(this.execution, options), currentCandidate = current ? candidates.find(v => v.option.key === current.key) : null;
+        applyDirectorScores(c,candidates,currentCandidate,models.some(m=>m.kind==='committed'));
         const currentScore = currentCandidate?.score?.Uraw ?? null, unexpired = current!==null&&o.nowTick < this.execution.minimumHoldUntilTick;
         if (currentCandidate && currentCandidate.outcome!.earlyRiskPct >= 12 && candidates.some(v => v.outcome && v.outcome.earlyRiskPct <= currentCandidate.outcome!.earlyRiskPct - 6))
             emergency = true;
@@ -93,7 +95,7 @@ export class UtilityController {
         this.nextDecisionTick = o.nowTick + this.profile.decisionIntervalTicks;
         this.decisionIndex++;
         if (this.traceEnabled)
-            this.lastTrace = deepFreeze({ aiVersion: this.aiVersion, nowTick: o.nowTick, sensedTick: o.sensedTick, decisionIndex: this.decisionIndex, profileId: this.profile.id, profileVersion: this.profile.version, belief: c.belief, threats: describeThreats(models), candidates, continuationKey: current?.key ?? null, continuationScore: currentScore, selectedKey, poolKeys: pool.map(v => v.option.key), randomBits: bits, choiceDraw: draw, emergency, commitmentHeld: this.settings.hysteresis!==false && unexpired && !emergency, stuck: this.memory.stuckUntilTick > o.nowTick, blockedMoveX: this.memory.blockedMoveX, requestId: input.requestId, input, executionBefore: before });
+            this.lastTrace = deepFreeze({ ...(o.directorCue?{directorCue:o.directorCue}:{}), aiVersion: this.aiVersion, nowTick: o.nowTick, sensedTick: o.sensedTick, decisionIndex: this.decisionIndex, profileId: this.profile.id, profileVersion: this.profile.version, belief: c.belief, threats: describeThreats(models), candidates, continuationKey: current?.key ?? null, continuationScore: currentScore, selectedKey, poolKeys: pool.map(v => v.option.key), randomBits: bits, choiceDraw: draw, emergency, commitmentHeld: this.settings.hysteresis!==false && unexpired && !emergency, stuck: this.memory.stuckUntilTick > o.nowTick, blockedMoveX: this.memory.blockedMoveX, requestId: input.requestId, input, executionBefore: before });
         return input;
     }
     private context(o: Observation, bits: number): PredictionContext { return { observation: o, content: this.content, profile: this.profile, belief: buildBelief(o, this.content, this.profile, this.memory, bits, this.settings), memory: this.memory, execution: this.execution, settings: this.settings }; }

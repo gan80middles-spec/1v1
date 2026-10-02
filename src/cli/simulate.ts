@@ -8,6 +8,8 @@ import { canonicalSerialize } from '../math/canonical.js';
 import { compileFighterContent } from '../content/fighter.js';
 import { FighterRunner, fighterConfig } from '../runner/fighter.js';
 import { replayInputs } from '../runner/input-replay.js';
+import { gzipSync } from 'node:zlib';
+import { compilePhase3BContent, PACING_PROFILE_ID } from '../content/phase3b.js';
 import { compilePhase3AContent } from '../content/phase3a.js';
 import { compileUtilityContent } from '../content/utility.js';
 import { UtilityRunner } from '../runner/utility.js';
@@ -25,7 +27,7 @@ async function main(): Promise<void> {
         }, strict: true, allowPositionals: false,
     });
     if (values.help) {
-        console.log('Phase 3A: npm run simulate -- --ai utility --a iron --b mirror --seed 17 --trace artifacts/phase-3a/trace.json\nCharacters: standard|rubber|iron|mirror; controllers: utility|rush|ranged|idle; pacing: off\nCheckpoint: add --checkpoint-at 240 --checkpoint artifacts/phase-3a/checkpoint.json; resume with --resume FILE\nProfiles: --profile-a/--profile-b balanced|pressure|counter|evasive; diagnostic flags --no-noise --eval --no-memory --no-prediction --no-hysteresis\nLegacy Phase 2: --ai utility --build phase2-v1; Phase 1: --a standard --b rubber --controller-a rush --controller-b ranged\nReplay: --replay FILE; zero-gravity diagnostic: --ai utility --a standard --b standard --ruleset free-bounce-fixture\nPhase 0 fixture: --seed 17 --ticks 600 [--record-states]; full evaluation: npm run evaluate:ai -- --ablations');
+        console.log('Phase 3B: npm run simulate -- --ai utility --a iron --b mirror --seed 17 --trace artifacts/phase-3b/trace.json\nCharacters: standard|rubber|iron|mirror; controllers: utility|rush|ranged|idle; pacing: off|observe|pace (default off)\nCheckpoint: add --checkpoint-at 240 --checkpoint artifacts/phase-3b/checkpoint.json; resume with --resume FILE\nProfiles: --profile-a/--profile-b balanced|pressure|counter|evasive; diagnostic flags --no-noise --eval --no-memory --no-prediction --no-hysteresis\nLegacy Phase 2: --ai utility --build phase2-v1; Phase 1: --a standard --b rubber --controller-a rush --controller-b ranged\nReplay: --replay FILE; zero-gravity diagnostic: --ai utility --a standard --b standard --ruleset free-bounce-fixture\nPhase 0 fixture: --seed 17 --ticks 600 [--record-states]; full evaluation: npm run evaluate:ai -- --ablations');
         return;
     }
     const integer = (name: string, text: string, max: number, min = 0): number => {
@@ -39,22 +41,26 @@ async function main(): Promise<void> {
         console.log(JSON.stringify({ replayVerified: true, finalWorldHash: checked.replay.finalWorldHash, result: checked.replay.result }, null, 2));
         return;
     }
-    if(values.build!==undefined&&!['phase2-v1','phase3a-v1'].includes(values.build))throw new Error('--build must be phase2-v1|phase3a-v1');
-    if(values.pacing!=='off')throw new Error('Phase 3A supports --pacing off only');
+    if(values.build!==undefined&&!['phase2-v1','phase3a-v1','phase3b-v1'].includes(values.build))throw new Error('--build must be phase2-v1|phase3a-v1|phase3b-v1');
+    if(!['off','observe','pace'].includes(values.pacing))throw new Error('--pacing must be off|observe|pace');
     if(values.ruleset!==undefined&&!['fighter','free-bounce-fixture'].includes(values.ruleset))throw new Error('--ruleset must be fighter|free-bounce-fixture');
     if (values.ai !== undefined && values.ai !== 'utility')
         throw new Error('--ai must be utility');
-    if (values.ai === 'utility' || values['controller-a'] === 'utility' || values['controller-b'] === 'utility' || values.resume || values.build==='phase3a-v1' || ['iron','mirror'].includes(values.a??'') || ['iron','mirror'].includes(values.b??'') || values.ruleset==='free-bounce-fixture') {
+    if (values.ai === 'utility' || values['controller-a'] === 'utility' || values['controller-b'] === 'utility' || values.resume || values.build==='phase3a-v1' || values.build==='phase3b-v1' || values.pacing!=='off' || ['iron','mirror'].includes(values.a??'') || ['iron','mirror'].includes(values.b??'') || values.ruleset==='free-bounce-fixture') {
         const saved = values.resume ? JSON.parse(await readFile(resolve(values.resume), 'utf8')) as {
             content: unknown;
             checkpoint: FullCheckpoint;
         } : null;
-        const build=values.build??saved?.checkpoint.engineBuild??'phase3a-v1';
-        const path=values.content?resolve(values.content):fileURLToPath(new URL(`../../../content/fighter-${build==='phase2-v1'?'phase2':'phase3a'}.json`,import.meta.url));
+        const pacingExplicit=process.argv.slice(2).some(arg=>arg==='--pacing'||arg.startsWith('--pacing='));
+        if(saved&&pacingExplicit&&values.pacing!==saved.checkpoint.config.pacing.mode)throw new Error('Resume keeps the saved pacing mode; start a new simulation to change modes');
+        if(saved&&values.build!==undefined&&values.build!==saved.checkpoint.engineBuild)throw new Error('Resume keeps the saved engine build');
+        const build=values.build??saved?.checkpoint.engineBuild??'phase3b-v1';
+        const path=values.content?resolve(values.content):fileURLToPath(new URL(`../../../content/fighter-${build==='phase2-v1'?'phase2':build==='phase3a-v1'?'phase3a':'phase3b'}.json`,import.meta.url));
         const raw=saved?.content??JSON.parse(await readFile(path,'utf8'));
         if(values.ruleset==='free-bounce-fixture'){const arena=structuredClone(raw.arenas[0]);arena.id='free-bounce-test';arena.gravity={x:0,y:0};arena.spawnPositions=[{x:240,y:260},{x:720,y:600}];raw.arenas.push(arena);}
-        const bundle=(build==='phase2-v1'?compileUtilityContent:compilePhase3AContent)(raw),ticks=integer('ticks',values.ticks??(values.ruleset==='free-bounce-fixture'?'600':'3600'),3600,1);
+        const bundle=(build==='phase2-v1'?compileUtilityContent:build==='phase3a-v1'?compilePhase3AContent:compilePhase3BContent)(raw),ticks=integer('ticks',values.ticks??(values.ruleset==='free-bounce-fixture'?'600':'3600'),3600,1);
         const config = saved?.checkpoint.config ?? fighterConfig(bundle, seed, values.a ?? 'standard', values.b ?? 'rubber', ticks);
+        if(!saved)config.pacing={mode:values.pacing as 'off'|'observe'|'pace',profileId:values.pacing==='off'?null:PACING_PROFILE_ID};
         if(values.ruleset==='free-bounce-fixture'){config.rulesetId='free-bounce-fixture';config.arenaId='free-bounce-test';}
         for (const i of [0, 1] as const) {
             const id = values[i === 0 ? 'profile-a' : 'profile-b'];
@@ -91,8 +97,9 @@ async function main(): Promise<void> {
         }
         if (checkpointAt !== null && !checkpointSaved)
             throw new Error('Match ended before requested checkpoint tick');
-        const replay = runner.replay(), destination = resolve(values.output ?? `artifacts/${build==='phase2-v1'?'phase-2':'phase-3a'}/replays/${config.matchId}.json`);
+        const replay = runner.replay(), destination = resolve(values.output ?? `artifacts/${build==='phase2-v1'?'phase-2':build==='phase3a-v1'?'phase-3a':'phase-3b'}/replays/${config.matchId}.json`);
         await save(destination, replay);
+        if(build==='phase3b-v1')await writeFile(destination+'.director.ndjson.gz',gzipSync((replay.directorRecords??[]).map(r=>canonicalSerialize(r)).join('\n')+'\n'));
         if (values.trace)
             await save(values.trace, { engineBuild: replay.engineBuild, config, contentHash: bundle.bundleHash, traces: runner.traces, finalControllers: runner.controllers.map(c => c.snapshot()) });
         if (replay.result.reason === 'invalid') {

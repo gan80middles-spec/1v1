@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {gunzipSync} from 'node:zlib';
+import {replayInputs} from '../dist/node/runner/input-replay.js';
+import {canonicalSerialize} from '../dist/node/math/canonical.js';
+import {hashCanonical} from '../dist/node/math/hash.js';
+import {deriveSeed} from '../dist/node/math/random.js';
+const manifest=JSON.parse(await readFile('fixtures/seeds/pacing-pairs-v1.json','utf8')),cases=manifest.cases.filter(c=>c.sampleIndex===0||c.sampleIndex===10),directory=resolve('artifacts/phase-3b'),dir=resolve(directory,'review');assert.equal(cases.length,20);await mkdir(dir,{recursive:true});
+const entries=[],key=[];for(let i=0;i<cases.length;i++){const item=cases[i],first=deriveSeed(2026,'pacing-review',item.caseId)%2===0?'off':'pace';for(const mode of ['off','pace']){const r=JSON.parse(gunzipSync(await readFile(resolve(directory,'records',`${item.caseId}-${mode}.json.gz`))).toString('utf8')),loaded=replayInputs(r),side=mode===first?'X':'Y',label=`pair-${String(i+1).padStart(2,'0')}-${side}`,clip={schemaVersion:1,label,frames:loaded.frames,events:r.events,characters:r.content.characters,abilities:r.content.abilities,statuses:r.content.statuses,arenas:r.content.arenas};await writeFile(resolve(dir,label+'.json'),canonicalSerialize(clip)+'\n');entries.push({label,url:'./'+label+'.json'});key.push({label,mode,...item,finalWorldHash:r.finalWorldHash,clipHash:hashCanonical(clip)});}}
+entries.sort((a,b)=>deriveSeed(2026,'pair-order',a.label.slice(0,-2))-deriveSeed(2026,'pair-order',b.label.slice(0,-2))||a.label.localeCompare(b.label));
+const reviewId='phase3b-pacing-v1-'+hashCanonical(key).slice(0,12);await writeFile(resolve(dir,'index.json'),canonicalSerialize({schemaVersion:1,reviewId,title:'节奏导演成对盲评',paired:true,status:'pending-human-review',entries})+'\n');await writeFile(resolve(dir,'private-key.json'),canonicalSerialize({reviewId,manifestHash:manifest.datasetHash,subsetHash:hashCanonical(cases),key})+'\n');await writeFile(resolve(directory,'review.json'),canonicalSerialize({reviewId,manifestHash:manifest.datasetHash,subsetHash:hashCanonical(cases),pairs:20,clips:40,trainPairs:10,holdoutPairs:10,status:'pending-human-review',modesHidden:true,orderRandomized:true})+'\n');console.log('Created 20 blind pairs (10 train, 10 holdout); human review pending.');

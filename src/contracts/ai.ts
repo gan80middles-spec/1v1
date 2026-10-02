@@ -7,8 +7,10 @@ export const UTILITY_BUILD = 'phase2-v1' as const;
 export const AI_VERSION = 'utility-v1' as const;
 export const PHASE3A_BUILD='phase3a-v1' as const;
 export const PHASE3A_AI_VERSION='utility-v2' as const;
-export type AIVersion=typeof AI_VERSION|typeof PHASE3A_AI_VERSION;
-export type UtilityBuild=typeof UTILITY_BUILD|typeof PHASE3A_BUILD;
+export const PHASE3B_BUILD='phase3b-v1' as const;
+export const PHASE3B_AI_VERSION='utility-v3' as const;
+export type AIVersion=typeof AI_VERSION|typeof PHASE3A_AI_VERSION|typeof PHASE3B_AI_VERSION;
+export type UtilityBuild=typeof UTILITY_BUILD|typeof PHASE3A_BUILD|typeof PHASE3B_BUILD;
 export type RunnerControllerKind = ControllerKind | 'utility';
 export interface UtilitySettings {
     noise: boolean;
@@ -194,6 +196,8 @@ export interface OutcomeEstimate {
     setupReason: string;
 }
 export interface UtilityScore {
+    Ubase?:number;
+    director?:import('./pacing.js').DirectorAdjustment;
     D: number;
     L: number;
     P: number;
@@ -219,6 +223,7 @@ export interface CandidateTrace {
     eligible: boolean;
 }
 export interface AITrace {
+    directorCue?:import('./pacing.js').DirectorCue;
     aiVersion: AIVersion;
     nowTick: number;
     sensedTick: number | null;
@@ -259,6 +264,7 @@ export type ControllerCheckpoint = {
     data: import('./fighter.js').ScriptSnapshot;
 };
 export interface UtilityRunnerOptions {
+    directorLog:boolean;
     kinds: readonly [
         RunnerControllerKind,
         RunnerControllerKind
@@ -281,10 +287,11 @@ export interface FullCheckpoint {
     ];
     observations: ObservationSnapshot;
     settings: UtilitySettings;
-    pacingDirector: null;
+    pacingDirector: import('./pacing.js').PacingDirectorSnapshot | null;
     recorderCursor: number;
     runnerHash: string;
     recording?: {
+        directorRecords?:readonly import('./pacing.js').DirectorRecord[];
         inputs: readonly InputEntry[];
         events: readonly BattleEvent[];
         checkpoints: readonly {

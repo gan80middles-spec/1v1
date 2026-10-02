@@ -1,5 +1,8 @@
 import source from '../../content/fighter-phase1.json';
 import utilitySource from '../../content/fighter-phase2.json';
+import phase3bSource from '../../content/fighter-phase3b.json';
+import { compilePhase3BContent, PACING_PROFILE_ID } from '../content/phase3b.js';
+import { cueIntensity } from '../contracts/pacing.js';
 import phase3Source from '../../content/fighter-phase3a.json';
 import { compilePhase3AContent } from '../content/phase3a.js';
 import { compileFighterContent } from '../content/fighter.js';
@@ -20,6 +23,8 @@ const canvas = el<HTMLCanvasElement>('#arena'), ctx = canvas.getContext('2d')!;
 if (!ctx)
     throw new Error('Canvas unavailable');
 let runner!: FighterRunner | UtilityRunner;
+let runSerial=0;
+let pairs: Partial<Record<'off'|'pace',UtilityRunner>>={};
 let traces: TraceEntry[] = [], decisionCursor = -1;
 let content = compileFighterContent(source), playing = false, replaying = false, replay: InputReplay | null = null, frames: RenderFrame[] = [], cursor = 0, accumulator = 0, lastTime = 0;
 const message = el('#message'), output = el('#output'), play = el<HTMLButtonElement>('#play'), seek = el<HTMLInputElement>('#seek');
@@ -47,6 +52,15 @@ function show(): void {
     seek.value = String(frame.tick);
     el<HTMLButtonElement>('#replay').disabled = !replay;
     el<HTMLButtonElement>('#export').disabled = !replay;
+    const director=runner instanceof UtilityRunner?runner.director:null,records=replaying?replay?.directorRecords??[]:director?.records??[],recordCue=replaying?records.findLast(r=>r.type==='issued'&&r.cue.applyTick<=frame.tick&&r.cue.expiresTick>frame.tick)?.cue:director?.currentCue;
+    const tracedCue=entry?.trace.directorCue,cue=recordCue&&frame.tick<recordCue.expiresTick?(tracedCue?.id===recordCue.id?tracedCue:recordCue):null;
+    const pacingConfig=replay?.config??runner.config,pacingProfile=content.source.pacingProfiles.find(p=>p.id===pacingConfig.pacing.profileId),delay=Math.max(...pacingConfig.participants.map(p=>content.source.profiles.find(x=>x.id===p.profileId)!.reactionDelayTicks))+1,cutoff=pacingProfile&&frame.tick>0?Math.floor((frame.tick-1)/pacingProfile.sampleIntervalTicks)*pacingProfile.sampleIntervalTicks-delay:-1,lastIssued=records.findLast(r=>r.type==='issued'&&r.tick<=frame.tick),neutralRemaining=pacingProfile&&lastIssued?Math.max(0,lastIssued.cue.expiresTick+pacingProfile.neutralBetweenCuesTicks-frame.tick):0;
+    const windowText=pacingConfig.pacing.mode==='off'?'':` · 公共窗口 ${cutoff<0?'未成熟':Math.max(0,cutoff-360)+'～'+cutoff}`;
+    const profile=content.source.pacingProfiles.find(p=>p.id===cue?.profileId),intensity=cue&&profile?cueIntensity(cue,frame.tick,profile.rampTicks):0;
+    el<HTMLButtonElement>('#pair-run').disabled=(replay?.engineBuild??(runner instanceof UtilityRunner?runner.engineBuild:'phase1-v1'))!=='phase3b-v1';
+    el('#director-summary').textContent=`运行 ${replay?.config.matchId??runner.config.matchId} · 模式 ${replay?.config.pacing.mode??runner.config.pacing.mode} · ${cue?cue.kind+' #'+cue.id+' · 强度 '+intensity.toFixed(2)+' · 公开证据 tick '+(cue.liveEvidence?.basedOnTick??cue.basedOnTick)+' · 连续无交锋 '+(cue.liveEvidence?.evidence.quietTicks??cue.evidence.quietTicks)+' tick · 剩余 '+Math.max(0,cue.expiresTick-frame.tick)+' tick':'中立 · 间隔剩余 '+neutralRemaining+' tick'}${windowText}`;
+    el('#director-jumps').replaceChildren(...records.filter(r=>r.type==='issued').map(r=>{const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent=`#${r.cue.id} ${r.cue.kind} @${r.tick}`;button.disabled=!replay;button.addEventListener('click',()=>{playing=false;replaying=true;decisionCursor=-1;cursor=Math.min(frames.length-1,r.cue.applyTick);show();});return button;}));
+    el('#director-timeline').textContent=records.filter(r=>r.tick<=frame.tick).map(r=>`${r.tick}: ${r.type} ${r.cue.kind} #${r.cue.id} (${r.reason}; source ${r.cue.basedOnTick}; quiet ${r.cue.evidence.quietTicks}; apply ${r.cue.applyTick}～${r.cue.expiresTick})`).join('\n');
     output.textContent = JSON.stringify({ seed: replay?.config.seed ?? runner.config.seed, tick: frame.tick, mode: replaying ? 'replay' : 'live', contentHash: content.bundleHash, finalWorldHash: replay?.finalWorldHash ?? null, result: frame.result }, null, 2);
     output.dataset['tick'] = String(frame.tick);
     output.dataset['finalHash'] = replay?.finalWorldHash ?? '';
@@ -76,8 +90,10 @@ function reset(): void {
         RunnerControllerKind,
         RunnerControllerKind
     ], build=new URLSearchParams(location.search).get('build'), utility=build!=='phase1-v1';
-    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):compilePhase3AContent(phase3Source);
+    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):build==='phase3a-v1'?compilePhase3AContent(phase3Source):compilePhase3BContent(phase3bSource);
+    el<HTMLSelectElement>('#pacing').disabled=Boolean(build&&build!=='phase3b-v1');
     const config = fighterConfig(content, seed, el<HTMLSelectElement>('#a').value, el<HTMLSelectElement>('#b').value);
+    if(!build||build==='phase3b-v1'){const mode=el<HTMLSelectElement>('#pacing').value as 'off'|'observe'|'pace';config.pacing={mode,profileId:mode==='off'?null:PACING_PROFILE_ID};config.matchId+=`-${mode}-${++runSerial}`;}
     if (utility) {
         config.participants[0].profileId = el<HTMLSelectElement>('#profile-a').value;
         config.participants[1].profileId = el<HTMLSelectElement>('#profile-b').value;
@@ -86,6 +102,7 @@ function reset(): void {
         ControllerKind,
         ControllerKind
     ]);
+    pairs={};el<HTMLButtonElement>('#pair-off').disabled=true;el<HTMLButtonElement>('#pair-pace').disabled=true;
     traces = [];
     decisionCursor = -1;
     playing = false;
@@ -133,6 +150,10 @@ el('#finish').addEventListener('click', () => guard(() => {
         completed();
     }
 }));
+function loadPair(mode:'off'|'pace'):void{const selected=pairs[mode];if(!selected)return;runner=selected;replay=runner.replay();frames=runner.frames;traces=runner.traces;playing=false;replaying=true;cursor=0;decisionCursor=-1;seek.max=String(frames.length-1);seek.disabled=false;el<HTMLSelectElement>('#pacing').value=mode;show();}
+el('#pair-run').addEventListener('click',()=>guard(()=>{if(!(runner instanceof UtilityRunner)||runner.engineBuild!=='phase3b-v1')throw new Error('成对运行需要 Phase 3B');const base=structuredClone(replay?.config??runner.config);pairs={};for(const mode of ['off','pace'] as const){const cfg=structuredClone(base);cfg.pacing={mode,profileId:mode==='off'?null:PACING_PROFILE_ID};cfg.matchId=base.matchId+'-pair-'+mode+'-'+(++runSerial);const paired=new UtilityRunner(content,cfg,{...runner.options,recordFrames:true,trace:true});paired.run();pairs[mode]=paired;}el<HTMLButtonElement>('#pair-off').disabled=false;el<HTMLButtonElement>('#pair-pace').disabled=false;loadPair('off');}));
+el('#pair-off').addEventListener('click',()=>guard(()=>loadPair('off')));el('#pair-pace').addEventListener('click',()=>guard(()=>loadPair('pace')));
+el('#pacing').addEventListener('change',()=>guard(reset));
 el('#overlay').addEventListener('change', show);
 el('#replay').addEventListener('click', () => guard(() => { replaying = true; cursor = 0; playing = true; accumulator = 0; show(); }));
 seek.addEventListener('input', () => guard(() => { playing = false; replaying = true; cursor = Number(seek.value); show(); }));
@@ -157,8 +178,9 @@ el<HTMLInputElement>('#import').addEventListener('change', async (e) => {
         replaying = true;
         replay = loaded.replay;
         frames = loaded.frames;
-        content = (replay.engineBuild==='phase3a-v1'?compilePhase3AContent:compileFighterContent)(replay.content);
+        content = (replay.engineBuild==='phase3b-v1'?compilePhase3BContent:replay.engineBuild==='phase3a-v1'?compilePhase3AContent:compileFighterContent)(replay.content);
         el<HTMLInputElement>('#seed').value = String(replay.config.seed);
+        el<HTMLSelectElement>('#pacing').value=replay.config.pacing.mode;
         for (const [index, side] of ['a', 'b'].entries()) {
             const participant = replay.config.participants[index]!;
             el<HTMLSelectElement>('#' + side).value = participant.characterId;
@@ -191,7 +213,7 @@ function animate(now: number): void {
     requestAnimationFrame(animate);
 }
 const query = new URLSearchParams(location.search);
-for (const id of ['a', 'b', 'seed', 'controller-a', 'controller-b', 'profile-a', 'profile-b']) {
+for (const id of ['a', 'b', 'seed', 'controller-a', 'controller-b', 'profile-a', 'profile-b','pacing']) {
     const value = query.get(id);
     if (value !== null)
         el<HTMLInputElement | HTMLSelectElement>(`#${id}`).value = value;
@@ -206,7 +228,7 @@ function reviewDecision(index: number): void { const own = traces.filter(t => t.
 el('#decision').addEventListener('input', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value)));
 el('#decision-prev').addEventListener('click', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value) - 1));
 el('#decision-next').addEventListener('click', () => reviewDecision(Number(el<HTMLInputElement>('#decision').value) + 1));
-el('#export-trace').addEventListener('click', () => guard(() => { const blob = new Blob([canonicalSerialize({ engineBuild: replay?.engineBuild ?? (runner instanceof UtilityRunner?runner.engineBuild:'phase1-v1'), config: replay?.config ?? runner.config, contentHash: content.bundleHash, traces }) + '\n'], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `${runner.config.matchId}.trace.json`; a.click(); URL.revokeObjectURL(url); }));
+el('#export-trace').addEventListener('click', () => guard(() => { const blob = new Blob([canonicalSerialize({ engineBuild: replay?.engineBuild ?? (runner instanceof UtilityRunner?runner.engineBuild:'phase1-v1'), config: replay?.config ?? runner.config, contentHash: content.bundleHash, traces }) + '\n'], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = `${replay?.config.matchId??runner.config.matchId}.trace.json`; a.click(); URL.revokeObjectURL(url); }));
 el<HTMLInputElement>('#import-trace').addEventListener('change', async (e) => { try {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file)

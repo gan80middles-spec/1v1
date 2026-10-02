@@ -179,7 +179,7 @@ export class FighterSimulation {
                         const def = this.content.source.statuses.find(s => s.id === fx.statusId)!, old = e.statuses.find(s => s.definitionId === def.id);
                         if (old && def.stacking !== 'replace') {
                             old.expiresTick = t + def.durationTicks;
-                            if(this.engineBuild==='phase3a-v1'){old.sourceCastId=c.castId;old.appliedTick=t;}
+                            if((this.engineBuild==='phase3a-v1'||this.engineBuild==='phase3b-v1')){old.sourceCastId=c.castId;old.appliedTick=t;}
                             if (def.stacking === 'stack')
                                 old.stacks = Math.min(def.maxStacks, old.stacks + 1);
                             emit('StatusApplied', { statusId: def.id, expiresTick: old.expiresTick, stacks: old.stacks, castId: c.castId }, e.id);
@@ -256,14 +256,14 @@ export class FighterSimulation {
                             if (sweepCircles(offset(interpolate(a, start)), offset(interpolate(a, end)), h.radius, interpolate(b, start), interpolate(b, end), target.body.radius) !== null) {
                                 const velocity=(s:Segment)=>({x:(s.to.x-s.from.x)*240/(s.end-s.start||1),y:(s.to.y-s.from.y)*240/(s.end-s.start||1)}),va=velocity(a),vb=velocity(b);
                                 const runtime=w.casts.find(c=>c.castId===h.castId)!;
-                                const damage=this.engineBuild==='phase3a-v1'?speedImpactDamage(this.content,owner.characterId,runtime.abilityId,h.hit.damage,Math.hypot(va.x-vb.x,va.y-vb.y)):h.hit.damage;
+                                const damage=(this.engineBuild==='phase3a-v1'||this.engineBuild==='phase3b-v1')?speedImpactDamage(this.content,owner.characterId,runtime.abilityId,h.hit.damage,Math.hypot(va.x-vb.x,va.y-vb.y)):h.hit.damage;
                                 add({ sourceId: h.ownerId, targetId: target.id, castId: h.castId, hit: { ...h.hit,damage, launchDeltaV: { x: h.hit.launchDeltaV.x * h.aimX, y: h.hit.launchDeltaV.y } }, projectileId: null, position: { ...target.body.position } });
                             }
                         }
                 }
                 const removed = new Set<number>();
                 for (const p of w.projectiles) {
-                    if(this.engineBuild==='phase3a-v1'){
+                    if((this.engineBuild==='phase3a-v1'||this.engineBuild==='phase3b-v1')){
                         const contact=projectileSubstep(p,w.entities,paths,this.content,t,arena);
                         if(contact.kind==='reflect'){
                             const reflected=emit('ProjectileReflected',{projectileId:p.id,castId:p.sourceCastId,defenseCastId:contact.defenseCastId,previousOwnerId:contact.previousOwnerId,reflectionCount:p.reflectionCount,velocity:{...p.velocity},preventedDamage:p.hit.damage},contact.target.id,contact.previousOwnerId,contact.position,p.reflectionCause??cause(p.sourceCastId));

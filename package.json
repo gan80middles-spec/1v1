@@ -33,7 +33,15 @@
     "test:phase3a-correctness": "node scripts/verify-phase3a.mjs",
     "verify:phase3a-browser": "node scripts/verify-phase3a-browser.mjs",
     "review:style": "node scripts/serve-h2.mjs --stage phase3a",
-    "verify:phase3a": "npm run typecheck && npm run test:phase3a && npm run build && node scripts/check-boundaries.mjs artifacts/phase-3a/boundaries.json && node scripts/create-seed-manifests.mjs --check && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser && npm run test:phase2-smoke && npm run verify:phase2-browser && npm run test:phase3a-correctness && npm run evaluate:ai -- --ablations && node scripts/create-phase3a-style.mjs && node scripts/record-phase3a-examples.mjs && npm run verify:phase3a-browser && node scripts/record-phase3a-evidence.mjs"
+    "verify:phase3a": "npm run typecheck && npm run test:phase3a && npm run build && node scripts/check-boundaries.mjs artifacts/phase-3a/boundaries.json && node scripts/create-seed-manifests.mjs --check && npm run test:determinism && npm run verify:browser && npm run test:phase1-smoke && npm run verify:phase1-browser && npm run test:phase2-smoke && npm run verify:phase2-browser && npm run test:phase3a-correctness && npm run evaluate:ai -- --ablations && node scripts/create-phase3a-style.mjs && node scripts/record-phase3a-examples.mjs && npm run verify:phase3a-browser && node scripts/record-phase3a-evidence.mjs",
+    "evaluate:pacing": "node scripts/evaluate-pacing.mjs && node scripts/create-pacing-review.mjs",
+    "test:phase3b": "vitest run --outputFile.json=artifacts/phase-3b/unit-tests.json",
+    "test:phase3b-correctness": "node scripts/verify-phase3b.mjs",
+    "verify:phase3b-browser": "node scripts/verify-phase3b-browser.mjs",
+    "review:pacing": "node scripts/serve-h2.mjs --stage phase3b",
+    "verify:phase3b": "npm run typecheck && npm run test:phase3b && npm run build && node scripts/check-boundaries.mjs artifacts/phase-3b/boundaries.json && node scripts/create-seed-manifests.mjs --check && npm run evaluate:pacing && npm run test:phase3b-correctness && npm run verify:phase3b-browser && npm run measure:pacing",
+    "measure:pacing": "node scripts/measure-pacing.mjs",
+    "record:pacing-evidence": "node scripts/record-phase3b-evidence.mjs"
   },
   "dependencies": {
     "zod": "4.6.5"
