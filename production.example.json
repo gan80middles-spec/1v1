@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "phase4-formal-v1",
+  "output": "artifacts/phase-4/正式视频 production v1",
+  "seed": 20261002,
+  "matchups": [{"a":"rubber","b":"iron"},{"a":"iron","b":"mirror"},{"a":"standard","b":"mirror"}],
+  "countPerMatchup": 10,
+  "workers": 4,
+  "top": 3,
+  "pacing": "off",
+  "preset": "vertical-1080",
+  "templateId": "arena-dark",
+  "keepFrames": true,
+  "fullCheckpoints": true,
+  "maxTicks": 3600
+}

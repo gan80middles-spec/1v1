@@ -1,0 +1,9 @@
+import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
+import { unlink } from 'node:fs/promises';
+import { BatchManifestSchema } from '../contracts/production.js';
+import { type JobContext } from './batch.js';
+import { acquireJobLock } from './lock.js';
+import { atomicJSON, readJSON, containedPath, safeRead, fileHash } from './files.js';
+import { loadReplayPackage } from './replay-store.js';
+export async function openStoredBatch(path:string){const directory=containedPath(resolve('artifacts'),resolve(path)),release=await acquireJobLock(directory);try{const batch=BatchManifestSchema.parse(await readJSON(resolve(directory,'batch.json')));for(const task of batch.tasks){if(!task.manifestHash)continue;const matchDir=resolve(directory,'matches',task.matchId);await loadReplayPackage(matchDir);const actual=fileHash(await safeRead(matchDir,'manifest.json'));if(actual!==task.manifestHash){const journal=await readJSON(resolve(matchDir,'rebuild-journal.json')) as {oldHash:string;newHash:string;matchId:string};if(journal.oldHash!==task.manifestHash||journal.newHash!==actual||journal.matchId!==task.matchId)throw new Error('STORED_MANIFEST_HASH_MISMATCH');task.manifestHash=actual;}}await unlink(resolve(directory,'cancel.request')).catch(error=>{if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;});const cancelBuffer=new SharedArrayBuffer(4),cancel=new Int32Array(cancelBuffer),stop=()=>Atomics.store(cancel,0,1);process.on('SIGINT',stop);process.on('SIGTERM',stop);const context:JobContext={directory,batch,cancelBuffer,cancelled:()=>Atomics.load(cancel,0)!==0||existsSync(resolve(directory,'cancel.request')),fault:null,save:async()=>{batch.updatedAt=new Date().toISOString();await atomicJSON(resolve(directory,'batch.json'),BatchManifestSchema.parse(batch));}};return {context,release:async()=>{process.off('SIGINT',stop);process.off('SIGTERM',stop);await release();}};}catch(error){await release();throw error;}}

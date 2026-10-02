@@ -41,7 +41,22 @@
     "review:pacing": "node scripts/serve-h2.mjs --stage phase3b",
     "verify:phase3b": "npm run typecheck && npm run test:phase3b && npm run build && node scripts/check-boundaries.mjs artifacts/phase-3b/boundaries.json && node scripts/create-seed-manifests.mjs --check && npm run evaluate:pacing && npm run test:phase3b-correctness && npm run verify:phase3b-browser && npm run measure:pacing",
     "measure:pacing": "node scripts/measure-pacing.mjs",
-    "record:pacing-evidence": "node scripts/record-phase3b-evidence.mjs"
+    "record:pacing-evidence": "node scripts/record-phase3b-evidence.mjs",
+    "batch": "node dist/node/cli/production.js batch",
+    "rank": "node dist/node/cli/production.js rank",
+    "render": "node dist/node/cli/production.js render",
+    "verify:video": "node dist/node/cli/production.js verify",
+    "verify": "node dist/node/cli/production.js verify",
+    "produce": "node dist/node/cli/production.js produce",
+    "studio": "node dist/node/cli/studio.js",
+    "test:phase4": "vitest run --outputFile.json=artifacts/phase-4/unit-tests.json",
+    "test:phase4-correctness": "node scripts/verify-phase4.mjs",
+    "test:phase4-recovery": "node scripts/verify-phase4-recovery.mjs",
+    "test:phase4-checkpoints": "node scripts/verify-phase4-checkpoints.mjs",
+    "test:phase4-cleanup": "node scripts/verify-phase4-cleanup.mjs",
+    "verify:phase4-browser": "node scripts/verify-phase4-browser.mjs",
+    "verify:phase4": "npm run typecheck && npm run test:phase4 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-4/boundaries.json && node scripts/create-audio-assets.mjs --check && npm run test:phase4-correctness && npm run test:phase4-checkpoints && npm run produce -- --config production.example.json --resume && npm run test:phase4-recovery && npm run test:phase4-cleanup && npm run verify:phase4-browser",
+    "record:phase4-evidence": "node scripts/record-phase4-evidence.mjs"
   },
   "dependencies": {
     "zod": "4.6.5"

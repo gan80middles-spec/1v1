@@ -1,0 +1,7 @@
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { resolve, extname } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { containedPath } from './files.js';
+const mime:Record<string,string>={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.otf':'font/otf','.ttf':'font/ttf','.png':'image/png','.mp4':'video/mp4'};
+export type HTTPHandler=(request:IncomingMessage,response:ServerResponse)=>Promise<boolean>;
+export async function serveStatic(port:number,handler?:HTTPHandler){const root=resolve('dist/web'),server=createServer((request,response)=>void (async()=>{if(await handler?.(request,response))return;const url=new URL(request.url??'/','http://localhost'),path=decodeURIComponent(url.pathname)==='/'?'production.html':decodeURIComponent(url.pathname).slice(1),full=containedPath(root,path);response.setHeader('Content-Type',mime[extname(full)]??'application/octet-stream');response.end(await readFile(full));})().catch(error=>{response.statusCode=404;response.end(String(error));}));await new Promise<void>((accept,reject)=>{server.once('error',reject);server.listen(port,'127.0.0.1',accept);});const address=server.address();if(!address||typeof address==='string')throw new Error('SERVER_ADDRESS');return {url:`http://127.0.0.1:${address.port}`,close:()=>new Promise<void>((accept,reject)=>server.close(error=>error?reject(error):accept()))};}

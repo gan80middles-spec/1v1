@@ -2,4 +2,5 @@
 *.png binary
 *.mp4 binary
 *.wav binary
+*.otf binary
 *.gz binary

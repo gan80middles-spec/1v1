@@ -45,15 +45,20 @@
     "probe": "IBM Plex Mono Regular",
     "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
     "license": "SIL OFL 1.1",
-    "chineseExportValidated": false
+    "chineseExportValidated": true,
+    "chineseExportFamily": "Noto Sans SC / ExportSans",
+    "chineseExportSha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9"
   },
   "encoding": {
     "ffmpegOnPath": false,
     "ffprobeOnPath": false,
-    "libx264Validated": false,
-    "aacValidated": false,
+    "libx264Validated": true,
+    "aacValidated": true,
     "playwrightBundledFfmpegRevision": "1011",
-    "status": "production encoder and ffprobe deferred to Phase 4; Playwright helper is not the validated export toolchain"
+    "status": "Phase 4 portable FFmpeg 9.0.2/ffprobe verified; three 1080x1920 60fps H.264/AAC videos fully decoded",
+    "exportToolchainId": "export-win-x64-ffmpeg9.0.2-chromium153-v1",
+    "exportLockPath": "content/export-toolchain.json",
+    "verifiedDateLocal": "2026-10-03"
   },
   "deterministicBoundary": "same build, fixed Node/V8, same compiled content, seed and inputs"
 }

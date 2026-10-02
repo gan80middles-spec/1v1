@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "version": "synth-sfx-v1",
+  "source": "Self-created analytical sine sweeps, envelopes and fixed gains; src/render/audio.ts",
+  "license": "CC0-1.0 (original project generated recordings)",
+  "sampleRate": 48000,
+  "channels": 2,
+  "specs": {
+    "hit": {
+      "duration": 0.1,
+      "frequency": 170,
+      "gain": 0.12
+    },
+    "wall": {
+      "duration": 0.08,
+      "frequency": 110,
+      "gain": 0.045
+    },
+    "reflect": {
+      "duration": 0.18,
+      "frequency": 780,
+      "gain": 0.1
+    },
+    "ultimate": {
+      "duration": 0.35,
+      "frequency": 390,
+      "gain": 0.13
+    },
+    "ko": {
+      "duration": 0.45,
+      "frequency": 90,
+      "gain": 0.16
+    }
+  },
+  "assets": [
+    {
+      "kind": "hit",
+      "path": "public/audio/hit.wav",
+      "sha256": "3d874bb449b632073aa6f44106382b7c80f400be0b0b24c847ca31bff4990a53",
+      "samples": 4800
+    },
+    {
+      "kind": "wall",
+      "path": "public/audio/wall.wav",
+      "sha256": "8b478b9a37922e98af6d6bfdfb1f7386e85f06d3238f1e84a8cd87e7825725b7",
+      "samples": 3840
+    },
+    {
+      "kind": "reflect",
+      "path": "public/audio/reflect.wav",
+      "sha256": "19519a2fea0063df789f0ed8ba1c970b74018b8a80db317b9ebdd91faf913293",
+      "samples": 8640
+    },
+    {
+      "kind": "ultimate",
+      "path": "public/audio/ultimate.wav",
+      "sha256": "a346193af757566bc5a819dab4c325aafc3b32d0bde5c80ae2cd9998c909891a",
+      "samples": 16800
+    },
+    {
+      "kind": "ko",
+      "path": "public/audio/ko.wav",
+      "sha256": "288e3fe7be0662ddef17fd0158f004eb640f36d209fc47373d7f816a22b1fab3",
+      "samples": 21600
+    }
+  ]
+}
