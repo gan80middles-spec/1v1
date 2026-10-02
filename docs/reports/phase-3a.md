@@ -16,10 +16,10 @@ npm.cmd run dev
 # http://127.0.0.1:5173/
 
 npm.cmd run build
-npm.cmd run simulate -- --ai utility --a iron --b mirror --seed 17 --pacing off --trace artifacts\phase-3a\trace.json --output artifacts\phase-3a\match.json
+npm.cmd run simulate -- --ai utility --build phase3a-v1 --a iron --b mirror --seed 17 --pacing off --trace artifacts\phase-3a\trace.json --output artifacts\phase-3a\match.json
 npm.cmd run simulate -- --replay artifacts\phase-3a\match.json
 
-npm.cmd run simulate -- --ai utility --a iron --b mirror --seed 17 --checkpoint-at 240 --checkpoint artifacts\phase-3a\checkpoint.json --output artifacts\phase-3a\original.json
+npm.cmd run simulate -- --ai utility --build phase3a-v1 --a iron --b mirror --seed 17 --checkpoint-at 240 --checkpoint artifacts\phase-3a\checkpoint.json --output artifacts\phase-3a\original.json
 npm.cmd run simulate -- --resume artifacts\phase-3a\checkpoint.json --output artifacts\phase-3a\resumed.json
 
 # 完整复现：包括旧构建回归、全量评测、消融和观看包
