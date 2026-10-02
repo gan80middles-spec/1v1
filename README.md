@@ -102,6 +102,33 @@ npm.cmd run simulate -- --ai utility --a standard --b standard --seed 17 --rules
 
 `--ai utility` 默认启用 phase3b-v1、utility-v3 和 `--pacing off`；控制器支持 utility/rush/ranged/idle，角色支持 standard/rubber/iron/mirror。`--pacing observe` 只计算提示，`--pacing pace` 接入评分。旧构建只允许 off。`--profile-a`/`--profile-b` 为 balanced/pressure/counter/evasive。`--no-noise` 关闭误差，`--eval` 固定选择最高分，`--no-memory` 关闭习惯适应；它们保留正常反应延迟。`--no-prediction` 和 `--no-hysteresis` 是诊断开关。感知延迟消融仅在评测命令中执行，并明确标记信息预算改变。FreeBounceFixture 是内部模式隔离测试，不出现在正式模式选择中。
 
+### 可选的 AI 校准版（2026-10-03）
+
+`utility-v4` 修正受击打断后的攻击收益预测，并阻止预测无命中收益的普攻借用较低出手门槛切换移动。战斗数值、反应延迟、误差和随机选择预算不变；内容使用独立的 `content/fighter-calibrated.json`，旧版和旧生产批次保持原版本。结果与局限见 [算法校准报告](./docs/reports/algorithm-calibration-2026-10-03.md)。
+
+网页在“AI 算法”中选择“校准版”，也可用 `/?ai=utility-v4` 打开。切换会开始新一场比赛。CLI 和批量生成示例：
+
+```powershell
+. .\scripts\use-node.ps1
+npm run build
+npm run simulate -- --ai utility --content content/fighter-calibrated.json --pacing off --seed 17 --output artifacts/calibrated-example.json
+npm run produce -- --config production.calibrated.json --resume
+```
+
+批量 JSON 的可选字段 `"aiVersion": "utility-v4"` 选择校准内容；省略该字段仍使用旧版。`production.calibrated.json` 生成 20 场候选、最多导出 5 条视频，并保持导演关闭。导演的提前介入及相对距离实验尚未满足冷场/一边倒联合标准，不作为推荐生产配置。
+
+复验命令如下；评测标签须使用新名称，脚本拒绝覆盖已有报告。
+
+```powershell
+node scripts/evaluate-calibration.mjs --label my-v4-train --split train
+node scripts/evaluate-calibration.mjs --label my-v4-holdout --split holdout
+node scripts/evaluate-calibration.mjs --label my-v3-control --split all --model legacy
+node scripts/verify-calibration.mjs
+node scripts/benchmark-calibration.mjs
+```
+
+自对战评测追加 `--suite pacing`；实验导演追加 `--pacing pace --early-cue --relative-engage`。实验内容快照与逐场输入保存在对应标签目录，可用 `simulate --content <该目录/content.json> --pacing pace` 单独复现。测量命中率时，baseline 的 `overall` 仅统计被测 AI；自对战的 `summary` 统计双方，二者不可混用。
+
 默认时间上限 3600 tick。seed 为 uint32，`--ticks` 为 1～3600。`--content FILE` 指定内容，`--help` 查看参数。Phase 3B 默认输出 `artifacts/phase-3b/replays/`，同时保存 `.json.director.ndjson.gz` sidecar；回放也嵌入导演记录，trace 独立保存。不指定 AI 且使用旧角色时保留 Phase 1 默认脚本，未指定角色使用 Phase 0 夹具。
 
 输入回放只执行保存的输入，核对构建、完整内容/插件版本、事件、60 tick 检查点、结果和 worldHash，不重新运行导演。完整检查点用于 AI 重新决策续跑，另核对包含导演状态的 runnerHash。resume 沿用保存的模式；显式改成不同模式会报错，修改模式请新开比赛。旧支持版本回放缺失 pacing 时明确迁移为 off。CLI 检查点同时保存此前输入历史；纯运行状态快照不冒充完整输入回放。

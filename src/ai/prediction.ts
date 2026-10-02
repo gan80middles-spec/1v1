@@ -11,6 +11,7 @@ import { advanceMotion, resolvePredictedContact } from './motion.js';
 import { statusGeometry, speedImpactDamage } from '../math/ability-effects.js';
 import { predictProjectile } from './projectile.js';
 import { staticOutcome } from './no-prediction.js';
+import { resolveExchange, type PredictedImpact } from './exchange.js';
 export interface PredictionContext {
     observation: Observation;
     content: ContentBundle;
@@ -34,6 +35,7 @@ interface Point {
     body: MotionState;
 }
 interface Branch {
+    castDamage?: number;
     damage: number;
     meanLoss: number;
     rawLoss: number;
@@ -361,11 +363,9 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
     const grid = predictionGrid(c, option, models), cast = selfCast(c, option), branches: Branch[] = [], quiet = o.nowTick - c.memory.lastEffectiveInteractionTick, band = distanceBand(o, c.content, c.profile, quiet, models.some(m => m.kind === 'committed')), enemyMax = c.content.source.characters.find(d => d.id === enemy.characterId)!.stats.maxHp, enemyHp = enemy.hpRatio * enemyMax;
     for (const hypothesis of c.belief.hypotheses) {
         const phase3=c.content.pluginVersions['speed-impact']===1;
-        const path = trajectory(c, option, grid.ticks, hypothesis), attacks: {
-            tick: number;
-            amount: number;
-        }[] = [], groups = new Set<string>(), targetMultiplier = attributes(c.content, enemy, o.nowTick).damageTaken;
-        const reflectedLoss:{tick:number;amount:number;likelihood:number;origin:ThreatModel['origin']}[]=[];
+        const path = trajectory(c, option, grid.ticks, hypothesis), attacks: PredictedImpact[] = [], groups = new Set<string>(), targetMultiplier = attributes(c.content, enemy, o.nowTick).damageTaken;
+        const release=(fx:AttackEffect,birth:number,tick:number,ability:DeepReadonly<AbilityDefinition>|null,start=0):number=>fx.kind==='hitbox'?tick:ability?.scheduledPolicy==='before-first-emission'?start+Math.min(...ability.timeline.filter(t=>t.effects.some(f=>f.kind==='projectile')).map(t=>t.offsetTick)):birth;
+        const reflectedLoss:(PredictedImpact&{likelihood:number;origin:ThreatModel['origin']})[]=[];
         if (cast)
             for (const entry of cast.ability.timeline)
                 for (const fx of entry.effects)
@@ -375,11 +375,11 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
                         if (groups.has(fx.hit.hitGroup))
                             continue;
                         const reflected=phase3&&fx.kind==='projectile'?projectileOutcome(c,cast,fx,cast.start+entry.offsetTick,path,o.self.entity.id,cast.aimX):null;
-                        if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile'});
+                        if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile',stunTicks:fx.hit.hitstunTicks,releaseTick:release(fx,cast.start+entry.offsetTick,reflected.hit.tick,cast.ability,cast.start),releaseOwner:'self'});
                         const tick = reflected?(reflected.hit?.targetId===enemy.id?reflected.hit.tick:null):phase3&&fx.kind==='hitbox'?hitboxHit(fx,cast.start+entry.offsetTick,path.own,path.enemy,cast.aimX,t=>ownGeometry(c,cast,t).meleeScale):attackHit(fx, cast.start + entry.offsetTick, path.own, path.enemy, cast.aimX, o.arena);
                         if (tick !== null) {
                             groups.add(fx.hit.hitGroup);
-                            attacks.push({ tick, amount: (phase3&&fx.kind==='hitbox'?speedImpactDamage(c.content,o.self.entity.characterId,cast.ability.id,fx.hit.damage,relativeSpeed(path,tick)):fx.hit.damage) * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier) });
+                            attacks.push({ tick, amount: (phase3&&fx.kind==='hitbox'?speedImpactDamage(c.content,o.self.entity.characterId,cast.ability.id,fx.hit.damage,relativeSpeed(path,tick)):fx.hit.damage) * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier),stunTicks:fx.hit.hitstunTicks,releaseTick:release(fx,cast.start+entry.offsetTick,tick,cast.ability,cast.start),newCast:option.kind==='cast' });
                         }
                     }
         for (const p of o.projectiles.filter(p => p.ownerId === o.self.entity.id)) {
@@ -388,17 +388,15 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
                 continue;
             const age = Math.min(18, c.belief.age ?? 0),initial={position:{x:p.position.x+p.velocity.x*age/60,y:p.position.y+p.velocity.y*age/60},velocity:p.velocity,reflectionCount:p.reflectionCount};
             const reflected=phase3?projectileOutcome(c,cast,fx,0,path,p.ownerId,direction(p.velocity.x),initial):null;
-            if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile'});
+            if(reflected?.hit?.targetId===o.self.entity.id)reflectedLoss.push({tick:reflected.hit.tick,amount:fx.hit.damage*ownParams(c,cast,reflected.hit.tick).damageTaken,likelihood:1,origin:'projectile',stunTicks:fx.hit.hitstunTicks,releaseTick:null});
             const tick = reflected?(reflected.hit?.targetId===enemy.id?reflected.hit.tick:null):projectileHit(fx, 0, path.own, path.enemy, direction(p.velocity.x), o.arena, initial);
             if (tick !== null)
-                attacks.push({ tick, amount: fx.hit.damage * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier) });
+                attacks.push({ tick, amount: fx.hit.damage * (phase3?enemyAttributes(c,tick).damageTaken:targetMultiplier),stunTicks:fx.hit.hitstunTicks,releaseTick:null });
         }
-        const hits: {
-            tick: number;
-            amount: number;
+        const hits: (PredictedImpact & {
             likelihood: number;
             origin: ThreatModel['origin'];
-        }[] = [...reflectedLoss];
+        })[] = [...reflectedLoss];
         for (const m of models) {
             let initial: undefined | {
                 position: Vec2;
@@ -409,12 +407,13 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
                 initial = { position: { x: p.position.x + p.velocity.x * age / 60, y: p.position.y + p.velocity.y * age / 60 }, velocity: p.velocity };
             }
             const reflected=phase3&&m.effect.kind==='projectile'?projectileOutcome(c,cast,m.effect,m.birth,path,enemy.id,m.aimX,initial?{...initial,reflectionCount:m.publicProjectile?.reflectionCount}:undefined):null;
-            if(reflected?.hit?.targetId===enemy.id)attacks.push({tick:reflected.hit.tick,amount:m.effect.hit.damage*enemyAttributes(c,reflected.hit.tick).damageTaken});
+            const enemyAbility=c.content.source.abilities.find(a=>a.id===m.abilityId)!,enemyCastStart=m.kind==='possible-basic'?m.birth-enemyAbility.timeline[0]!.offsetTick:enemy.tell?enemy.tell.visibleSinceTick-o.nowTick:0;
+            if(reflected?.hit?.targetId===enemy.id)attacks.push({tick:reflected.hit.tick,amount:m.effect.hit.damage*enemyAttributes(c,reflected.hit.tick).damageTaken,stunTicks:m.effect.hit.hitstunTicks,releaseTick:m.publicProjectile?null:release(m.effect,m.birth,reflected.hit.tick,enemyAbility,enemyCastStart),releaseOwner:'opponent',possible:m.kind==='possible-basic'});
             const tick = reflected?(reflected.hit?.targetId===o.self.entity.id?reflected.hit.tick:null):phase3&&m.effect.kind==='hitbox'?hitboxHit(m.effect,m.birth,path.enemy,path.own,m.aimX,t=>enemyGeometry(c,t).meleeScale):attackHit(m.effect, m.birth, path.enemy, path.own, m.aimX, o.arena, initial);
             if (tick !== null) {
                 const multiplier = ownParams(c, cast, tick).damageTaken;
                 const amount=phase3&&m.effect.kind==='hitbox'?speedImpactDamage(c.content,enemy.characterId,m.abilityId,m.estimatedDamage,relativeSpeed(path,tick)):m.estimatedDamage;
-                hits.push({ tick, amount: amount * multiplier, likelihood: m.likelihood, origin: m.origin });
+                hits.push({ tick, amount: amount * multiplier, likelihood: m.likelihood, origin: m.origin,stunTicks:m.effect.hit.hitstunTicks,releaseTick:m.publicProjectile?null:release(m.effect,m.birth,tick,enemyAbility,enemyCastStart),possible:m.kind==='possible-basic' });
             }
         }
         attacks.sort((a, b) => a.tick - b.tick);
@@ -442,8 +441,11 @@ export function predictOutcome(c: PredictionContext, option: Option, models = bu
         const residual = extra && available && endDistance <= reach + attributes(c.content, enemy, o.nowTick).moveSpeed * extra / 60 ? Math.min(12, (basicFx?.kind === 'hitbox' ? basicFx.hit.damage : 8) * possibleBasicLikelihood(c.memory, contextAt(o), c.settings.memory) * extra / 12 * 100 / o.self.entity.maxHp) : 0;
         const setup = estimatedSetup(c, option, path, cast);
         const beforeDistance=Math.hypot(o.self.entity.body.position.x-enemy.position.x,o.self.entity.body.position.y-enemy.position.y),progress=Math.max(0,beforeDistance-band[1])-Math.max(0,endDistance-band[1]);
-        branches.push({ progress, damage: earned * 100 / enemyMax, meanLoss: meanLoss * 100 / o.self.entity.maxHp, rawLoss: rawLoss * 100 / o.self.entity.maxHp, kill: earned >= enemyHp ? 1 : 0, death, earlyRisk: earlyRisk * 100 / o.self.entity.maxHp, quality: positionQuality(endOwn, endEnemy, o.arena.width, band, o.self.passives.length > 0), residual, hitTicks: attacks.map(h => h.tick), setup: setup.value, setupReason: setup.reason });
+        if(c.profile.predictionModel==='causal-v1'){
+            const absent=resolveExchange(attacks,hits,o.self.entity.hp,enemyHp,false),present=resolveExchange(attacks,hits,o.self.entity.hp,enemyHp,true),likelihood=possibleBasicLikelihood(c.memory,contextAt(o),c.settings.memory),blend=(key:keyof typeof absent)=>absent[key]*(1-likelihood)+present[key]*likelihood;
+            branches.push({progress,castDamage:blend('castDamage')*100/enemyMax,damage:blend('damage')*100/enemyMax,meanLoss:blend('loss')*100/o.self.entity.maxHp,rawLoss:Math.max(absent.loss,present.loss)*100/o.self.entity.maxHp,kill:blend('kill'),death:blend('death'),earlyRisk:blend('earlyLoss')*100/o.self.entity.maxHp,quality:positionQuality(endOwn,endEnemy,o.arena.width,band,o.self.passives.length>0),residual,hitTicks:attacks.map(h=>h.tick),setup:setup.value,setupReason:setup.reason});
+        }else branches.push({ progress, damage: earned * 100 / enemyMax, meanLoss: meanLoss * 100 / o.self.entity.maxHp, rawLoss: rawLoss * 100 / o.self.entity.maxHp, kill: earned >= enemyHp ? 1 : 0, death, earlyRisk: earlyRisk * 100 / o.self.entity.maxHp, quality: positionQuality(endOwn, endEnemy, o.arena.width, band, o.self.passives.length > 0), residual, hitTicks: attacks.map(h => h.tick), setup: setup.value, setupReason: setup.reason });
     }
     const weighted = (get: (b: Branch) => number): number => branches.reduce((sum, b, i) => sum + get(b) * c.belief.hypotheses[i]!.weight, 0);
-    return { ...empty, expectedDamageDealtPct: weighted(b => b.damage), meanDamageTakenPct: weighted(b => b.meanLoss), worstDamageTakenPct: Math.max(...branches.map(b => b.rawLoss)), killLikelihood: weighted(b => b.kill), deathLikelihood: weighted(b => b.death), positionQualityBefore: positionQuality(bodyOf(o), enemy, o.arena.width, band, o.self.passives.length > 0), positionQualityAfter: weighted(b => b.quality), bandProgressPx:weighted(b=>b.progress), residualExposurePct: weighted(b => b.residual), setupValue: weighted(b => b.setup), confidence: c.belief.confidence * (grid.budgetExceeded ? .5 : 1), earlyRiskPct: weighted(b => b.earlyRisk), hitTicks: [...new Set(branches.flatMap(b => b.hitTicks))].sort((a, b) => a - b), segmentsUsed: grid.ticks.length - 1, budgetExceeded: grid.budgetExceeded, setupReason: branches[0]?.setupReason ?? 'none' };
+    return { ...empty, ...(c.profile.predictionModel==='causal-v1'?{castDamageDealtPct:weighted(b=>b.castDamage??0)}:{}), expectedDamageDealtPct: weighted(b => b.damage), meanDamageTakenPct: weighted(b => b.meanLoss), worstDamageTakenPct: Math.max(...branches.map(b => b.rawLoss)), killLikelihood: weighted(b => b.kill), deathLikelihood: weighted(b => b.death), positionQualityBefore: positionQuality(bodyOf(o), enemy, o.arena.width, band, o.self.passives.length > 0), positionQualityAfter: weighted(b => b.quality), bandProgressPx:weighted(b=>b.progress), residualExposurePct: weighted(b => b.residual), setupValue: weighted(b => b.setup), confidence: c.belief.confidence * (grid.budgetExceeded ? .5 : 1), earlyRiskPct: weighted(b => b.earlyRisk), hitTicks: [...new Set(branches.flatMap(b => b.hitTicks))].sort((a, b) => a - b), segmentsUsed: grid.ticks.length - 1, budgetExceeded: grid.budgetExceeded, setupReason: branches[0]?.setupReason ?? 'none' };
 }

@@ -65,11 +65,13 @@ const PassiveSchema = z.strictObject({
 });
 const ProfileSchema = z.strictObject({
   id, version: z.number().int().min(1), aggression: ratio, riskPreference: ratio, spacing: ratio, resourcePatience: ratio,
+  predictionModel: z.literal('causal-v1').optional(),
   reactionDelayTicks: tick.max(30), decisionIntervalTicks: tick.min(3).max(12),
   positionNoisePx: finite.min(0).max(64), velocityNoisePxPerSecond: finite.min(0).max(180), nearBestBand: finite.min(0).max(1.5),
   distancePreference: z.enum(['melee','mixed','ranged']),
 });
 const PacingProfileSchema = z.strictObject({
+  engageModel: z.literal('gap-relative-v1').optional(),
   id, version: z.number().int().min(1), sampleIntervalTicks: duration.max(60), initialQuietTicks: tick,
   noInteractionThresholdTicks: duration, repeatedMissThreshold: z.number().int().min(1).max(12), readyHoldThresholdTicks: duration,
   cueDurationTicks: duration.max(600), rampTicks: duration.max(300), neutralBetweenCuesTicks: duration, maxCuesPerMatch: z.number().int().min(0).max(6),

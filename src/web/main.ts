@@ -1,5 +1,6 @@
 import source from '../../content/fighter-phase1.json';
 import utilitySource from '../../content/fighter-phase2.json';
+import calibratedSource from '../../content/fighter-calibrated.json';
 import phase3bSource from '../../content/fighter-phase3b.json';
 import { compilePhase3BContent, PACING_PROFILE_ID } from '../content/phase3b.js';
 import { cueIntensity } from '../contracts/pacing.js';
@@ -27,6 +28,7 @@ let runSerial=0;
 let pairs: Partial<Record<'off'|'pace',UtilityRunner>>={};
 let traces: TraceEntry[] = [], decisionCursor = -1;
 let content = compileFighterContent(source), playing = false, replaying = false, replay: InputReplay | null = null, frames: RenderFrame[] = [], cursor = 0, accumulator = 0, lastTime = 0;
+if(new URLSearchParams(location.search).get('ai')==='utility-v4')el<HTMLSelectElement>('#ai-version').value='utility-v4';
 const message = el('#message'), output = el('#output'), play = el<HTMLButtonElement>('#play'), seek = el<HTMLInputElement>('#seek');
 const phaseLabels = { free: '自由行动', startup: '准备出招', active: '攻击中', recovery: '收招', hitstun: '受击硬直', dead: '已倒下' };
 const escapeHtml = (s: string): string => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
@@ -90,7 +92,8 @@ function reset(): void {
         RunnerControllerKind,
         RunnerControllerKind
     ], build=new URLSearchParams(location.search).get('build'), utility=build!=='phase1-v1';
-    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):build==='phase3a-v1'?compilePhase3AContent(phase3Source):compilePhase3BContent(phase3bSource);
+    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):build==='phase3a-v1'?compilePhase3AContent(phase3Source):compilePhase3BContent(el<HTMLSelectElement>('#ai-version').value==='utility-v4'?calibratedSource:phase3bSource);
+    el<HTMLSelectElement>('#ai-version').disabled=Boolean(build&&build!=='phase3b-v1');
     el<HTMLSelectElement>('#pacing').disabled=Boolean(build&&build!=='phase3b-v1');
     const config = fighterConfig(content, seed, el<HTMLSelectElement>('#a').value, el<HTMLSelectElement>('#b').value);
     if(!build||build==='phase3b-v1'){const mode=el<HTMLSelectElement>('#pacing').value as 'off'|'observe'|'pace';config.pacing={mode,profileId:mode==='off'?null:PACING_PROFILE_ID};config.matchId+=`-${mode}-${++runSerial}`;}
@@ -154,6 +157,7 @@ function loadPair(mode:'off'|'pace'):void{const selected=pairs[mode];if(!selecte
 el('#pair-run').addEventListener('click',()=>guard(()=>{if(!(runner instanceof UtilityRunner)||runner.engineBuild!=='phase3b-v1')throw new Error('成对运行需要 Phase 3B');const base=structuredClone(replay?.config??runner.config);pairs={};for(const mode of ['off','pace'] as const){const cfg=structuredClone(base);cfg.pacing={mode,profileId:mode==='off'?null:PACING_PROFILE_ID};cfg.matchId=base.matchId+'-pair-'+mode+'-'+(++runSerial);const paired=new UtilityRunner(content,cfg,{...runner.options,recordFrames:true,trace:true});paired.run();pairs[mode]=paired;}el<HTMLButtonElement>('#pair-off').disabled=false;el<HTMLButtonElement>('#pair-pace').disabled=false;loadPair('off');}));
 el('#pair-off').addEventListener('click',()=>guard(()=>loadPair('off')));el('#pair-pace').addEventListener('click',()=>guard(()=>loadPair('pace')));
 el('#pacing').addEventListener('change',()=>guard(reset));
+el('#ai-version').addEventListener('change',()=>guard(reset));
 el('#overlay').addEventListener('change', show);
 el('#replay').addEventListener('click', () => guard(() => { replaying = true; cursor = 0; playing = true; accumulator = 0; show(); }));
 seek.addEventListener('input', () => guard(() => { playing = false; replaying = true; cursor = Number(seek.value); show(); }));

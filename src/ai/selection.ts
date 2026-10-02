@@ -3,7 +3,7 @@ export function switchMargin(option: Option, current: number | null): number { r
 export function eligiblePool(candidates: CandidateTrace[], current: number | null, held: boolean, emergency: boolean, band = .8): CandidateTrace[] {
     for (const c of candidates) {
         c.switchMargin = switchMargin(c.option, current);
-        c.eligible = c.option.legal && c.score !== null && (!held || emergency) && (current === null || c.score.Uraw > current + c.switchMargin);
+        c.eligible = !c.selectionBlockReason && c.option.legal && c.score !== null && (!held || emergency) && (current === null || c.score.Uraw > current + c.switchMargin);
     }
     const eligible = candidates.filter(c => c.eligible);
     if (!eligible.length)

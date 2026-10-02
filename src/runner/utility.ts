@@ -1,11 +1,12 @@
+import { utilityVersion } from '../contracts/ai-version.js';
 import { isPhase3AContent } from '../content/phase3a.js';
 import { isPhase3BContent } from '../content/phase3b.js';
 import { PacingDirector } from '../director/pacing.js';
 import type { DirectorRecord } from '../contracts/pacing.js';
-import { PHASE3B_BUILD, PHASE3B_AI_VERSION, type UtilityBuild, type AIVersion } from '../contracts/ai.js';
+import { PHASE3B_BUILD, type UtilityBuild, type AIVersion } from '../contracts/ai.js';
 import type { ContentBundle } from '../contracts/content.js';
 import type { BattleEvent, FighterConfig, InputEntry, InputReplay, RenderFrame } from '../contracts/fighter.js';
-import { AI_VERSION, UTILITY_BUILD, PHASE3A_BUILD, PHASE3A_AI_VERSION, DEFAULT_UTILITY_SETTINGS, type AITrace, type FullCheckpoint, type UtilityRunnerOptions } from '../contracts/ai.js';
+import { UTILITY_BUILD, PHASE3A_BUILD, DEFAULT_UTILITY_SETTINGS, type AITrace, type FullCheckpoint, type UtilityRunnerOptions } from '../contracts/ai.js';
 import { FullCheckpointSchema } from '../contracts/ai-schema.js';
 import { deepFreeze, canonicalSerialize } from '../math/canonical.js';
 import { hashCanonical } from '../math/hash.js';
@@ -46,7 +47,7 @@ export class UtilityRunner {
         this.options = deepFreeze(structuredClone({ kinds: options.kinds ?? ['utility', 'utility'], settings: options.settings ?? { ...DEFAULT_UTILITY_SETTINGS }, trace: options.trace ?? false, recordFrames: options.recordFrames ?? true,directorLog:options.directorLog??true }));
         if (config.pacing.mode !== 'off'&&!isPhase3BContent(content))throw new Error('Legacy build requires pacing off');
         this.engineBuild=isPhase3BContent(content)?PHASE3B_BUILD:isPhase3AContent(content)?PHASE3A_BUILD:UTILITY_BUILD;
-        this.aiVersion=isPhase3BContent(content)?PHASE3B_AI_VERSION:isPhase3AContent(content)?PHASE3A_AI_VERSION:AI_VERSION;
+        this.aiVersion=utilityVersion(content, config.participants.map(p=>content.source.profiles.find(profile=>profile.id===p.profileId)!));
         this.directorDelayTicks=Math.max(...config.participants.map(p=>content.source.profiles.find(x=>x.id===p.profileId)!.reactionDelayTicks))+1;
         const pacingProfile=content.source.pacingProfiles.find(p=>p.id===config.pacing.profileId);
         if(config.pacing.mode!=='off'&&!pacingProfile)throw new Error('Unknown pacing profile');

@@ -85,6 +85,16 @@ function context(kind: DirectorCue['kind']): PredictionContext { const raw = str
 function candidate(c: PredictionContext, Uraw = 1, slot: CandidateTrace['option']['slot'] = null, out: Partial<OutcomeEstimate> = {}): CandidateTrace { return { option: { key: slot ?? 'move', kind: slot ? 'cast' : 'move', moveX: 1, slot, aimX: 1, legal: true, reason: null, tag: 'test' }, outcome: { ...estimate, ...out }, score: { ...scoreOutcome(estimate, c.profile, 1, 0, 0), Uraw }, eligible: false, switchMargin: 0 }; }
 describe('bounded director score and selection', () => {
     it('engage caps at 1.2 and uses the existing predictor band progress', () => { const c = context('engage'), v = candidate(c); applyDirectorScores(c, [v], v); expect(v.score!.Ubase).toBe(1); expect(v.score!.director?.applied).toBe(1.2); expect(v.score!.Uraw).toBe(2.2); });
+    it('experimental gap-relative engage rewards a reachable final step without raising caps or risk allowance', () => {
+        const c = context('engage'), raw = structuredClone(source);
+        raw.pacingProfiles[0]!.engageModel = 'gap-relative-v1'; c.content = compilePhase3BContent(raw);
+        const band = distanceBand(c.observation, c.content, c.profile, 250);
+        c.belief.opponent!.position = {x: c.observation.self.entity.body.position.x + band[1] + 40, y: c.observation.self.entity.body.position.y};
+        const move = candidate(c, 1, null, {bandProgressPx: 40}), risky = candidate(c, 1, null, {bandProgressPx: 40, deathLikelihood: .051});
+        applyDirectorScores(c, [move, risky], move);
+        expect(move.score!.director?.applied).toBe(1.2);
+        expect(risky.score!.director?.applied).toBe(0);
+    });
     it('own stuck bonus and engage sum cannot exceed 2.5', () => { const c = context('engage'), v = candidate(c); v.score!.stuckBonus = 2; applyDirectorScores(c, [v], v); expect(v.score!.director?.raw).toBe(1.2); expect(v.score!.director?.applied).toBe(.5); });
     it('engage has no bonus inside the legal main-attack band', () => { const c = context('engage'), band = distanceBand(c.observation, c.content, c.profile, 250); c.belief.opponent!.position = { x: c.observation.self.entity.body.position.x + (band[0] + band[1]) / 2, y: 32 }; const v = candidate(c); applyDirectorScores(c, [v], v); expect(v.score!.director?.applied).toBe(0); });
     it.each([-30, 0])('no engage for non-positive progress %s', progress => { const c = context('engage'), v = candidate(c, 1, null, { bandProgressPx: progress }); applyDirectorScores(c, [v], v); expect(v.score!.director?.applied).toBe(0); });

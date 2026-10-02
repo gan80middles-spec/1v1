@@ -9,7 +9,7 @@ export function applyDirectorScores(c: PredictionContext, candidates: CandidateT
     const profile = c.content.source.pacingProfiles.find(p => p.id === cue.profileId && p.version === cue.profileVersion);
     if (!profile)
         throw new Error('Unknown director cue profile');
-    const intensity = cueIntensity(cue, o.nowTick, profile.rampTicks), best = Math.max(...candidates.map(v => v.score?.Uraw ?? -Infinity)), death = continuation?.outcome?.deathLikelihood ?? 0;
+    const intensity = cueIntensity(cue, o.nowTick, profile.rampTicks), best = Math.max(...candidates.filter(v => !v.selectionBlockReason).map(v => v.score?.Uraw ?? -Infinity)), death = continuation?.outcome?.deathLikelihood ?? 0;
     const band = distanceBand(o, c.content, c.profile, o.nowTick - c.memory.lastEffectiveInteractionTick, threatened), enemy = c.belief.opponent, distance = enemy ? Math.hypot(enemy.position.x - o.self.entity.body.position.x, enemy.position.y - o.self.entity.body.position.y) : null, outside = distance !== null && (distance < band[0] || distance > band[1]);
     const mitigationReference = continuation?.outcome?.meanDamageTakenPct ?? candidates.filter(v => v.option.slot !== 'ultimate' && v.outcome).sort((a, b) => b.score!.Uraw - a.score!.Uraw)[0]?.outcome?.meanDamageTakenPct ?? 0;
     for (const v of candidates) {
@@ -18,7 +18,11 @@ export function applyDirectorScores(c: PredictionContext, candidates: CandidateT
         const s = v.score, Ubase = s.Uraw;
         let raw = 0, cap = Infinity, reason = 'no-opportunity';
         if (cue.kind === 'engage' && outside && v.outcome.bandProgressPx > 0) {
-            raw = intensity * 1.2 * clamp01(v.outcome.bandProgressPx / 120);
+            // Credit the fraction of the remaining gap closed. Near the reachable band,
+            // a useful final step should not disappear under a fixed 120 px denominator.
+            const progressScale = profile.engageModel === 'gap-relative-v1' && distance !== null ?
+                Math.max(20, Math.min(120, distance - band[1])) : 120;
+            raw = intensity * 1.2 * clamp01(v.outcome.bandProgressPx / progressScale);
             cap = Math.max(0, 2.5 - s.stuckBonus);
             reason = 'improve-available-distance-band';
         }
