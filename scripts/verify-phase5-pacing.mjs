@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {fileHash} from '../dist/node/jobs/files.js';
+const commit='0a49452a63cdac15f7887589667ee06a69fb8308',paths=['src/sim','src/ai','src/director','src/content','src/math','src/runner/utility.ts','src/runner/observation.ts','src/contracts/ai.ts','src/contracts/fighter.ts','src/contracts/ai-schema.ts','src/contracts/fighter-schema.ts','src/contracts/content-schema.ts','content/fighter-phase3b.json'];
+const git=args=>execFileSync('git',['-c','safe.directory=E:/1-1',...args],{windowsHide:true,maxBuffer:32e6});assert.equal(git(['diff','--name-only',commit,'--',...paths]).toString().trim(),'','Reuse allowed only with exact critical source equality');
+const evidence=JSON.parse(await readFile('docs/reports/phase-3b-evidence.json','utf8')),evaluation=JSON.parse(await readFile('artifacts/phase-3b/evaluation.json','utf8')),records=evidence.recordDigests.filter(r=>r.path.startsWith('artifacts/phase-3b/records/')||r.path.startsWith('artifacts/phase-3b/review/'));
+assert.equal(evaluation.configs,200);assert.equal(evaluation.executions,400);assert(evaluation.passed);
+for(const record of records)assert.equal(fileHash(await readFile(record.path)),record.sha256,record.path);
+const sourceFiles=git(['ls-tree','-r','--name-only',commit,'--',...paths]).toString().trim().split('\n').filter(Boolean).map(path=>({path,sha256:fileHash(git(['show',commit+':'+path]))}));
+await writeFile('artifacts/phase-5/pacing-reuse.json',JSON.stringify({passed:true,originalImplementationCommit:commit,criticalSourcesUnchanged:true,sourceFiles,verifiedOldRecordFiles:records.length,configs:200,executions:400,reviewPairs:20,contentHash:evaluation.contentHash,rulesHash:evidence.versions.rulesHash,effect:evaluation.effect,train:evaluation.train,holdout:evaluation.holdout,reviewStatus:'pending-human-review',reason:'Only media host capture and review UI changed; no battle, AI, director, content or seed-list changes. Existing actual400 runs and20pairs retained after source/file hash verification.'},null,2)+'\n');console.log(`Reuse verified: ${sourceFiles.length} unchanged critical source files / ${records.length} original record hashes.`);

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "phase5-final-v1",
+  "output": "artifacts/phase-5/最终视频 final v1",
+  "seed": 20261003,
+  "matchups": [{"a":"iron","b":"iron"},{"a":"iron","b":"mirror"},{"a":"iron","b":"rubber"},{"a":"iron","b":"standard"},{"a":"mirror","b":"mirror"},{"a":"mirror","b":"rubber"},{"a":"mirror","b":"standard"},{"a":"rubber","b":"rubber"},{"a":"rubber","b":"standard"},{"a":"standard","b":"standard"}],
+  "countPerMatchup": 10,
+  "workers": 4,
+  "top": 10,
+  "pacing": "off",
+  "preset": "vertical-1080",
+  "templateId": "arena-dark",
+  "keepFrames": true,
+  "fullCheckpoints": true,
+  "maxTicks": 3600
+}

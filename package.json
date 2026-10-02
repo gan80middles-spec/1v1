@@ -56,7 +56,20 @@
     "test:phase4-cleanup": "node scripts/verify-phase4-cleanup.mjs",
     "verify:phase4-browser": "node scripts/verify-phase4-browser.mjs",
     "verify:phase4": "npm run typecheck && npm run test:phase4 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-4/boundaries.json && node scripts/create-audio-assets.mjs --check && npm run test:phase4-correctness && npm run test:phase4-checkpoints && npm run produce -- --config production.example.json --resume && npm run test:phase4-recovery && npm run test:phase4-cleanup && npm run verify:phase4-browser",
-    "record:phase4-evidence": "node scripts/record-phase4-evidence.mjs"
+    "record:phase4-evidence": "node scripts/record-phase4-evidence.mjs",
+    "benchmark": "node scripts/benchmark.mjs",
+    "benchmark:capture": "node scripts/measure-export-capture.mjs",
+    "test:phase5": "vitest run --outputFile.json=artifacts/phase-5/unit-tests.json",
+    "test:phase5-release": "node scripts/verify-phase5-release.mjs",
+    "test:phase5-recovery": "node scripts/verify-phase5-recovery.mjs",
+    "review:phase5-build": "node scripts/create-phase5-review.mjs",
+    "review:selection": "node scripts/serve-h2.mjs --stage phase5",
+    "review:final-style": "node scripts/serve-h2.mjs --stage phase5-style",
+    "test:phase5-videos": "node scripts/verify-phase5-videos.mjs",
+    "verify:phase5-browser": "node scripts/verify-phase5-browser.mjs",
+    "verify:phase5-install": "node scripts/verify-phase5-install.mjs",
+    "record:phase5-evidence": "node scripts/record-phase5-evidence.mjs",
+    "verify:phase5": "npm run typecheck && npm run test:phase5 && npm run build && node scripts/check-boundaries.mjs artifacts/phase-5/boundaries.json && node scripts/create-seed-manifests.mjs --check && node scripts/create-audio-assets.mjs --check && npm run benchmark && npm run benchmark:capture && npm run test:phase5-release && node scripts/record-phase5-traces.mjs && npm run review:phase5-build && node scripts/verify-phase5-pacing.mjs && npm run test:phase5-recovery && npm run produce -- --config production.final.json --resume && npm run test:phase5-videos && npm run verify:phase5-browser"
   },
   "dependencies": {
     "zod": "4.6.5"

@@ -69,6 +69,7 @@ try {
         throw new Error('请先生成对应阶段的观感观看包');
     const data = await response.json() as {
         paired?:boolean;
+        reviewKind?:string;
         title?:string;
         reviewId?:string;
         entries: {
@@ -80,7 +81,7 @@ try {
     reviewKey=data.reviewId??'h2-style-review-v1';
     ratings=JSON.parse(localStorage.getItem(reviewKey)??'{}') as typeof ratings;
     el('h1').textContent=data.title??'两角色观感盲评';
-    el('header p').textContent=paired?`观看 ${entries.length/2} 对隐藏模式的比赛。每对 X/Y 使用相同 seed 和角色，请比较节奏、双方参与和可读性。`:`观看 ${entries.length} 场隐藏人格的比赛。重点观察 A 方；双方能力相同，感知水平固定。`;
+    el('header p').textContent=data.reviewKind==='score-preference'?`观看 ${entries.length/2} 对隐藏分数组别的比赛。每对 X/Y 为两场不同比赛，请比较观看偏好、双方参与和可读性。`:paired?`观看 ${entries.length/2} 对隐藏模式的比赛。每对 X/Y 使用相同 seed 和角色，请比较节奏、双方参与和可读性。`:`观看 ${entries.length} 场隐藏人格的比赛。重点观察 A 方；双方能力相同，感知水平固定。`;
     base = new URL(indexUrl, location.href).href;
     for (let i = 0; i < entries.length; i++) {
         const option = document.createElement('option');
