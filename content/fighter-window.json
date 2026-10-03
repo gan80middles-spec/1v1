@@ -1,0 +1,1140 @@
+{
+  "schemaVersion": 2,
+  "purpose": "production",
+  "characters": [
+    {
+      "id": "standard",
+      "version": 1,
+      "name": "标准",
+      "ruleText": "近身打击与远程火球交替进攻",
+      "body": {
+        "radius": 32,
+        "mass": 1,
+        "restitution": 0.65,
+        "moveSpeed": 320,
+        "groundAcceleration": 1800,
+        "airAcceleration": 600,
+        "jumpSpeed": 620
+      },
+      "stats": {
+        "maxHp": 100
+      },
+      "slots": {
+        "basic": "standard-jab",
+        "skill1": "standard-bolt",
+        "skill2": "standard-push",
+        "ultimate": "standard-volley"
+      },
+      "passiveIds": [],
+      "aiProfileId": "balanced",
+      "visual": {
+        "shape": "hexagon",
+        "color": "#4b91ed",
+        "outlineColor": "#d9e7ff"
+      }
+    },
+    {
+      "id": "rubber",
+      "version": 1,
+      "name": "橡胶",
+      "ruleText": "高速撞墙后短暂加速，最多三层",
+      "body": {
+        "radius": 32,
+        "mass": 0.8,
+        "restitution": 0.9,
+        "moveSpeed": 340,
+        "groundAcceleration": 1800,
+        "airAcceleration": 600,
+        "jumpSpeed": 640
+      },
+      "stats": {
+        "maxHp": 100
+      },
+      "slots": {
+        "basic": "rubber-slap",
+        "skill1": "rubber-dash",
+        "skill2": "rubber-cushion",
+        "ultimate": "rubber-overdrive"
+      },
+      "passiveIds": [
+        "rubber-wall-growth"
+      ],
+      "aiProfileId": "pressure",
+      "visual": {
+        "shape": "circle",
+        "color": "#f7a74e",
+        "outlineColor": "#ffe6c5"
+      }
+    },
+    {
+      "id": "iron",
+      "version": 1,
+      "name": "铁球",
+      "ruleText": "冲撞越快越痛，伤害倍率最多 1.75；巨人增加体型与质量",
+      "body": {
+        "radius": 36,
+        "mass": 1.6,
+        "restitution": 0.4,
+        "moveSpeed": 270,
+        "groundAcceleration": 1800,
+        "airAcceleration": 600,
+        "jumpSpeed": 560
+      },
+      "stats": {
+        "maxHp": 110
+      },
+      "slots": {
+        "basic": "iron-smash",
+        "skill1": "iron-charge",
+        "skill2": "iron-brace",
+        "ultimate": "iron-giant"
+      },
+      "passiveIds": [
+        "speed-impact"
+      ],
+      "aiProfileId": "pressure",
+      "visual": {
+        "shape": "square",
+        "color": "#91a4be",
+        "outlineColor": "#eaf2ff"
+      }
+    },
+    {
+      "id": "mirror",
+      "version": 1,
+      "name": "镜子",
+      "ruleText": "及时展开屏障可反射飞行物；不抵挡近战，同一弹最多反射两次",
+      "body": {
+        "radius": 30,
+        "mass": 0.9,
+        "restitution": 0.65,
+        "moveSpeed": 320,
+        "groundAcceleration": 1800,
+        "airAcceleration": 600,
+        "jumpSpeed": 620
+      },
+      "stats": {
+        "maxHp": 95
+      },
+      "slots": {
+        "basic": "mirror-jab",
+        "skill1": "mirror-shard",
+        "skill2": "mirror-screen",
+        "ultimate": "mirror-dome"
+      },
+      "passiveIds": [],
+      "aiProfileId": "counter",
+      "visual": {
+        "shape": "triangle",
+        "color": "#a18fff",
+        "outlineColor": "#eaf2ff"
+      }
+    }
+  ],
+  "abilities": [
+    {
+      "id": "standard-jab",
+      "version": 1,
+      "tags": [
+        "melee"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 8,
+      "activeTicks": 4,
+      "recoveryTicks": 14,
+      "cooldownTicks": 26,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 8,
+          "effects": [
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 4,
+              "hit": {
+                "damage": 8,
+                "launchDeltaV": {
+                  "x": 500,
+                  "y": 300
+                },
+                "hitstunTicks": 10,
+                "hitGroup": "jab"
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "melee",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "standard-bolt",
+      "version": 1,
+      "tags": [
+        "projectile"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 12,
+      "activeTicks": 1,
+      "recoveryTicks": 18,
+      "cooldownTicks": 120,
+      "energyCost": 0,
+      "movementScale": 0.5,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 12,
+          "effects": [
+            {
+              "kind": "projectile",
+              "radius": 12,
+              "speed": 720,
+              "lifetimeTicks": 90,
+              "reflectable": true,
+              "hit": {
+                "damage": 11,
+                "launchDeltaV": {
+                  "x": 420,
+                  "y": 240
+                },
+                "hitstunTicks": 10,
+                "hitGroup": "bolt"
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "projectile",
+        "preferredCenterDistance": [
+          220,
+          420
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "standard-push",
+      "version": 1,
+      "tags": [
+        "melee"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 16,
+      "activeTicks": 5,
+      "recoveryTicks": 19,
+      "cooldownTicks": 180,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 16,
+          "effects": [
+            {
+              "kind": "hitbox",
+              "radius": 42,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 5,
+              "hit": {
+                "damage": 8,
+                "launchDeltaV": {
+                  "x": 850,
+                  "y": 460
+                },
+                "hitstunTicks": 16,
+                "hitGroup": "push"
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "melee",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "standard-volley",
+      "version": 1,
+      "tags": [
+        "projectile"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 18,
+      "activeTicks": 1,
+      "recoveryTicks": 24,
+      "cooldownTicks": 300,
+      "energyCost": 100,
+      "movementScale": 0.5,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 18,
+          "effects": [
+            {
+              "kind": "projectile",
+              "radius": 12,
+              "speed": 800,
+              "lifetimeTicks": 90,
+              "reflectable": true,
+              "hit": {
+                "damage": 8,
+                "launchDeltaV": {
+                  "x": 420,
+                  "y": 240
+                },
+                "hitstunTicks": 10,
+                "hitGroup": "volley-one"
+              }
+            }
+          ]
+        },
+        {
+          "offsetTick": 30,
+          "effects": [
+            {
+              "kind": "projectile",
+              "radius": 12,
+              "speed": 800,
+              "lifetimeTicks": 90,
+              "reflectable": true,
+              "hit": {
+                "damage": 8,
+                "launchDeltaV": {
+                  "x": 420,
+                  "y": 240
+                },
+                "hitstunTicks": 10,
+                "hitGroup": "volley-two"
+              }
+            }
+          ]
+        },
+        {
+          "offsetTick": 42,
+          "effects": [
+            {
+              "kind": "projectile",
+              "radius": 12,
+              "speed": 800,
+              "lifetimeTicks": 90,
+              "reflectable": true,
+              "hit": {
+                "damage": 8,
+                "launchDeltaV": {
+                  "x": 420,
+                  "y": 240
+                },
+                "hitstunTicks": 10,
+                "hitGroup": "volley-three"
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "volley",
+        "preferredCenterDistance": [
+          220,
+          420
+        ],
+        "purpose": "damage"
+      },
+      "scheduledPolicy": "before-first-emission"
+    },
+    {
+      "id": "rubber-slap",
+      "version": 1,
+      "tags": [
+        "melee"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 7,
+      "activeTicks": 5,
+      "recoveryTicks": 14,
+      "cooldownTicks": 26,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 7,
+          "effects": [
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 5,
+              "hit": {
+                "damage": 7,
+                "launchDeltaV": {
+                  "x": 540,
+                  "y": 340
+                },
+                "hitGroup": "slap",
+                "hitstunTicks": 10
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "melee",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "rubber-dash",
+      "version": 1,
+      "tags": [
+        "melee",
+        "mobility"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 8,
+      "activeTicks": 10,
+      "recoveryTicks": 18,
+      "cooldownTicks": 150,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 8,
+          "effects": [
+            {
+              "kind": "impulse",
+              "deltaV": {
+                "x": 900,
+                "y": 0
+              },
+              "target": "self",
+              "velocityMode": "set-x"
+            },
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 10,
+              "hit": {
+                "damage": 10,
+                "launchDeltaV": {
+                  "x": 700,
+                  "y": 280
+                },
+                "hitGroup": "dash",
+                "hitstunTicks": 10
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "dash-hit",
+        "preferredCenterDistance": [
+          150,
+          260
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "rubber-cushion",
+      "version": 1,
+      "tags": [
+        "defense"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 5,
+      "activeTicks": 1,
+      "recoveryTicks": 16,
+      "cooldownTicks": 180,
+      "energyCost": 0,
+      "movementScale": 0.6,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 5,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "cushion",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "guard",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "defense"
+      }
+    },
+    {
+      "id": "rubber-overdrive",
+      "version": 1,
+      "tags": [
+        "buff"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 12,
+      "activeTicks": 1,
+      "recoveryTicks": 18,
+      "cooldownTicks": 300,
+      "energyCost": 100,
+      "movementScale": 0,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 12,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "overdrive",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "self-buff",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "setup"
+      }
+    },
+    {
+      "id": "iron-smash",
+      "version": 1,
+      "tags": [
+        "melee"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 13,
+      "activeTicks": 5,
+      "recoveryTicks": 22,
+      "cooldownTicks": 40,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 13,
+          "effects": [
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 5,
+              "hit": {
+                "damage": 11,
+                "launchDeltaV": {
+                  "x": 650,
+                  "y": 330
+                },
+                "hitGroup": "smash",
+                "hitstunTicks": 14
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "melee",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "iron-charge",
+      "version": 1,
+      "tags": [
+        "melee",
+        "mobility"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 18,
+      "activeTicks": 14,
+      "recoveryTicks": 24,
+      "cooldownTicks": 210,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 18,
+          "effects": [
+            {
+              "kind": "impulse",
+              "deltaV": {
+                "x": 850,
+                "y": 0
+              },
+              "target": "self",
+              "velocityMode": "set-x"
+            },
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 14,
+              "hit": {
+                "damage": 9,
+                "launchDeltaV": {
+                  "x": 800,
+                  "y": 280
+                },
+                "hitGroup": "charge",
+                "hitstunTicks": 10
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "dash-hit",
+        "preferredCenterDistance": [
+          150,
+          260
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "iron-brace",
+      "version": 1,
+      "tags": [
+        "defense"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 5,
+      "activeTicks": 1,
+      "recoveryTicks": 18,
+      "cooldownTicks": 180,
+      "energyCost": 0,
+      "movementScale": 0.6,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 5,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "brace",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "guard",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "defense"
+      }
+    },
+    {
+      "id": "iron-giant",
+      "version": 1,
+      "tags": [
+        "buff"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 16,
+      "activeTicks": 1,
+      "recoveryTicks": 22,
+      "cooldownTicks": 300,
+      "energyCost": 100,
+      "movementScale": 0,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 16,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "giant",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "self-buff",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "setup"
+      }
+    },
+    {
+      "id": "mirror-jab",
+      "version": 1,
+      "tags": [
+        "melee"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 8,
+      "activeTicks": 4,
+      "recoveryTicks": 14,
+      "cooldownTicks": 26,
+      "energyCost": 0,
+      "movementScale": 0.25,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 8,
+          "effects": [
+            {
+              "kind": "hitbox",
+              "radius": 34,
+              "offset": {
+                "x": 48,
+                "y": 0
+              },
+              "durationTicks": 4,
+              "hit": {
+                "damage": 7,
+                "launchDeltaV": {
+                  "x": 480,
+                  "y": 280
+                },
+                "hitGroup": "mirror-jab",
+                "hitstunTicks": 10
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "melee",
+        "preferredCenterDistance": [
+          76,
+          104
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "mirror-shard",
+      "version": 1,
+      "tags": [
+        "projectile"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 10,
+      "activeTicks": 1,
+      "recoveryTicks": 16,
+      "cooldownTicks": 105,
+      "energyCost": 0,
+      "movementScale": 0.5,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 10,
+          "effects": [
+            {
+              "kind": "projectile",
+              "radius": 12,
+              "speed": 820,
+              "lifetimeTicks": 90,
+              "reflectable": true,
+              "hit": {
+                "damage": 9,
+                "launchDeltaV": {
+                  "x": 400,
+                  "y": 240
+                },
+                "hitGroup": "shard",
+                "hitstunTicks": 10
+              }
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "projectile",
+        "preferredCenterDistance": [
+          220,
+          420
+        ],
+        "purpose": "damage"
+      }
+    },
+    {
+      "id": "mirror-screen",
+      "version": 1,
+      "tags": [
+        "defense"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 6,
+      "activeTicks": 1,
+      "recoveryTicks": 16,
+      "cooldownTicks": 150,
+      "energyCost": 0,
+      "movementScale": 0.6,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 6,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "screen",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "reflect",
+        "preferredCenterDistance": [
+          220,
+          420
+        ],
+        "purpose": "defense"
+      }
+    },
+    {
+      "id": "mirror-dome",
+      "version": 1,
+      "tags": [
+        "defense"
+      ],
+      "allowedWhen": "both",
+      "startupTicks": 12,
+      "activeTicks": 1,
+      "recoveryTicks": 20,
+      "cooldownTicks": 300,
+      "energyCost": 100,
+      "movementScale": 0.6,
+      "conditions": [],
+      "timeline": [
+        {
+          "offsetTick": 12,
+          "effects": [
+            {
+              "kind": "status",
+              "statusId": "dome",
+              "target": "self"
+            }
+          ]
+        }
+      ],
+      "ai": {
+        "predictorId": "reflect",
+        "preferredCenterDistance": [
+          220,
+          420
+        ],
+        "purpose": "defense"
+      }
+    }
+  ],
+  "statuses": [
+    {
+      "id": "cushion",
+      "version": 1,
+      "durationTicks": 36,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 0.6,
+        "knockbackTakenMultiplier": 1.25,
+        "moveSpeedMultiplier": 1,
+        "jumpSpeedMultiplier": 1,
+        "massMultiplier": 1,
+        "bodyScale": 1,
+        "meleeHitboxScale": 1,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": null
+      },
+      "reflect": null
+    },
+    {
+      "id": "overdrive",
+      "version": 1,
+      "durationTicks": 240,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 1,
+        "knockbackTakenMultiplier": 1,
+        "moveSpeedMultiplier": 1,
+        "jumpSpeedMultiplier": 1.15,
+        "massMultiplier": 1,
+        "bodyScale": 1,
+        "meleeHitboxScale": 1,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": 0.1
+      },
+      "reflect": null
+    },
+    {
+      "id": "brace",
+      "version": 1,
+      "durationTicks": 42,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 0.7,
+        "knockbackTakenMultiplier": 0.4,
+        "moveSpeedMultiplier": 0.6,
+        "jumpSpeedMultiplier": 1,
+        "massMultiplier": 1,
+        "bodyScale": 1,
+        "meleeHitboxScale": 1,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": null
+      },
+      "reflect": null
+    },
+    {
+      "id": "giant",
+      "version": 1,
+      "durationTicks": 240,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 1,
+        "knockbackTakenMultiplier": 1,
+        "moveSpeedMultiplier": 0.8,
+        "jumpSpeedMultiplier": 1,
+        "massMultiplier": 1.4,
+        "bodyScale": 1.35,
+        "meleeHitboxScale": 1.25,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": null
+      },
+      "reflect": null
+    },
+    {
+      "id": "screen",
+      "version": 1,
+      "durationTicks": 18,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 1,
+        "knockbackTakenMultiplier": 1,
+        "moveSpeedMultiplier": 1,
+        "jumpSpeedMultiplier": 1,
+        "massMultiplier": 1,
+        "bodyScale": 1,
+        "meleeHitboxScale": 1,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": null
+      },
+      "reflect": {
+        "extraRadius": 14
+      }
+    },
+    {
+      "id": "dome",
+      "version": 1,
+      "durationTicks": 180,
+      "stacking": "refresh",
+      "maxStacks": 1,
+      "modifiers": {
+        "damageTakenMultiplier": 1,
+        "knockbackTakenMultiplier": 1,
+        "moveSpeedMultiplier": 1,
+        "jumpSpeedMultiplier": 1,
+        "massMultiplier": 1,
+        "bodyScale": 1,
+        "meleeHitboxScale": 1,
+        "restitutionOverride": null,
+        "wallGrowthCoefficientOverride": null
+      },
+      "reflect": {
+        "extraRadius": 24
+      }
+    }
+  ],
+  "passives": [
+    {
+      "id": "rubber-wall-growth",
+      "trigger": "wallBounce",
+      "internalCooldownTicks": 6,
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "plugin",
+          "pluginId": "rubber-wall-growth",
+          "params": {
+            "minIncomingSpeed": 250,
+            "internalCooldownTicks": 6,
+            "maxStacks": 3,
+            "durationTicks": 120,
+            "growthCoefficient": 0.04
+          }
+        }
+      ]
+    },
+    {
+      "id": "speed-impact",
+      "trigger": "damageDealt",
+      "internalCooldownTicks": 0,
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "plugin",
+          "pluginId": "speed-impact",
+          "params": {
+            "thresholdSpeed": 400,
+            "speedScale": 800,
+            "maxBonus": 0.75
+          }
+        }
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "balanced",
+      "version": 3,
+      "aggression": 0.5,
+      "riskPreference": 0.5,
+      "spacing": 0.5,
+      "resourcePatience": 0.5,
+      "reactionDelayTicks": 9,
+      "decisionIntervalTicks": 6,
+      "positionNoisePx": 6,
+      "velocityNoisePxPerSecond": 18,
+      "nearBestBand": 0.8,
+      "distancePreference": "mixed",
+      "predictionModel": "window-v1"
+    },
+    {
+      "id": "pressure",
+      "version": 3,
+      "aggression": 0.85,
+      "riskPreference": 0.75,
+      "spacing": 0.3,
+      "resourcePatience": 0.3,
+      "reactionDelayTicks": 11,
+      "decisionIntervalTicks": 6,
+      "positionNoisePx": 8,
+      "velocityNoisePxPerSecond": 24,
+      "nearBestBand": 0.8,
+      "distancePreference": "melee",
+      "predictionModel": "window-v1"
+    },
+    {
+      "id": "counter",
+      "version": 3,
+      "aggression": 0.4,
+      "riskPreference": 0.3,
+      "spacing": 0.85,
+      "resourcePatience": 0.65,
+      "reactionDelayTicks": 8,
+      "decisionIntervalTicks": 6,
+      "positionNoisePx": 5,
+      "velocityNoisePxPerSecond": 16,
+      "nearBestBand": 0.8,
+      "distancePreference": "mixed",
+      "predictionModel": "window-v1"
+    },
+    {
+      "id": "evasive",
+      "version": 3,
+      "aggression": 0.35,
+      "riskPreference": 0.25,
+      "spacing": 0.95,
+      "resourcePatience": 0.55,
+      "reactionDelayTicks": 10,
+      "decisionIntervalTicks": 6,
+      "positionNoisePx": 7,
+      "velocityNoisePxPerSecond": 20,
+      "nearBestBand": 0.8,
+      "distancePreference": "ranged",
+      "predictionModel": "window-v1"
+    }
+  ],
+  "pacingProfiles": [
+    {
+      "id": "gentle-v1",
+      "version": 1,
+      "sampleIntervalTicks": 30,
+      "initialQuietTicks": 120,
+      "noInteractionThresholdTicks": 180,
+      "repeatedMissThreshold": 3,
+      "readyHoldThresholdTicks": 180,
+      "cueDurationTicks": 120,
+      "rampTicks": 30,
+      "neutralBetweenCuesTicks": 120,
+      "maxCuesPerMatch": 6
+    }
+  ],
+  "arenas": [
+    {
+      "id": "square",
+      "version": 1,
+      "width": 960,
+      "height": 960,
+      "gravity": {
+        "x": 0,
+        "y": -1500
+      },
+      "spawnPositions": [
+        {
+          "x": 240,
+          "y": 32
+        },
+        {
+          "x": 720,
+          "y": 32
+        }
+      ]
+    }
+  ]
+}

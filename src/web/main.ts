@@ -1,5 +1,6 @@
 import source from '../../content/fighter-phase1.json';
 import utilitySource from '../../content/fighter-phase2.json';
+import windowSource from '../../content/fighter-window.json';
 import calibratedSource from '../../content/fighter-calibrated.json';
 import phase3bSource from '../../content/fighter-phase3b.json';
 import { compilePhase3BContent, PACING_PROFILE_ID } from '../content/phase3b.js';
@@ -28,7 +29,8 @@ let runSerial=0;
 let pairs: Partial<Record<'off'|'pace',UtilityRunner>>={};
 let traces: TraceEntry[] = [], decisionCursor = -1;
 let content = compileFighterContent(source), playing = false, replaying = false, replay: InputReplay | null = null, frames: RenderFrame[] = [], cursor = 0, accumulator = 0, lastTime = 0;
-if(new URLSearchParams(location.search).get('ai')==='utility-v4')el<HTMLSelectElement>('#ai-version').value='utility-v4';
+const selectedAi=new URLSearchParams(location.search).get('ai');
+if(selectedAi==='utility-v4'||selectedAi==='utility-v5')el<HTMLSelectElement>('#ai-version').value=selectedAi;
 const message = el('#message'), output = el('#output'), play = el<HTMLButtonElement>('#play'), seek = el<HTMLInputElement>('#seek');
 const phaseLabels = { free: '自由行动', startup: '准备出招', active: '攻击中', recovery: '收招', hitstun: '受击硬直', dead: '已倒下' };
 const escapeHtml = (s: string): string => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
@@ -92,7 +94,7 @@ function reset(): void {
         RunnerControllerKind,
         RunnerControllerKind
     ], build=new URLSearchParams(location.search).get('build'), utility=build!=='phase1-v1';
-    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):build==='phase3a-v1'?compilePhase3AContent(phase3Source):compilePhase3BContent(el<HTMLSelectElement>('#ai-version').value==='utility-v4'?calibratedSource:phase3bSource);
+    content = build==='phase1-v1'?compileFighterContent(source):build==='phase2-v1'?compileUtilityContent(utilitySource):build==='phase3a-v1'?compilePhase3AContent(phase3Source):compilePhase3BContent(el<HTMLSelectElement>('#ai-version').value==='utility-v5'?windowSource:el<HTMLSelectElement>('#ai-version').value==='utility-v4'?calibratedSource:phase3bSource);
     el<HTMLSelectElement>('#ai-version').disabled=Boolean(build&&build!=='phase3b-v1');
     el<HTMLSelectElement>('#pacing').disabled=Boolean(build&&build!=='phase3b-v1');
     const config = fighterConfig(content, seed, el<HTMLSelectElement>('#a').value, el<HTMLSelectElement>('#b').value);

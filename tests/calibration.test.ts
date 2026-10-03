@@ -55,7 +55,7 @@ describe('calibrated controller integration', () => {
     it('production config selects v4 explicitly and frozen batch metadata must agree', () => {
         const config = ProductionConfigSchema.parse(JSON.parse(readFileSync('production.calibrated.json', 'utf8')));
         expect(config.aiVersion).toBe('utility-v4');
-        expect(ProductionConfigSchema.safeParse({...config, aiVersion: 'utility-v5'}).success).toBe(false);
+        expect(ProductionConfigSchema.safeParse({...config, aiVersion: 'utility-v6'}).success).toBe(false);
         const runner = new UtilityRunner(content, fighterConfig(content), {recordFrames: false});
         const match = runner.config;
         const batch = {schemaVersion: 1, batchId: config.id, config, createdAt: 'test', updatedAt: 'test', status: 'pending', engineBuild: 'phase3b-v1', aiVersion: 'utility-v4', contentHash: content.bundleHash, rulesHash: runner.sim.snapshot().rulesHash, scoreVersion: 'interesting-v1', toolchainId: 'test', workerCount: 1,

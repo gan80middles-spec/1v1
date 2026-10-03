@@ -10,7 +10,8 @@ export const PHASE3A_AI_VERSION='utility-v2' as const;
 export const PHASE3B_BUILD='phase3b-v1' as const;
 export const PHASE3B_AI_VERSION='utility-v3' as const;
 export const CALIBRATED_AI_VERSION='utility-v4' as const;
-export type AIVersion=typeof AI_VERSION|typeof PHASE3A_AI_VERSION|typeof PHASE3B_AI_VERSION|typeof CALIBRATED_AI_VERSION;
+export const WINDOW_AI_VERSION='utility-v5' as const;
+export type AIVersion=typeof AI_VERSION|typeof PHASE3A_AI_VERSION|typeof PHASE3B_AI_VERSION|typeof CALIBRATED_AI_VERSION|typeof WINDOW_AI_VERSION;
 export type UtilityBuild=typeof UTILITY_BUILD|typeof PHASE3A_BUILD|typeof PHASE3B_BUILD;
 export type RunnerControllerKind = ControllerKind | 'utility';
 export interface UtilitySettings {
@@ -49,6 +50,8 @@ export interface PendingOwnResult {
     finished: boolean;
 }
 export interface AIMemory {
+    /** Own legal body samples only, for extrapolating delayed public contacts. v5. */
+    ownMotionHistory?: {tick: number; body: MotionState; castId: number|null}[] | undefined;
     lastVisibleEventSeq: number;
     encounters: EncounterSample[];
     recentOwnResults: OwnResult[];
@@ -178,8 +181,10 @@ export interface ThreatWindow {
     projectileId: number | null;
 }
 export interface OutcomeEstimate {
-    /** Damage attributed to this newly proposed cast, excluding existing projectiles. v4 only. */
+    /** Damage attributed to this newly proposed cast, excluding existing projectiles. v4+. */
     castDamageDealtPct?: number;
+    /** Weighted forecast scenarios with surviving new-cast contact, not a calibrated probability. v5 only. */
+    castContactWeight?: number;
     expectedDamageDealtPct: number;
     meanDamageTakenPct: number;
     worstDamageTakenPct: number;

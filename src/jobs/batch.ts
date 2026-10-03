@@ -23,7 +23,7 @@ export async function openBatch(input:unknown,options:{resume?:boolean;fault?:Jo
   if(process.version!=='v24.21.0')throw new Error('Use the locked Node24.21.0 runtime');const config=ProductionConfigSchema.parse(input),directory=containedPath(resolve('artifacts'),resolve(config.output));
   if(new Set(config.matchups.map(m=>[m.a,m.b].sort().join(':'))).size!==config.matchups.length)throw new Error('Duplicate unordered matchup');
   await mkdir(directory,{recursive:true});const releaseLock=await acquireJobLock(directory);let saveQueue=Promise.resolve();
-  try{const content=compilePhase3BContent(await readJSON(resolve(config.aiVersion==='utility-v4'?'content/fighter-calibrated.json':'content/fighter-phase3b.json')));let batch:BatchManifest;
+  try{const content=compilePhase3BContent(await readJSON(resolve(config.aiVersion==='utility-v5'?'content/fighter-window.json':config.aiVersion==='utility-v4'?'content/fighter-calibrated.json':'content/fighter-phase3b.json')));let batch:BatchManifest;
     if(existsSync(resolve(directory,'batch.json'))){if(!options.resume)throw new Error('BATCH_EXISTS: use --resume');batch=BatchManifestSchema.parse(await readJSON(resolve(directory,'batch.json')));
       if(hashCanonical({...config,workers:batch.config.workers})!==hashCanonical(batch.config)||batch.contentHash!==content.bundleHash)throw new Error('BATCH_CONFIG_OR_CONTENT_CHANGED');batch.workerCount=config.workers;
       if(batch.rankingHash&&fileHash(await safeRead(directory,'rankings.json'))!==batch.rankingHash)throw new Error('RANKING_HASH_MISMATCH');

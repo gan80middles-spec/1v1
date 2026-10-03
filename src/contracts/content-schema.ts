@@ -65,7 +65,7 @@ const PassiveSchema = z.strictObject({
 });
 const ProfileSchema = z.strictObject({
   id, version: z.number().int().min(1), aggression: ratio, riskPreference: ratio, spacing: ratio, resourcePatience: ratio,
-  predictionModel: z.literal('causal-v1').optional(),
+  predictionModel: z.enum(['causal-v1','window-v1']).optional(),
   reactionDelayTicks: tick.max(30), decisionIntervalTicks: tick.min(3).max(12),
   positionNoisePx: finite.min(0).max(64), velocityNoisePxPerSecond: finite.min(0).max(180), nearBestBand: finite.min(0).max(1.5),
   distancePreference: z.enum(['melee','mixed','ranged']),

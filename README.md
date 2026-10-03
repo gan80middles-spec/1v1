@@ -131,6 +131,30 @@ node scripts/benchmark-calibration.mjs
 
 默认时间上限 3600 tick。seed 为 uint32，`--ticks` 为 1～3600。`--content FILE` 指定内容，`--help` 查看参数。Phase 3B 默认输出 `artifacts/phase-3b/replays/`，同时保存 `.json.director.ndjson.gz` sidecar；回放也嵌入导演记录，trace 独立保存。不指定 AI 且使用旧角色时保留 Phase 1 默认脚本，未指定角色使用 Phase 0 夹具。
 
+### 第二轮 AI：接触与击退外推
+
+`utility-v5` 使用 `content/fighter-window.json`。它利用合法的自身动作与最多 19 条自身位置记录，推算观察延迟期间的接触、打断和击退；保持 v3/v4 入口、战斗数值、感知延迟、噪声与随机协议。网页选择“第二轮”，或打开 `/?ai=utility-v5`。本轮导演继续 off。验证状态与限制见 [第二轮报告](./docs/reports/optimization-r2.md)，持续交接见 [优化进度](./docs/optimization-progress.md)。
+
+```powershell
+. .\scripts\use-node.ps1
+npm run build
+npm run simulate -- --ai utility --content content/fighter-window.json --pacing off --seed 17 --output artifacts/window-example.json
+npm run batch -- --config production.window.json --resume
+```
+
+批量配置支持显式 `"aiVersion": "utility-v5"`；`production.window.json` 生成 20 场正式比赛包。导出视频另运行 `npm run produce -- --config production.window.json --resume`。第二轮观看包是 10 对可播放轨道，不冒充已重新编码的成片。
+
+本轮通用评测必须显式传 content/version/manifest/output，且核验实际控制器身份。新留出还必须传预先冻结的 experiment；未知参数、身份不符、数据 hash 错误及失败比赛会报错，输出目录不会覆盖旧实验。
+
+```powershell
+node scripts/create-optimization-seeds.mjs
+node scripts/evaluate-optimization.mjs --content content/fighter-window.json --version utility-v5 --manifest fixtures/seeds/optimization-r2-v1.json --split train --output artifacts/optimization/my-train
+node scripts/verify-optimization.mjs --content content/fighter-window.json --version utility-v5 --manifest fixtures/seeds/correctness-v1.json --output artifacts/optimization/my-verification
+node scripts/serve-optimization-review.mjs --directory artifacts/optimization/r2/review --port 5180
+```
+
+本轮 400 训练 / 400 留出使用十组对阵及换边，按 seed 簇配对统计。第一轮及本轮已经查看的数据后续均作为已见回归集；下一轮使用新的冻结验证数据。原始实验和观看包仍在被 Git 忽略的 `artifacts/`，换机器接管需保存或按报告重建。
+
 输入回放只执行保存的输入，核对构建、完整内容/插件版本、事件、60 tick 检查点、结果和 worldHash，不重新运行导演。完整检查点用于 AI 重新决策续跑，另核对包含导演状态的 runnerHash。resume 沿用保存的模式；显式改成不同模式会报错，修改模式请新开比赛。旧支持版本回放缺失 pacing 时明确迁移为 off。CLI 检查点同时保存此前输入历史；纯运行状态快照不冒充完整输入回放。
 
 成功退出码 0；参数错误和 invalid 比赛为 2。invalid 会保存 `.failure.json`。有限效果不会被静默丢弃；边界预算会诊断并停止该 substep 的剩余位移。

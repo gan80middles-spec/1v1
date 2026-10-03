@@ -31,6 +31,11 @@ export class UtilityController {
     constructor(seed: number, private content: ContentBundle, readonly profile: AIProfile, readonly settings: UtilitySettings = DEFAULT_UTILITY_SETTINGS, private traceEnabled = true) { this.rng = new Xoshiro128ss(seed); }
     update(o: Observation): ActionIntent {
         this.lastTrace = null;
+        if (this.profile.predictionModel === 'window-v1') {
+            const history = (this.memory.ownMotionHistory ?? []).filter(sample => sample.tick < o.nowTick && sample.tick >= o.nowTick - 18);
+            history.push({tick:o.nowTick,body:structuredClone(o.self.entity.body),castId:o.self.entity.action.kind==='cast'?o.self.entity.action.castId:null});
+            this.memory.ownMotionHistory = history;
+        }
         const changed = consumeMemory(this.memory, this.execution, o, this.content, this.profile, this.settings, distanceBand(o, this.content, this.profile, o.nowTick - this.memory.lastEffectiveInteractionTick));
         const moving = (): ActionIntent => ({ ...NEUTRAL_INTENT, moveX: o.self.canMove ? this.execution.moveX : 0 });
         if (['dead', 'hitstun'].includes(actionPhase(o.self.entity, o.nowTick)))
@@ -54,7 +59,7 @@ export class UtilityController {
         const current = continuation(this.execution, options), currentCandidate = current ? candidates.find(v => v.option.key === current.key) : null;
         // A basic attack is not a cheaper way to switch horizontal movement. Existing
         // projectiles also cannot supply the evidence for a newly proposed basic.
-        if (this.profile.predictionModel === 'causal-v1' && this.settings.prediction !== false)
+        if (this.profile.predictionModel !== undefined && this.settings.prediction !== false)
             for (const candidate of candidates)
                 if (candidate.option.slot === 'basic' && candidate.outcome?.castDamageDealtPct === 0)
                     candidate.selectionBlockReason = 'no-predicted-basic-hit';
